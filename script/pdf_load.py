@@ -7,21 +7,22 @@ import fitz  # PyMuPDF
 pdf_directory = "../knowledge/pdf"  # Directory containing PDF files
 
 
-def extract_text_from_pdfs(pdf_directory):
+def extract_and_chunk_pdfs(pdf_directory):
     documents = []
     for filename in os.listdir(pdf_directory):
         if filename.endswith(".pdf"):
             file_path = os.path.join(pdf_directory, filename)
             with fitz.open(file_path) as doc:
-                text = ""
                 for page in doc:
-                    text += page.get_text()
-                documents.append((filename, text))
+                    text = page.get_text()
+                    paragraphs = text.split("\n\n")
+                    for paragraph in paragraphs:
+                        documents.append((filename, paragraph))
     return documents
 
 
 # Extract text from PDFs
-pdf_documents = extract_text_from_pdfs(pdf_directory)
+pdf_documents = extract_and_chunk_pdfs(pdf_directory)
 
 
 # Print results
@@ -64,7 +65,7 @@ class KnowledgeDoc(BaseDoc):
 
 
 # Create vector database
-db = InMemoryExactNNVectorDB[KnowledgeDoc](workspace="./workspace_path")
+db = InMemoryExactNNVectorDB[KnowledgeDoc](workspace="./vectorDB_workspace")
 # %%
 # Create list of all documents
 doc_list = [
@@ -81,13 +82,7 @@ print(f"Number of entities in database: {len(doc_list)}")
 
 # Perform simple retrieval test
 query_text = """ Consider PID control applied to steer a car along a straight track. The control signal
- uk corresponds to the angle between the front wheel and the centerline of the track, the
- input signal xk corresponds to the angle between the car body and the track in degrees,
- and the goal of the PID controller is to bring the angle between the car body and the
- track to a value of x∗ = 4 degrees (corresponding to executing a turn). Figure 1 shows
- the behavior of both xk and uk at time steps k = 0,1,2,.... Suppose the PID controller
- takes the form described in the lecture notes, and assume Kd = Ki = 0, which one of
- the following options are true?"""
+"""
 query_embedding = model.encode(query_text)
 query_doc = KnowledgeDoc(text=query_text, embedding=query_embedding)
 
