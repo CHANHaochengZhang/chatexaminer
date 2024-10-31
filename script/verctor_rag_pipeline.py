@@ -25,7 +25,6 @@ if not env_path.exists():
 load_dotenv(env_path)
 api_key = os.getenv("OPENAI_API_KEY")
 
-openai.api_key = api_key
 client = OpenAI(api_key=api_key)
 
 
@@ -69,12 +68,13 @@ Please provide a clear and accurate answer, citing relevant knowledge base conte
     ]
 
     # Make a streaming request to OpenAI API
-    response = client.chat.completions.create(
-        model="gpt-4o-mini-2024-07-18",
-        messages=messages,
-    )
+    # response = client.chat.completions.create(
+    #     model="gpt-4o-mini-2024-07-18",
+    #     messages=messages,
+    # )
 
-    return response.choices[0].message.content.strip()
+    # return response.choices[0].message.content.strip()
+    return messages
 
 
 # Example usage

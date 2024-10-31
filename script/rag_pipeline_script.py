@@ -12,7 +12,6 @@ from pdf_load import KnowledgeDoc, db, model
 from sentence_transformers import SentenceTransformer
 from vectordb import InMemoryExactNNVectorDB
 
-# 获取项目根目录（脚本所在目录的父目录）
 ROOT_DIR = Path(__file__).parent.parent
 env_path = ROOT_DIR / ".env"
 
@@ -22,15 +21,14 @@ print(f"Looking for .env at: {env_path}")
 if not env_path.exists():
     raise FileNotFoundError(f".env file not found at {env_path}")
 
-# 加载环境变量
 load_dotenv(env_path)
 api_key = os.getenv("OPENAI_API_KEY")
 
 client = OpenAI(api_key=api_key)
+
+
 # %%
 # Define RAG pipeline
-
-
 def rag_pipeline(question):
     # Step 1: Vectorize the question
     question_embedding = model.encode(question)
