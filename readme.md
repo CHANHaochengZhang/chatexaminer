@@ -1,19 +1,78 @@
-# Intelligent Examination System
+# ChatExaminer
 
-An intelligent examination system based on RAG (Retrieval-Augmented Generation) architecture that automatically generates exam questions and evaluates answers based on a knowledge base.
+An intelligent examination system based on RAG (Retrieval-Augmented Generation) architecture that simulates interactive oral examinations through dynamic question generation and real-time evaluation.
 
-## Features
+## Project Overview
 
-- 🎯 Smart Question Generation: Automatically creates high-quality exam questions from knowledge base
-- 📝 Answer Evaluation: Automatically assesses student answers with detailed feedback
-- 🔄 Context Awareness: Considers historical questions and answers for exam coherence
+ChatExaminer is a proof-of-concept AI-powered oral examination system that aims to:
+- Generate dynamic questions based on course materials
+- Conduct interactive examinations similar to live oral exams
+- Provide real-time evaluation of student responses
+- Adapt questioning based on student performance
+- Assist human examiners with performance assessment
 
-## Quick Start
+## Key Features
 
-### Requirements
+- 🎯 Dynamic Question Generation
+  - Generates questions from course materials
+  - Creates adaptive dialogue trees
+  - Aligns with syllabus and learning objectives
 
-- Python 3.8+
-- OpenAI API Key
+- 🤖 Interactive Examination
+  - Simulates real oral exam scenarios
+  - Provides follow-up questions based on responses
+  - Maintains conversation context
+
+- 📊 Automated Evaluation
+  - Assesses student responses in real-time
+  - Provides detailed performance metrics
+  - Generates feedback for human examiners
+
+## Technical Architecture
+
+### Core Components
+
+- **RAG Engine**
+  - Knowledge base integration
+  - Context-aware retrieval
+  - Question generation
+
+- **Dialogue Manager**
+  - Conversation flow control
+  - Response analysis
+  - Dynamic question selection
+
+- **Evaluation System**
+  - Performance assessment
+  - Feedback generation
+  - Alignment verification
+
+### Data Processing
+
+- PDF parsing and structuring
+- LaTeX representation handling
+- Course material organization
+
+## Research Focus
+
+This project addresses the following research questions:
+
+1. How can AI systems effectively simulate interactive oral examination dynamics?
+2. How can we ensure AI-generated questions align with teacher-defined criteria?
+3. What methods can effectively evaluate AI-student interactions in educational contexts?
+
+## Development Status
+
+Current development focuses on:
+- [ ] Knowledge base integration
+- [ ] Question generation algorithms
+- [ ] Interactive dialogue management
+- [ ] Evaluation metrics implementation
+- [ ] Teacher control interface
+
+## Getting Started
+
+[Development setup instructions will be added as the project progresses]
 
 ### Configuration
 
