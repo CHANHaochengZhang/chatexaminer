@@ -81,3 +81,84 @@ Current development focuses on:
 ```
 OPENAI_API_KEY=<your-openai-api-key>
 ```
+
+## Code Architecture
+
+### Directory Structure
+```
+.
+├── knowledge/
+│   └── pdf/            # PDF knowledge base files
+├── script/
+│   ├── pdf_load.py     # PDF processing and vectorization
+│   ├── rag_pipeline_script.py  # Main RAG pipeline
+│   └── rag/
+│       └── core.py     # Core examination system
+└── .env                # Environment configuration
+```
+
+### Core Components Overview
+
+#### 1. PDF Processing (`pdf_load.py`)
+- **Purpose**: Handles PDF document processing and vectorization
+- **Key Functions**:
+  - `extract_and_chunk_pdfs()`: Extracts and chunks text from PDFs
+  - `vectorize_documents()`: Converts text into embeddings
+  - `KnowledgeDoc`: Document schema for vector database
+- **Dependencies**: PyMuPDF, NLTK, SentenceTransformer
+
+#### 2. RAG Pipeline (`rag_pipeline_script.py`)
+- **Purpose**: Implements the main RAG (Retrieval-Augmented Generation) logic
+- **Key Features**:
+  - Question vectorization
+  - Context retrieval from vector database
+  - Response generation using OpenAI GPT
+- **Integration**: Connects PDF processing with examination system
+
+#### 3. Examination System (`rag/core.py`)
+- **Purpose**: Core examination logic and context management
+- **Key Classes**:
+  - `ExamContext`: Manages examination session information
+  - `RAGResponse`: Structures generated questions and context
+  - `ExaminerRAG`: Main examination controller
+- **Features**:
+  - Question generation
+  - Answer evaluation
+  - Context-aware prompting
+
+### Component Interactions
+
+1. **Knowledge Base Creation**
+   ```mermaid
+   graph LR
+   A[PDF Files] --> B[pdf_load.py]
+   B --> C[Vector Database]
+   ```
+
+2. **Question Generation Flow**
+   ```mermaid
+   graph LR
+   A[ExamContext] --> B[ExaminerRAG]
+   B --> C[RAG Pipeline]
+   C --> D[Generated Question]
+   ```
+
+3. **Answer Evaluation Flow**
+   ```mermaid
+   graph LR
+   A[Student Answer] --> B[ExaminerRAG]
+   B --> C[Knowledge Retrieval]
+   C --> D[Evaluation Result]
+   ```
+
+### Key Dependencies
+- OpenAI API: For question generation and answer evaluation
+- SentenceTransformer: For text embedding
+- Vector Database: For efficient knowledge retrieval
+- PyMuPDF: For PDF processing
+
+### Configuration
+The system requires proper configuration of:
+- OpenAI API key in `.env`
+- Knowledge base PDFs in `knowledge/pdf/`
+- Vector database workspace settings
