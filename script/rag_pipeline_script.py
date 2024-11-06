@@ -2,9 +2,9 @@
 # Import required libraries
 import json
 import os
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from docarray import DocList
 
@@ -46,6 +46,7 @@ class ExamQuestion:
     context: List[str]
     difficulty: int
     topic: str
+    context_metadata: List[Dict[str, any]] = field(default_factory=list)
     approved: bool = False
     teacher_notes: Optional[str] = None
 
@@ -145,6 +146,14 @@ class RAGPipeline:
             question_id=f"Q{len(self.questions) + 1}",
             question=response.choices[0].message.content.strip(),
             context=[c["text"] for c in contexts],
+            context_metadata=[
+                {
+                    "filename": c["metadata"].filename,
+                    "page_number": c["metadata"].page_number,
+                    "chunk_index": c["metadata"].chunk_index,
+                }
+                for c in contexts
+            ],  # 添加元数据
             difficulty=difficulty,
             topic=topic,
         )
@@ -199,13 +208,13 @@ if __name__ == "__main__":
 
     # Generate new question
     question = rag.generate_question(
-        topic="The dynamical programming algorithm for finite-horizon control",
-        difficulty=2,
+        topic="Direct methods for optimal control",
+        difficulty=4,
     )
     print(f"Generated Question: {question.question}\n")
 
     # Evaluate answer
-    answer = "PID control helps maintain the car's position by..."
+    answer = """I don't know"""
     evaluation = rag.answer_question(question.question_id, answer)
     print(f"Evaluation:\n{evaluation}")
 # %%

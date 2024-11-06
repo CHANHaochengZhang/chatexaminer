@@ -11,6 +11,7 @@
     ],
     "difficulty": 3,
     "topic": "PID control in automotive systems",
+    "context_metadata": [],
     "approved": false,
     "teacher_notes": null
   },
@@ -26,6 +27,7 @@
     ],
     "difficulty": 2,
     "topic": "The dynamical programming algorithm for finite-horizon control",
+    "context_metadata": [],
     "approved": false,
     "teacher_notes": null
   },
@@ -41,6 +43,91 @@
     ],
     "difficulty": 2,
     "topic": "The dynamical programming algorithm for finite-horizon control",
+    "context_metadata": [],
+    "approved": false,
+    "teacher_notes": null
+  },
+  "Q4": {
+    "question_id": "Q4",
+    "question": "**Exam Question:**\n\nConsider a discrete linear quadratic regulator (LQR) setup for a double integrator system, where the state vector is defined as \\( x_k = [p_k, v_k]^T \\), with \\( p_k \\) representing the position and \\( v_k \\) the velocity at time step \\( k \\). The system dynamics are given by:\n\n\\[\nx_{k+1} = Ax_k + Bu_k\n\\]\n\nwhere \\( A = \\begin{bmatrix} 1 & \\Delta t \\\\ 0 & 1 \\end{bmatrix} \\) and \\( B = \\begin{bmatrix} 0 \\\\ \\Delta t \\end{bmatrix} \\), with \\( \\Delta t \\) being the discretization time step. The cost function for the LQR is defined as:\n\n\\[\nJ = \\sum_{k=0}^{N-1} (x_k^T Q x_k + u_k^T R u_k)\n\\]\n\nwhere \\( Q \\) and \\( R \\) are positive semi-definite matrices.\n\n**Question:**\n\n1. Derive the optimal control law \\( u_k \\) for the given discrete LQR problem. Specify the roles of matrices \\( Q \\) and \\( R \\) in shaping the control strategy.\n  \n2. Explain how the choice of \\( \\Delta t \\) affects the performance of the LQR controller in terms of stability and control effort. Provide a brief discussion on potential issues that may arise if \\( \\Delta t \\) is too large or too small.\n\n**Instructions:**\n\n- Use appropriate mathematical notation and reasoning to support your derivation and explanation.\n- Clearly state any assumptions you make during the process.",
+    "context": [
+      "linear quadratic regulator general discrete lqr algorithm dtu compute lecture march aa fix fix",
+      "linear quadratic regulator double integrator example blue lqr using euler xk xk uk red lqr using exponential xk ea xk ea buk time seconds position x euler discretization ei discretization time seconds action u euler discretization ei discretization lqr optimal discrete problem discrete controller bad real problem always check always use ei linear dynamics dtu compute lecture march",
+      "linear quadratic regulator lqr simplified form dp solution gives controller vn qn lk rk bt k vk bk bt k vk ak vk qk lt k rklk ak bklk vk ak bklk u k lkxk j k xk xt k vkxk dtu compute lecture march",
+      "linear quadratic regulator boing example u w q z u uw w ww q z x z b h e z u h h z p u uw w ww q corresponds airspeed climb rate start x steady flight want air speed dtu compute lecture march",
+      "linear quadratic regulator example locomotive steer locomotive starting x goal x x mu written x x u discretized xk axk buk dtu compute lecture march"
+    ],
+    "difficulty": 2,
+    "topic": " The discrete linear quadratic regulator linearization",
+    "context_metadata": [
+      {
+        "filename": "Lecture_6-handout.pdf",
+        "page_number": 18,
+        "chunk_index": 0
+      },
+      {
+        "filename": "Lecture_6-handout.pdf",
+        "page_number": 13,
+        "chunk_index": 0
+      },
+      {
+        "filename": "Lecture_6-handout.pdf",
+        "page_number": 9,
+        "chunk_index": 0
+      },
+      {
+        "filename": "Lecture_6-handout.pdf",
+        "page_number": 19,
+        "chunk_index": 0
+      },
+      {
+        "filename": "Lecture_6-handout.pdf",
+        "page_number": 14,
+        "chunk_index": 0
+      }
+    ],
+    "approved": false,
+    "teacher_notes": null
+  },
+  "Q5": {
+    "question_id": "Q5",
+    "question": "### Exam Question: \n\n**Question:**\n\nConsider a deterministic optimal control problem where the control input \\( u(t) \\) is required to minimize a cost functional defined as:\n\n\\[\nJ(u) = \\int_{0}^{T} L(x(t), u(t), t) \\, dt + \\Phi(x(T))\n\\]\n\nwhere \\( L \\) is the running cost, \\( \\Phi \\) is the terminal cost, and \\( x(t) \\) is the state trajectory defined by the dynamics:\n\n\\[\n\\dot{x}(t) = f(x(t), u(t)), \\quad x(0) = x_0\n\\]\n\n1. Describe the steps involved in formulating this problem as a nonlinear programming problem. Include a discussion of how constraints related to state and control limits can be incorporated into your formulation.\n\n2. Explain how sequential convex programming can be used to solve this problem. Discuss the importance of the initial guess in this optimization approach and how it affects the convergence to the optimal solution.\n\n3. Provide an example of a specific choice for \\( L \\) and \\( \\Phi \\) that leads to a quadratic cost function and derive the corresponding optimal control law assuming that the dynamics allow for a linear feedback policy.\n\n**Answer:**\n\n*In your answer, ensure to clearly outline the key components such as the construction of the Lagrangian, the incorporation of inequality and equality constraints, and how the properties of the cost function influence the choice of optimization method. Discuss the role of Jacobians and Hessians in the context of sequential convex programming and provide a concise derivation of the optimal control law.*",
+    "context": [
+      "chapter direct methods section deterministic problem solved using open loop control optimal policy sequence actions found optimization since models used control x f x u deterministic one expect optimal control intrinsically tied simple optimization therefore explore optimization based methods optimal control chapter optimization since chapter treat optimization useful discuss optimization abstract point view proceeding non linear optimization general non linear optimization problem sometimes known non linear pro gram typically take following abstract definition minimization problem non linear pro gram z rn minz e z subject h z g z zlow z zupp functions e h g goal find optimal z minimizes expression general ways solve problem however assuming problem complicated methods sequential convex programming may yield sequential convex programming good results therefore assume access way solving problem section without understanding works important note methods work well need initial guess solution performance depends good guess instance satisfy constraints recommended compute gradient hessian e well jacobians g h",
+      "reading material chapter learning objectives direct methods optimal control trajectory planning linear quadratic problems using optimization trajectory planning using trapezoidal collocation dtu compute lecture march",
+      "introduction reinforcement learning control direct methods control optimization tue herlau dtu compute technical university denmark dtu",
+      "pid control approaches control rule based methods build u x directly optimization based methods u arg min u ju x dp inspired planning methods dtu compute lecture february",
+      "applying dp algorithm eq directly j n xn min un rm xt n qn xn ut n rn un xt nvnxn inserting dynamics eq becomes j n xn min un rm n xt n qn xn ut n rn un xn bn un tvn xn bn un rearranging j n xn min un rm n xt n qn n vnan xn ut n rn bt n vnbn un ut n bt n vnan xn find optimum setting derivative equal zero j n un xn rn bt n vnbn un bt n vnan xn setting zero yields u n rn bt n vnbn bt n vnan z ln xn write u n ln xn time varying linear feedback policy plugging policy j n xn xt n qn lt n rn ln bn ln tvn bn ln xn optimal policy always linear optimal cost go always quadratic dp recursion may recursively performed backward time minimization may performed analytically formally rn bt n vnbn therefore local minima global minima technical note cost go remains positive semi definite quadratic function state"
+    ],
+    "difficulty": 4,
+    "topic": "Direct methods for optimal control",
+    "context_metadata": [
+      {
+        "filename": "02465_Notes.pdf",
+        "page_number": 187,
+        "chunk_index": 0
+      },
+      {
+        "filename": "Lecture_5-handout.pdf",
+        "page_number": 3,
+        "chunk_index": 0
+      },
+      {
+        "filename": "Lecture_5-handout.pdf",
+        "page_number": 1,
+        "chunk_index": 0
+      },
+      {
+        "filename": "Lecture_4-handout.pdf",
+        "page_number": 15,
+        "chunk_index": 0
+      },
+      {
+        "filename": "02465_Notes.pdf",
+        "page_number": 203,
+        "chunk_index": 0
+      }
+    ],
     "approved": false,
     "teacher_notes": null
   }
