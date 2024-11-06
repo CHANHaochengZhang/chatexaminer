@@ -86,9 +86,11 @@ OPENAI_API_KEY=<your-openai-api-key>
 
 ### Directory Structure
 ```
-.
+project_root/
 ├── knowledge/
 │   └── pdf/            # PDF knowledge base files
+├── data/               # Generated data storage
+│   └── exam_questions.json  # Generated exam questions
 ├── script/
 │   ├── pdf_load.py     # PDF processing and vectorization
 │   ├── rag_pipeline_script.py  # Main RAG pipeline
@@ -101,18 +103,25 @@ OPENAI_API_KEY=<your-openai-api-key>
 
 #### 1. PDF Processing (`pdf_load.py`)
 - **Purpose**: Handles PDF document processing and vectorization
+- **Key Classes**:
+  - `DocumentMetadata`: Stores document chunk information
+  - `KnowledgeDoc`: Document schema with metadata for vector database
 - **Key Functions**:
   - `extract_and_chunk_pdfs()`: Extracts and chunks text from PDFs
   - `vectorize_documents()`: Converts text into embeddings
-  - `KnowledgeDoc`: Document schema for vector database
+  - `clean_text()`: Preprocesses text content
 - **Dependencies**: PyMuPDF, NLTK, SentenceTransformer
 
 #### 2. RAG Pipeline (`rag_pipeline_script.py`)
-- **Purpose**: Implements the main RAG (Retrieval-Augmented Generation) logic
+- **Purpose**: Implements the main RAG pipeline for question generation and evaluation
+- **Key Classes**:
+  - `ExamQuestion`: Structure for storing exam questions
+  - `RAGPipeline`: Main pipeline controller
 - **Key Features**:
-  - Question vectorization
-  - Context retrieval from vector database
-  - Response generation using OpenAI GPT
+  - JSON-based question storage and retrieval
+  - Enhanced context relevance scoring
+  - Question generation with GPT-4
+  - Answer evaluation with detailed feedback
 - **Integration**: Connects PDF processing with examination system
 
 #### 3. Examination System (`rag/core.py`)
@@ -138,27 +147,31 @@ OPENAI_API_KEY=<your-openai-api-key>
 2. **Question Generation Flow**
    ```mermaid
    graph LR
-   A[ExamContext] --> B[ExaminerRAG]
-   B --> C[RAG Pipeline]
-   C --> D[Generated Question]
+   A[ExamContext] --> B[RAGPipeline]
+   B --> C[Context Retrieval]
+   C --> D[GPT-4 Generation]
+   D --> E[JSON Storage]
    ```
 
 3. **Answer Evaluation Flow**
    ```mermaid
    graph LR
-   A[Student Answer] --> B[ExaminerRAG]
-   B --> C[Knowledge Retrieval]
-   C --> D[Evaluation Result]
+   A[Student Answer] --> B[RAGPipeline]
+   B --> C[Context Retrieval]
+   C --> D[GPT-4 Evaluation]
+   D --> E[Feedback Generation]
    ```
 
 ### Key Dependencies
-- OpenAI API: For question generation and answer evaluation
+- OpenAI API: For GPT-4 based generation and evaluation
 - SentenceTransformer: For text embedding
 - Vector Database: For efficient knowledge retrieval
 - PyMuPDF: For PDF processing
+- Rich: For formatted console output
 
 ### Configuration
 The system requires proper configuration of:
 - OpenAI API key in `.env`
 - Knowledge base PDFs in `knowledge/pdf/`
 - Vector database workspace settings
+- Data storage directory for generated questions

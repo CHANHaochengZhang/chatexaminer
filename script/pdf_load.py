@@ -2,11 +2,15 @@
 # Import required libraries
 import os
 import re
-from typing import List
+from dataclasses import dataclass
+from typing import List, Optional
 
 import fitz  # PyMuPDF
 import nltk
+from docarray import BaseDoc, DocList
+from docarray.typing import NdArray
 from nltk.corpus import stopwords
+from vectordb import InMemoryExactNNVectorDB
 
 pdf_directory = "../knowledge/pdf"  # Directory containing PDF files
 
@@ -36,8 +40,26 @@ def clean_text(text: str, stop_words: set) -> str:
     return " ".join(cleaned_words)
 
 
+@dataclass
+class DocumentMetadata:
+    """Metadata for document chunks"""
+
+    filename: str
+    page_number: int
+    chunk_index: int
+    # difficulty_level: Optional[int] = None
+
+
+class KnowledgeDoc(BaseDoc):
+    """Document schema with metadata"""
+
+    text: str
+    embedding: NdArray[384]
+    metadata: DocumentMetadata
+
+
 def extract_and_chunk_pdfs(pdf_directory):
-    """Extract text from PDFs with preprocessing"""
+    """Extract text from PDFs with metadata"""
     stop_words = get_stopwords()
     documents = []
 
@@ -45,15 +67,19 @@ def extract_and_chunk_pdfs(pdf_directory):
         if filename.endswith(".pdf"):
             file_path = os.path.join(pdf_directory, filename)
             with fitz.open(file_path) as doc:
-                for page in doc:
+                for page_num, page in enumerate(doc):
                     text = page.get_text()
-                    # Clean and preprocess text
                     cleaned_text = clean_text(text, stop_words)
-                    if cleaned_text.strip():  # Ensure non-empty text
+                    if cleaned_text.strip():
                         paragraphs = cleaned_text.split("\n\n")
-                        for paragraph in paragraphs:
-                            if len(paragraph.split()) > 5:  # Minimum words threshold
-                                documents.append((filename, paragraph))
+                        for chunk_idx, paragraph in enumerate(paragraphs):
+                            if len(paragraph.split()) > 5:
+                                metadata = DocumentMetadata(
+                                    filename=filename,
+                                    page_number=page_num + 1,
+                                    chunk_index=chunk_idx,
+                                )
+                                documents.append((metadata, paragraph))
     return documents
 
 
@@ -71,11 +97,11 @@ model = SentenceTransformer("all-MiniLM-L6-v2")
 
 
 def vectorize_documents(documents):
-    """Vectorize documents"""
+    """Vectorize documents with metadata"""
     vectors = []
-    for filename, text in documents:
+    for metadata, text in documents:
         embedding = model.encode(text, show_progress_bar=True)
-        vectors.append((filename, text, embedding))
+        vectors.append((metadata, text, embedding))
     return vectors
 
 
@@ -88,25 +114,13 @@ print(document_vectors)
 
 import numpy as np
 
-# %%
-from docarray import BaseDoc, DocList
-from docarray.typing import NdArray
-from vectordb import InMemoryExactNNVectorDB
-
-
-# Define document schema
-class KnowledgeDoc(BaseDoc):
-    text: str
-    embedding: NdArray[384]  # Dimension of SBERT embeddings
-
-
 # Create vector database
 db = InMemoryExactNNVectorDB[KnowledgeDoc](workspace="./vectorDB_workspace")
 # %%
 # Create list of all documents
 doc_list = [
-    KnowledgeDoc(text=text, embedding=np.array(embedding))
-    for filename, text, embedding in document_vectors
+    KnowledgeDoc(text=text, embedding=np.array(embedding), metadata=metadata)
+    for metadata, text, embedding in document_vectors
 ]
 
 # Index documents into database
@@ -119,16 +133,17 @@ print(f"Number of entities in database: {len(doc_list)}")
 
 # Modify the search function
 def semantic_search(query_text: str, db, model, top_k=3):
-    """Perform semantic search with preprocessed query"""
-    # Preprocess query
+    """Perform semantic search with metadata in results"""
     stop_words = get_stopwords()
     processed_query = clean_text(query_text, stop_words)
 
-    # Generate query embedding
     query_embedding = model.encode(processed_query)
-    query_doc = KnowledgeDoc(text=processed_query, embedding=query_embedding)
+    query_doc = KnowledgeDoc(
+        text=processed_query,
+        embedding=query_embedding,
+        metadata=DocumentMetadata(filename="query", page_number=0, chunk_index=0),
+    )
 
-    # Execute search
     results = db.search(inputs=DocList[KnowledgeDoc]([query_doc]), limit=top_k)
     return results
 
@@ -137,10 +152,10 @@ def semantic_search(query_text: str, db, model, top_k=3):
 query_text = """Consider PID control applied to steer a car along a straight track. The control signal"""
 results = semantic_search(query_text, db, model)
 
-# Print search results
+# Print search results with metadata
 for match in results[0].matches:
-    # print(f"Match score: {match}")
-    print(f"Matched Document Text:")
+    print(f"Source: {match.metadata.filename}, Page: {match.metadata.page_number}")
+    print(f"Matched Text:")
     print(match.text[:1000])
     print("-" * 50)
 
