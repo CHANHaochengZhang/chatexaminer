@@ -12,8 +12,6 @@ from docarray import DocList
 from dotenv import load_dotenv
 from openai import OpenAI
 from pdf_load import DocumentMetadata, KnowledgeDoc, db, model
-from sentence_transformers import SentenceTransformer
-from vectordb import InMemoryExactNNVectorDB
 
 ROOT_DIR = Path(__file__).parent.parent
 env_path = ROOT_DIR / ".env"

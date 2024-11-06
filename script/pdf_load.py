@@ -3,7 +3,6 @@
 import os
 import re
 from dataclasses import dataclass
-from typing import List, Optional
 
 import fitz  # PyMuPDF
 import nltk
