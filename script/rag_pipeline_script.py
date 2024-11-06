@@ -194,13 +194,15 @@ Please provide:
         return response.choices[0].message.content.strip()
 
 
+# %%
 # Example usage
 if __name__ == "__main__":
     rag = RAGPipeline()
 
     # Generate new question
     question = rag.generate_question(
-        topic="PID control in automotive systems", difficulty=3
+        topic="The dynamical programming algorithm for finite-horizon control",
+        difficulty=2,
     )
     print(f"Generated Question: {question.question}\n")
 

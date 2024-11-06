@@ -163,11 +163,10 @@ project_root/
    ```
 
 ### Key Dependencies
-- OpenAI API: For GPT-4 based generation and evaluation
+- OpenAI API: For GPT-4o-mini based generation and evaluation
 - SentenceTransformer: For text embedding
 - Vector Database: For efficient knowledge retrieval
 - PyMuPDF: For PDF processing
-- Rich: For formatted console output
 
 ### Configuration
 The system requires proper configuration of:
