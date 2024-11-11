@@ -91,15 +91,17 @@ project_root/
 │   └── pdf/            # PDF knowledge base files
 ├── data/               # Generated data storage
 │   └── exam_questions.json  # Generated exam questions
-├── script/
-│   ├── pdf_load.py     # PDF processing and vectorization
-│   ├── rag_pipeline_script.py  # Main RAG pipeline
+├── script/            # Proof of Concept Implementation
+│   ├── pdf_load.py     # Basic PDF processing (PoC)
+│   ├── rag_pipeline_script.py  # Simple RAG pipeline (PoC)
 │   └── rag/
-│       └── core.py     # Core examination system
+│       └── core.py     # Core concepts demonstration (PoC)
 └── .env                # Environment configuration
 ```
 
-### Core Components Overview
+### Proof of Concept Implementation
+
+The current implementation in the `script/` directory serves as a proof of concept to demonstrate core functionalities:
 
 #### 1. PDF Processing (`pdf_load.py`)
 - **Purpose**: Handles PDF document processing and vectorization
@@ -129,15 +131,34 @@ project_root/
 - **Integration**: Connects PDF processing with examination system
 
 #### 3. Examination System (`rag/core.py`)
-- **Purpose**: Core examination logic and context management
-- **Key Classes**:
-  - `ExamContext`: Manages examination session information
-  - `RAGResponse`: Structures generated questions and context
-  - `ExaminerRAG`: Main examination controller
-- **Features**:
-  - Question generation
-  - Answer evaluation
-  - Context-aware prompting
+- **Status**: Conceptual framework demonstration
+- **Current Scope**:
+  - Basic exam context management
+  - Simple question-answer flow
+  - Preliminary feedback generation
+- **Limitations**:
+  - Limited dialogue management
+  - Basic context awareness
+  - Simple evaluation criteria
+
+### Future Development Plans
+
+The current proof of concept implementation will evolve into:
+
+1. **Enhanced Processing**
+   - Advanced PDF parsing with structure preservation
+   - Sophisticated chunking strategies
+   - Improved metadata extraction
+
+2. **Robust Pipeline**
+   - Advanced context retrieval algorithms
+   - Dynamic question adaptation
+   - Comprehensive evaluation system
+
+3. **Interactive System**
+   - Real-time dialogue management
+   - Adaptive questioning strategies
+   - Detailed performance analytics
 
 ### Component Interactions
 
