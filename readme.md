@@ -104,13 +104,17 @@ project_root/
 #### 1. PDF Processing (`pdf_load.py`)
 - **Purpose**: Handles PDF document processing and vectorization
 - **Key Classes**:
-  - `DocumentMetadata`: Stores document chunk information
-  - `KnowledgeDoc`: Document schema with metadata for vector database
+  - `DocumentMetadata`: Stores document chunk metadata (filename, page number, chunk index)
+  - `KnowledgeDoc`: Document schema with metadata and embeddings
 - **Key Functions**:
-  - `extract_and_chunk_pdfs()`: Extracts and chunks text from PDFs
-  - `vectorize_documents()`: Converts text into embeddings
-  - `clean_text()`: Preprocesses text content
-- **Dependencies**: PyMuPDF, NLTK, SentenceTransformer
+  - `extract_and_chunk_pdfs()`: Intelligent text extraction and chunking
+  - `vectorize_documents()`: Generates embeddings using SentenceTransformer
+  - `clean_text()`: Text preprocessing and stopwords removal
+- **Features**:
+  - Intelligent chunking with RecursiveCharacterTextSplitter
+  - Quality control for text chunks
+  - Error handling for PDF processing
+  - Metadata preservation
 
 #### 2. RAG Pipeline (`rag_pipeline_script.py`)
 - **Purpose**: Implements the main RAG pipeline for question generation and evaluation

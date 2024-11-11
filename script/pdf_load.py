@@ -3,12 +3,15 @@
 import os
 import re
 from dataclasses import dataclass
+from typing import List
 
 import fitz  # PyMuPDF
 import nltk
 from docarray import BaseDoc, DocList
 from docarray.typing import NdArray
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 from nltk.corpus import stopwords
+from PyPDF2 import PdfReader
 from vectordb import InMemoryExactNNVectorDB
 
 pdf_directory = "../knowledge/pdf"  # Directory containing PDF files
@@ -57,36 +60,87 @@ class KnowledgeDoc(BaseDoc):
     metadata: DocumentMetadata
 
 
-def extract_and_chunk_pdfs(pdf_directory):
-    """Extract text from PDFs with metadata"""
+def extract_and_chunk_pdfs(pdf_directory: str) -> List[tuple[DocumentMetadata, str]]:
+    """
+    Extract text from PDFs with intelligent chunking
+
+    Args:
+        pdf_directory: Directory containing PDF files
+
+    Returns:
+        List of tuples containing metadata and text chunks
+    """
     stop_words = get_stopwords()
     documents = []
 
+    # Initialize text splitter with optimal parameters
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=1000,  # Target size for each chunk
+        chunk_overlap=200,  # Overlap between chunks to maintain context
+        length_function=len,
+        separators=[
+            "\n\n",
+            "\n",
+            ".",
+            "!",
+            "?",
+            ";",
+            " ",
+            "",
+        ],  # Priority-based separators
+    )
+
     for filename in os.listdir(pdf_directory):
-        if filename.endswith(".pdf"):
-            file_path = os.path.join(pdf_directory, filename)
+        if not filename.endswith(".pdf"):
+            continue
+
+        file_path = os.path.join(pdf_directory, filename)
+        try:
+            # Process PDF using PyMuPDF (fitz)
             with fitz.open(file_path) as doc:
                 for page_num, page in enumerate(doc):
+                    # Extract text from page
                     text = page.get_text()
+
+                    # Clean and preprocess text
                     cleaned_text = clean_text(text, stop_words)
-                    if cleaned_text.strip():
-                        paragraphs = cleaned_text.split("\n\n")
-                        for chunk_idx, paragraph in enumerate(paragraphs):
-                            if len(paragraph.split()) > 5:
-                                metadata = DocumentMetadata(
-                                    filename=filename,
-                                    page_number=page_num + 1,
-                                    chunk_index=chunk_idx,
-                                )
-                                documents.append((metadata, paragraph))
+                    if not cleaned_text.strip():
+                        continue
+
+                    # langchain text chunking
+                    chunks = text_splitter.split_text(cleaned_text)
+
+                    # Process each text chunk
+                    for chunk_idx, chunk in enumerate(chunks):
+                        # Skip chunks that are too short
+                        if len(chunk.split()) < 20:  # Minimum 20 words per chunk
+                            continue
+
+                        metadata = DocumentMetadata(
+                            filename=filename,
+                            page_number=page_num + 1,
+                            chunk_index=chunk_idx,
+                        )
+                        documents.append((metadata, chunk))
+
+        except Exception as e:
+            print(f"Error processing {filename}: {str(e)}")
+            continue
+
     return documents
 
 
 # Extract text from PDFs
 pdf_documents = extract_and_chunk_pdfs(pdf_directory)
 
-# Print results
-print(pdf_documents)
+# Print statistics
+print(f"Total chunks extracted: {len(pdf_documents)}")
+print(f"Sample chunk from first document:")
+if pdf_documents:
+    metadata, text = pdf_documents[0]
+    print(f"File: {metadata.filename}")
+    print(f"Page: {metadata.page_number}")
+    print(f"Text preview: {text[:200]}...")
 
 # %%
 from sentence_transformers import SentenceTransformer
