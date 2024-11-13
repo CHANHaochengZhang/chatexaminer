@@ -60,14 +60,16 @@ ChatExaminer is a proof-of-concept AI-powered oral examination system that aims 
 
 The architecture of ChatExaminer consists of the following core components:
 
+The architecture of ChatExaminer consists of the following core components:
+
 ```mermaid
 graph TD
-A[User Interface] -->|Interacts with| B[Vue.js Frontend]
-B -->|API Requests| C[FastAPI Backend]
-C -->|Database Queries| D[PostgreSQL Database]
-C -->|Vector Retrieval| E[Vector Database (e.g., FAISS)]
-C -->|External API Calls| F[OpenAI API]
-C -->|Knowledge Base| G[PDF Files]
+    A[User Interface] -->|Interacts with| B[Vue.js Frontend]
+    B -->|API Requests| C[FastAPI Backend]
+    C -->|Database Queries| D[PostgreSQL Database]
+    C -->|Vector Retrieval| E[Vector Database]
+    C -->|External API Calls| F[OpenAI API]
+    C -->|Knowledge Base| G[PDF Files]
 ```
 ### Core Components
 
