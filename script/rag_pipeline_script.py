@@ -1,6 +1,7 @@
 # %%
 # Import required libraries
 import json
+import logging
 import os
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
@@ -12,6 +13,13 @@ from docarray import DocList
 from dotenv import load_dotenv
 from openai import OpenAI
 from pdf_load import DocumentMetadata, KnowledgeDoc, db, model
+
+# Configure logging
+logging.basicConfig(
+    filename="rag_pipeline.log",
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+)
 
 ROOT_DIR = Path(__file__).parent.parent
 env_path = ROOT_DIR / ".env"
@@ -212,9 +220,26 @@ if __name__ == "__main__":
         difficulty=4,
     )
     print(f"Generated Question: {question.question}\n")
+    logging.info(f"Generated Question: {question.question}\n")
 
     # Evaluate answer
-    answer = """I don't know"""
+    answer = """Direct Collocation Methods
+Direct collocation is a technique to solve complex control problems by turning them into an optimization problem. Instead of working with continuous equations, it breaks the problem into points over time and only enforces the control rules at these points. This makes it easier to handle problems with nonlinear behaviors and allows you to add complex constraints directly into the optimization process.
+
+Solving with Sequential Convex Programming (SCP)
+To solve the problem using SCP with direct collocation:
+
+Step 1: Divide the time interval into points (collocation points).
+Step 2: Start with an initial guess for how the system states and controls change over time.
+Step 3: Approximate the system’s behavior at each point and enforce constraints.
+Step 4: SCP then repeatedly adjusts the solution, solving a simplified (convex) version of the problem each time until it converges to a solution.
+Good initial guesses are important because they help SCP find an optimal solution more easily. Convergence—reaching a stable solution—is critical to ensure that the final answer is feasible and accurate.
+
+Limitations in Complex Problems
+When the system has many variables or is highly complex, direct methods can be slow and might not converge well. The computation gets heavy, which can make solving each step hard, especially in real-time applications. This may mean the solution is slower or less accurate, limiting the method's usefulness for very large or complex systems."""
+    logging.info(f"Answer:\n{answer}")
+
     evaluation = rag.answer_question(question.question_id, answer)
     print(f"Evaluation:\n{evaluation}")
+    logging.info(f"Evaluation:\n{evaluation}")
 # %%
