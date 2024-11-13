@@ -256,5 +256,47 @@
     ],
     "approved": false,
     "teacher_notes": null
+  },
+  "Q9": {
+    "question_id": "Q9",
+    "question": "**Exam Question:**\n\nConsider a deterministic optimal control problem characterized by the state dynamics \\( \\dot{x}(t) = f(x(t), u(t)) \\) and the cost functional defined as:\n\n\\[\nJ(u) = \\int_{t_0}^{t_f} e(x(t), u(t)) \\, dt + \\phi(x(t_f))\n\\]\n\nwhere \\( e(x(t), u(t)) \\) is a running cost function and \\( \\phi(x(t_f)) \\) is the terminal cost. \n\n1. **Direct Collocation Method**: Describe the direct collocation method for solving this optimal control problem. Specifically, outline the steps involved in formulating the problem, discretizing the state and control trajectories, and solving the resulting nonlinear programming problem. \n\n2. **Convergence and Sensitivity**: Discuss the importance of the initial guess in the context of the direct collocation method. How does the quality of the initial guess affect convergence to the optimal solution? What strategies can be employed to improve the robustness of the solution?\n\n3. **Application**: Provide an example of a real-world application where direct methods for optimal control, such as the direct collocation method, can be employed. Discuss the specific challenges that might arise in modeling the system dynamics and constraints, and how these challenges can influence the design of the optimal control strategy.\n\n4. **Comparative Analysis**: Compare the direct collocation method with another trajectory optimization method, such as sequential convex programming. Discuss their respective advantages and disadvantages in terms of accuracy, computational efficiency, and applicability to nonlinear constraints.\n\n*Note: Your answer should demonstrate a comprehensive understanding of direct methods for optimal control, including mathematical formulation, algorithmic implementation, and practical application considerations.*",
+    "context": [
+      "chapter direct methods section deterministic problem solved using open loop control optimal policy sequence actions found optimization since models used control x f x u deterministic one expect optimal control intrinsically tied simple optimization therefore explore optimization based methods optimal control chapter optimization since chapter treat optimization useful discuss optimization abstract point view proceeding non linear optimization general non linear optimization problem sometimes known non linear pro gram typically take following abstract definition minimization problem non linear pro gram z rn minz e z subject h z g z zlow z zupp functions e h g goal find optimal z minimizes expression general ways solve problem however assuming problem complicated methods sequential convex programming may yield sequential convex programming good results therefore assume access way solving problem section without understanding works important note methods work well need initial guess",
+      "closed loop controller cannot trusted certain number time steps might discourage us using method directly limitations addressed produce powerful control methods see algorithm discuss lmpc controller section direct collocation section consider important class solution methods assume assume good approximation underlying dynamical model x f x u concerned planning optimal trajectory examples situations could bring satellite orbit landing space shuttle within class problems direct collocation methods simply direct direct colloca tion methods methods perhaps best method trajectory optimization benefit easily incorporating non linear constraints non typical cost functions easiest way think direct methods extension simple discrete optimization approach previous chapter applied directly dynamical model f rather discrete approximation problem formulation problem consider general optimal control problem discussed chapter recall tf refer start end time control functions x",
+      "reading material chapter learning objectives direct methods optimal control trajectory planning linear quadratic problems using optimization trajectory planning using trapezoidal collocation dtu compute lecture march",
+      "pid control approaches control rule based methods build u x directly optimization based methods u arg min u ju x dp inspired planning methods dtu compute lecture february",
+      "applying dp algorithm eq directly j n xn min un rm xt n qn xn ut n rn un xt nvnxn inserting dynamics eq becomes j n xn min un rm n xt n qn xn ut n rn un xn bn un tvn xn bn un rearranging j n xn min un rm n xt n qn n vnan xn ut n rn bt n vnbn un ut n bt n vnan xn find optimum setting derivative equal zero j n un xn rn bt n vnbn un bt n vnan xn setting zero yields u n rn bt n vnbn bt n vnan z ln xn write u n ln xn time varying linear feedback policy plugging policy j n xn xt n qn lt n rn ln bn ln tvn bn ln xn optimal policy always linear optimal cost go always quadratic dp recursion may recursively performed backward time minimization may performed analytically formally rn bt n vnbn therefore local minima global minima technical note cost go remains positive semi definite quadratic function state"
+    ],
+    "difficulty": 4,
+    "topic": "Direct methods for optimal control",
+    "context_metadata": [
+      {
+        "filename": "02465_Notes.pdf",
+        "page_number": 187,
+        "chunk_index": 0
+      },
+      {
+        "filename": "02465_Notes.pdf",
+        "page_number": 189,
+        "chunk_index": 1
+      },
+      {
+        "filename": "Lecture_5-handout.pdf",
+        "page_number": 3,
+        "chunk_index": 0
+      },
+      {
+        "filename": "Lecture_4-handout.pdf",
+        "page_number": 15,
+        "chunk_index": 0
+      },
+      {
+        "filename": "02465_Notes.pdf",
+        "page_number": 203,
+        "chunk_index": 0
+      }
+    ],
+    "approved": false,
+    "teacher_notes": null
   }
 }
