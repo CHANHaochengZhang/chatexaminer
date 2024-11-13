@@ -28,8 +28,47 @@ ChatExaminer is a proof-of-concept AI-powered oral examination system that aims 
   - Provides detailed performance metrics
   - Generates feedback for human examiners
 
+## User Stories
+
+1. **As a student, I want to input short answers using the keyboard so that I can respond quickly during the exam.**
+   - The system should accept text input from the student and submit it within a specified time limit.
+
+2. **As a student, I want to view the context of the questions during the exam so that I can better understand them.**
+   - The system should display relevant context information next to the questions.
+
+3. **As an examiner, I want to view student responses in real-time so that I can evaluate them immediately.**
+   - The system should update the examiner's interface with the student's responses in real-time.
+
+4. **As a student, I want to receive immediate feedback after submitting my answers so that I can understand my performance.**
+   - The system should provide instant feedback and scoring after the student submits their answer.
+
+5. **As a teacher, I want to set time limits for the exam to control the pace of the examination.**
+   - The system should display a countdown timer when the exam starts.
+
+6. **As a student, I want to view my grades and feedback after the exam so that I can reflect on my performance.**
+   - The system should provide a detailed report of grades and feedback after the exam concludes.
+
+7. **As a system administrator, I want to monitor the health status of the system to ensure service availability.**
+   - The administrator should be able to access the system's health check interface.
+
+8. **As a student, I want to use a hint function during the exam to receive help when needed.**
+   - The system should provide a hint button that students can click when they require assistance.
+
 ## Technical Architecture
 
+### System Architecture
+
+The architecture of ChatExaminer consists of the following core components:
+
+```mermaid
+graph TD
+A[User Interface] -->|Interacts with| B[Vue.js Frontend]
+B -->|API Requests| C[FastAPI Backend]
+C -->|Database Queries| D[PostgreSQL Database]
+C -->|Vector Retrieval| E[Vector Database (e.g., FAISS)]
+C -->|External API Calls| F[OpenAI API]
+C -->|Knowledge Base| G[PDF Files]
+```
 ### Core Components
 
 - **RAG Engine**
