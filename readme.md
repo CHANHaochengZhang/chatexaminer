@@ -201,6 +201,52 @@ The current proof of concept implementation will evolve into:
    - Adaptive questioning strategies
    - Detailed performance analytics
 
+4. **Question Tree Implementation**
+   - **Overview**: Implement a pre-generated question tree structure that allows for dynamic question selection based on student responses during the examination.
+   - **Design**:
+     - **QuestionNode Class**: Create a class to represent each question and its potential follow-up questions.
+     - **Tree Structure**: Each question can have multiple child questions, forming a hierarchical structure that allows for depth in questioning.
+     - **Dynamic Selection**: Based on the student's answer, the system will select the next question from the tree, ensuring a tailored examination experience.
+   - **Implementation Steps**:
+     1. **Generate Question Tree**:
+        - Create a method to generate a question tree for a given topic and difficulty level.
+        - Each node in the tree will represent a question, with child nodes representing follow-up questions.
+     2. **Select Next Question**:
+        - Implement logic to evaluate the student's answer and select the appropriate next question from the tree.
+        - Use keywords or response analysis to determine the direction of questioning.
+     3. **Integrate with Existing System**:
+        - Ensure the question tree integrates seamlessly with the existing RAG pipeline and evaluation system.
+        - Maintain context and flow of the examination while allowing for dynamic adjustments based on student performance.
+
+### Example Question Tree Structure
+
+```python
+class QuestionNode:
+    def __init__(self, question: str, context: List[str], difficulty: int, topic: str):
+        self.question = question
+        self.context = context
+        self.difficulty = difficulty
+        self.topic = topic
+        self.children = []  # Store follow-up questions
+
+    def add_child(self, child_node: 'QuestionNode'):
+        self.children.append(child_node)
+
+def generate_question_tree(topic: str, difficulty: int, depth: int) -> QuestionNode:
+    root_question = rag.generate_question(topic, difficulty)
+    root_node = QuestionNode(root_question.question, root_question.context, difficulty, topic)
+
+    if depth > 0:
+        for _ in range(3):  # Assume each question has 3 follow-up questions
+            child_question = rag.generate_question(topic, difficulty + 1)  # Gradually increasing difficulty
+            child_node = QuestionNode(child_question.question, child_question.context, difficulty + 1, topic)
+            root_node.add_child(child_node)
+            # Recursively generate sub-questions
+            child_node.children.extend(generate_question_tree(topic, difficulty + 1, depth - 1).children)
+
+    return root_node
+```
+
 ### Component Interactions
 
 1. **Knowledge Base Creation**

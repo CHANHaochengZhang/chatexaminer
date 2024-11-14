@@ -126,8 +126,8 @@ class RAGPipeline:
     def generate_question(self, topic: str, difficulty: int) -> ExamQuestion:
         """Generate new exam question"""
         # Create prompt for question generation
-        prompt = f"""Generate an exam question about {topic} at difficulty level {difficulty}/5.
-        The question should be clear, specific, and test deep understanding."""
+        prompt = f"""Generate a clear and specific exam question about {topic} at difficulty level {difficulty}/5.
+        The question should be concise, ideally no longer than 25 words, and test a specific concept or skill."""
 
         # Get relevant context
         contexts = self.get_relevant_context(topic)
@@ -161,7 +161,7 @@ class RAGPipeline:
                     "chunk_index": c["metadata"].chunk_index,
                 }
                 for c in contexts
-            ],  # 添加元数据
+            ],
             difficulty=difficulty,
             topic=topic,
         )
@@ -180,7 +180,7 @@ class RAGPipeline:
         question = self.questions[question_id]
         context_text = "\n\n".join(question.context)
 
-        prompt = f"""Based on the following context and question, evaluate the student's answer:
+        prompt = f"""Evaluate the student's answer based on the following context and question:
 
 Context:
 {context_text}
@@ -193,9 +193,9 @@ Student Answer:
 
 Please provide:
 1. Score (0-100)
-2. Detailed feedback
-3. Correct aspects
-4. Areas for improvement"""
+2. Detailed feedback, focusing on clarity and relevance
+3. Correct aspects of the student's answer
+4. Specific areas for improvement, with suggestions for better responses"""
 
         response = client.chat.completions.create(
             model="gpt-4o-mini-2024-07-18",
@@ -203,7 +203,7 @@ Please provide:
                 {"role": "system", "content": "You are an expert exam evaluator."},
                 {"role": "user", "content": prompt},
             ],
-            temperature=0.3,
+            temperature=0.2,
         )
 
         return response.choices[0].message.content.strip()
