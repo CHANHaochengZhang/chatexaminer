@@ -129,15 +129,19 @@ OPENAI_API_KEY=<your-openai-api-key>
 ```
 project_root/
 ├── knowledge/
-│   └── pdf/            # PDF knowledge base files
-├── data/               # Generated data storage
-│   └── exam_questions.json  # Generated exam questions
-├── script/            # Proof of Concept Implementation
-│   ├── pdf_load.py     # Basic PDF processing (PoC)
-│   ├── rag_pipeline_script.py  # Simple RAG pipeline (PoC)
+│   └── pdf/                     # PDF knowledge base files
+├── data/                        # Generated data storage
+│   ├── exam_questions.json      # Generated exam questions
+│   └── logs/                    # Log files for the application
+│       ├── rag_pipeline.log      # Log for RAG pipeline operations
+│       └── rag_pipeline_iteration1.log  # Log for iteration 1 operations
+├── script/                      # Proof of Concept Implementation
+│   ├── pdf_load.py              # Basic PDF processing (PoC)
+│   ├── rag_pipeline_script.py    # Simple RAG pipeline (PoC)
 │   └── rag/
-│       └── core.py     # Core concepts demonstration (PoC)
-└── .env                # Environment configuration
+│       ├── core.py              # Core concepts demonstration (PoC)
+│       └── question_tree_generator.py  # Question tree generation implementation
+└── .env                         # Environment configuration
 ```
 
 ### Proof of Concept Implementation
@@ -184,6 +188,36 @@ The current implementation in the `script/` directory serves as a proof of conce
   - Limited dialogue management
   - Basic context awareness
   - Simple evaluation criteria
+
+#### 4. Question Tree Generator (`question_tree_generator.py`)
+- **Purpose**: Implements pre-generated question trees for structured examination flow
+- **Key Classes**:
+  - `QuestionNode`: Represents a node in the question tree
+    - Stores question details, child questions, and approval status
+    - Supports JSON serialization for persistence
+  - `QuestionTreeGenerator`: Manages question tree generation and storage
+- **Key Features**:
+  - **Tree Generation**:
+    - Recursive generation of question hierarchies
+    - Configurable depth and branching factor
+    - Progressive difficulty adjustment
+  - **Teacher Control**:
+    - Question approval system
+    - Teacher notes for each question
+    - Manual review capabilities
+  - **Persistence**:
+    - JSON-based storage of question trees
+    - Load/save functionality for tree structures
+    - Maintains question context and relationships
+- **Integration**:
+  - Uses existing RAG pipeline for question generation
+  - Supports examination flow control
+  - Enables pre-examination content review
+- **Benefits**:
+  - Ensures question quality through pre-generation
+  - Allows teacher review before deployment
+  - Maintains examination coherence
+  - Supports adaptive question selection
 
 ### Future Development Plans
 
