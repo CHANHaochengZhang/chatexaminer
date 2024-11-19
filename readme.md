@@ -160,16 +160,19 @@ The current implementation in the `script/` directory serves as a proof of conce
   - Metadata preservation
 
 #### 2. RAG Pipeline (`rag_pipeline_script.py`)
-- **Purpose**: Implements the main RAG pipeline for question generation and evaluation
+- **Purpose**: Implements the main RAG pipeline for question generation and evaluation.
 - **Key Classes**:
-  - `ExamQuestion`: Structure for storing exam questions
-  - `RAGPipeline`: Main pipeline controller
+  - `ExamQuestion`: Structure for storing exam questions.
+  - `RAGPipeline`: Main pipeline controller.
 - **Key Features**:
-  - JSON-based question storage and retrieval
-  - Enhanced context relevance scoring
-  - Question generation with GPT-4
-  - Answer evaluation with detailed feedback
-- **Integration**: Connects PDF processing with examination system
+  - JSON-based question storage and retrieval.
+  - Enhanced context relevance scoring.
+  - **Two-Round Semantic Search**:
+    - **First Round**: Retrieves a broad set of knowledge content related to the topic to ensure a wide context for question generation.
+    - **Second Round**: Refines the search results by selecting one context and performing a focused search to generate a specific question based on that content.
+  - Question generation with GPT-4, ensuring questions are concise and directly answerable from the provided context.
+  - Answer evaluation with detailed feedback, focusing on clarity and relevance.
+- **Integration**: Connects PDF processing with the examination system, allowing for dynamic question generation based on course materials.
 
 #### 3. Examination System (`rag/core.py`)
 - **Status**: Conceptual framework demonstration

@@ -3,7 +3,6 @@
 import json
 import logging
 import os
-import random
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -17,7 +16,7 @@ from pdf_load import DocumentMetadata, KnowledgeDoc, db, model
 
 # Configure logging
 logging.basicConfig(
-    filename="../data/logs/rag_pipeline.log",
+    filename="data/rag_pipeline.log",
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
 )
@@ -124,85 +123,15 @@ class RAGPipeline:
         scored_contexts.sort(key=lambda x: x["score"], reverse=True)
         return scored_contexts[:top_k]
 
-    def get_broad_context(self, topic: str, top_k: int = 15) -> List[Dict[str, Any]]:
-        """First round search: Get broad context related to the topic"""
-        topic_embedding = model.encode(topic)
-        query_doc = KnowledgeDoc(
-            text=topic,
-            embedding=topic_embedding,
-            metadata=DocumentMetadata(filename="query", page_number=0, chunk_index=0),
-        )
-
-        results = db.search(
-            inputs=DocList[KnowledgeDoc]([query_doc]),
-            limit=top_k,
-        )
-
-        return [
-            {"text": match.text, "metadata": match.metadata}
-            for match in results[0].matches
-        ]
-
-    def focused_search(
-        self, selected_context: Dict[str, Any], top_k: int = 3
-    ) -> List[Dict[str, Any]]:
-        """Second round search: Get focused context based on selected content"""
-        context_embedding = model.encode(selected_context["text"])
-        query_doc = KnowledgeDoc(
-            text=selected_context["text"],
-            embedding=context_embedding,
-            metadata=DocumentMetadata(filename="query", page_number=0, chunk_index=0),
-        )
-
-        results = db.search(
-            inputs=DocList[KnowledgeDoc]([query_doc]),
-            limit=top_k,
-        )
-
-        return [
-            {"text": match.text, "metadata": match.metadata}
-            for match in results[0].matches
-        ]
-
     def generate_question(self, topic: str, difficulty: int) -> ExamQuestion:
-        """Generate new exam question using two-round search"""
-        # First round: Get broad context
-        broad_contexts = self.get_broad_context(topic, top_k=15)
+        """Generate new exam question"""
+        # Create prompt for question generation
+        prompt = f"""Generate a clear and specific exam question about {topic} at difficulty level {difficulty}/5.
+        The question should be concise, ideally no longer than 25 words, and test a specific concept or skill."""
 
-        # Randomly select one context for focused search
-        selected_context = random.choice(broad_contexts)
-
-        # Second round: Get focused context
-        focused_contexts = self.focused_search(selected_context)
-
-        # Extract key concepts and terms from the selected context
-        context_text = "\n\n".join(c["text"] for c in focused_contexts)
-
-        # Enhanced prompt for specific question generation
-        prompt = f"""Based on the following specific context, generate a precise and focused exam question.
-
-Topic: {topic}
-Difficulty: {difficulty}/5
-Selected Content: {selected_context['text'][:200]}...
-
-Requirements:
-1. Focus on a single, specific concept, formula, or relationship
-2. Question must be answerable using ONLY the provided context
-3. Maximum length: 15 words
-4. Avoid broad questions like "describe" or "explain in detail"
-5. Instead of asking "What is X?", ask about:
-   - Specific components or parameters
-   - Mathematical meanings of symbols
-   - Units of measurement
-   - Specific relationships between concepts
-   - Concrete applications or examples
-   - Step-by-step procedures
-   - Specific conditions or constraints
-
-Context for reference:
-{context_text}
-
-Generate a focused question that tests understanding of a specific aspect from the selected content."""
+        # Get relevant context
+        contexts = self.get_relevant_context(topic)
+        context_text = "\n\n".join(c["text"] for c in contexts)
 
         # Generate question using GPT-4
         response = client.chat.completions.create(
@@ -210,11 +139,11 @@ Generate a focused question that tests understanding of a specific aspect from t
             messages=[
                 {
                     "role": "system",
-                    "content": "You are an expert at generating precise, focused exam questions. Avoid broad, open-ended questions.",
+                    "content": "You are an expert exam question generator.",
                 },
                 {
                     "role": "user",
-                    "content": prompt,
+                    "content": f"{prompt}\n\nRelevant context:\n{context_text}",
                 },
             ],
             temperature=0.7,
@@ -224,20 +153,20 @@ Generate a focused question that tests understanding of a specific aspect from t
         question = ExamQuestion(
             question_id=f"Q{len(self.questions) + 1}",
             question=response.choices[0].message.content.strip(),
-            context=[c["text"] for c in focused_contexts],
+            context=[c["text"] for c in contexts],
             context_metadata=[
                 {
                     "filename": c["metadata"].filename,
                     "page_number": c["metadata"].page_number,
                     "chunk_index": c["metadata"].chunk_index,
-                    "selected_context": selected_context["text"][:200],
                 }
-                for c in focused_contexts
+                for c in contexts
             ],
             difficulty=difficulty,
             topic=topic,
         )
 
+        # Save to questions dictionary
         self.questions[question.question_id] = question
         self.save_questions()
 
