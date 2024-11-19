@@ -3,6 +3,7 @@
 import os
 import re
 from dataclasses import dataclass
+from pathlib import Path
 from typing import List
 
 import fitz  # PyMuPDF
@@ -14,7 +15,8 @@ from nltk.corpus import stopwords
 from PyPDF2 import PdfReader
 from vectordb import InMemoryExactNNVectorDB
 
-pdf_directory = "../knowledge/pdf"  # Directory containing PDF files
+ROOT_DIR = Path(__file__).parent.parent
+PDF_DIR = ROOT_DIR / "knowledge" / "pdf"
 
 # Download required NLTK data
 try:
@@ -60,7 +62,9 @@ class KnowledgeDoc(BaseDoc):
     metadata: DocumentMetadata
 
 
-def extract_and_chunk_pdfs(pdf_directory: str) -> List[tuple[DocumentMetadata, str]]:
+def extract_and_chunk_pdfs(
+    pdf_directory: Path = PDF_DIR,
+) -> List[tuple[DocumentMetadata, str]]:
     """
     Extract text from PDFs with intelligent chunking
 
@@ -90,11 +94,13 @@ def extract_and_chunk_pdfs(pdf_directory: str) -> List[tuple[DocumentMetadata, s
         ],  # Priority-based separators
     )
 
+    pdf_directory.mkdir(parents=True, exist_ok=True)
+
     for filename in os.listdir(pdf_directory):
         if not filename.endswith(".pdf"):
             continue
 
-        file_path = os.path.join(pdf_directory, filename)
+        file_path = pdf_directory / filename
         try:
             # Process PDF using PyMuPDF (fitz)
             with fitz.open(file_path) as doc:
@@ -131,7 +137,7 @@ def extract_and_chunk_pdfs(pdf_directory: str) -> List[tuple[DocumentMetadata, s
 
 
 # Extract text from PDFs
-pdf_documents = extract_and_chunk_pdfs(pdf_directory)
+pdf_documents = extract_and_chunk_pdfs()
 
 # Print statistics
 print(f"Total chunks extracted: {len(pdf_documents)}")

@@ -15,14 +15,23 @@ from dotenv import load_dotenv
 from openai import OpenAI
 from pdf_load import DocumentMetadata, KnowledgeDoc, db, model
 
+# Define project paths
+ROOT_DIR = Path(__file__).parent.parent
+DATA_DIR = ROOT_DIR / "data"
+LOG_DIR = DATA_DIR / "logs"
+QUESTIONS_FILE = DATA_DIR / "exam_questions.json"
+
+# Ensure data and log directories exist
+DATA_DIR.mkdir(exist_ok=True)
+LOG_DIR.mkdir(exist_ok=True)
+
 # Configure logging
 logging.basicConfig(
-    filename="../data/logs/rag_pipeline.log",
+    filename=LOG_DIR / "rag_pipeline.log",
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
 )
 
-ROOT_DIR = Path(__file__).parent.parent
 env_path = ROOT_DIR / ".env"
 
 print(f"Current working directory: {os.getcwd()}")
@@ -138,10 +147,15 @@ class RAGPipeline:
             limit=top_k,
         )
 
-        return [
+        broad_contexts = [
             {"text": match.text, "metadata": match.metadata}
             for match in results[0].matches
         ]
+
+        # Log broad contexts
+        logging.info(f"Broad contexts for topic '{topic}': {broad_contexts}")
+
+        return broad_contexts
 
     def focused_search(
         self, selected_context: Dict[str, Any], top_k: int = 3
@@ -159,10 +173,15 @@ class RAGPipeline:
             limit=top_k,
         )
 
-        return [
+        focused_contexts = [
             {"text": match.text, "metadata": match.metadata}
             for match in results[0].matches
         ]
+
+        # Log focused contexts
+        logging.info(f"Focused contexts based on selected context: {focused_contexts}")
+
+        return focused_contexts
 
     def generate_question(self, topic: str, difficulty: int) -> ExamQuestion:
         """Generate new exam question using two-round search"""
@@ -172,11 +191,17 @@ class RAGPipeline:
         # Randomly select one context for focused search
         selected_context = random.choice(broad_contexts)
 
+        # Log selected context
+        logging.info(f"Selected context for focused search: {selected_context}")
+
         # Second round: Get focused context
         focused_contexts = self.focused_search(selected_context)
 
         # Extract key concepts and terms from the selected context
         context_text = "\n\n".join(c["text"] for c in focused_contexts)
+
+        # Log context text
+        logging.info(f"Context text for question generation: {context_text}")
 
         # Enhanced prompt for specific question generation
         prompt = f"""Based on the following specific context, generate a precise and focused exam question.
