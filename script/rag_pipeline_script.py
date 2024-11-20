@@ -188,8 +188,19 @@ class RAGPipeline:
         # First round: Get broad context
         broad_contexts = self.get_broad_context(topic, top_k=15)
 
+        # Filter broad contexts to ensure relevance to the topic
+        topic_keywords = set(topic.lower().split())
+        filtered_contexts = [
+            context
+            for context in broad_contexts
+            if any(keyword in context["text"].lower() for keyword in topic_keywords)
+        ]
+
+        if not filtered_contexts:
+            raise ValueError(f"No relevant contexts found for topic '{topic}'")
+
         # Randomly select one context for focused search
-        selected_context = random.choice(broad_contexts)
+        selected_context = random.choice(filtered_contexts)
 
         # Log selected context
         logging.info(f"Selected context for focused search: {selected_context}")
@@ -204,14 +215,14 @@ class RAGPipeline:
         logging.info(f"Context text for question generation: {context_text}")
 
         # Enhanced prompt for specific question generation
-        prompt = f"""Based on the following specific context, generate a precise and focused exam question.
+        prompt = f"""Based on the following specific context, generate a precise and focused exam question related to the topic '{topic}'.
 
 Topic: {topic}
 Difficulty: {difficulty}/5
 Selected Content: {selected_context['text'][:200]}...
 
 Requirements:
-1. Focus on a single, specific concept, formula, or relationship
+1. Focus on a single, specific concept, formula, or relationship related to the topic
 2. Question must be answerable using ONLY the provided context
 3. Maximum length: 15 words
 4. Avoid broad questions like "describe" or "explain in detail"
@@ -311,25 +322,34 @@ if __name__ == "__main__":
     rag = RAGPipeline()
 
     # Generate new question
-    question = rag.generate_question(
-        topic="Direct methods for optimal control",
-        difficulty=4,
-    )
-    print(f"Generated Question: {question.question}\n")
-    logging.info(f"Generated Question: {question.question}\n")
+    # question = rag.generate_question(
+    #     topic="Direct methods for optimal control",
+    #     difficulty=1,
+    # )
+    # print(f"Generated Question: {question.question}\n")
+    # logging.info(f"Generated Question: {question.question}\n")
+    for difficulty in range(1, 6):
+        question = rag.generate_question(
+            topic="Direct Methods for Optimal Control - Continuous-Time Control Problem and Discrete Optimization using Trapezoid Collocation",
+            difficulty=difficulty,
+        )
+        print(f"Generated Question (Difficulty {difficulty}): {question.question}\n")
+        logging.info(
+            f"Generated Question (Difficulty {difficulty}): {question.question}\n"
+        )
 
     # Evaluate answer
-    answer = """Direct Collocation Methods
-Direct collocation methods are drawing tools used to visualize control problems and help make them easier to solve.
+#     answer = """Direct Collocation Methods
+# Direct collocation methods are drawing tools used to visualize control problems and help make them easier to solve.
 
-Solving with Sequential Convex Programming (SCP)
-First, SCP randomly picks control values, then adjusts state variables to minimize the cost function.
+# Solving with Sequential Convex Programming (SCP)
+# First, SCP randomly picks control values, then adjusts state variables to minimize the cost function.
 
-Limitations of Direct Methods
-Direct methods are always perfect and have no limitations."""
-    logging.info(f"Answer:\n{answer}")
+# Limitations of Direct Methods
+# Direct methods are always perfect and have no limitations."""
+#     logging.info(f"Answer:\n{answer}")
 
-    evaluation = rag.answer_question(question.question_id, answer)
-    print(f"Evaluation:\n{evaluation}")
-    logging.info(f"Evaluation:\n{evaluation}")
+#     evaluation = rag.answer_question(question.question_id, answer)
+#     print(f"Evaluation:\n{evaluation}")
+#     logging.info(f"Evaluation:\n{evaluation}")
 # %%
