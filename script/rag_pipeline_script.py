@@ -328,7 +328,8 @@ if __name__ == "__main__":
     # )
     # print(f"Generated Question: {question.question}\n")
     # logging.info(f"Generated Question: {question.question}\n")
-    for difficulty in range(1, 6):
+    for i in range(10):
+        difficulty = (i % 5) + 1
         question = rag.generate_question(
             topic="Direct Methods for Optimal Control - Continuous-Time Control Problem and Discrete Optimization using Trapezoid Collocation",
             difficulty=difficulty,
