@@ -166,17 +166,52 @@ The current implementation in the `script/` directory serves as a proof of conce
 #### 2. RAG Pipeline (`rag_pipeline_script.py`)
 - **Purpose**: Implements the main RAG pipeline for question generation and evaluation.
 - **Key Classes**:
-  - `ExamQuestion`: Structure for storing exam questions.
-  - `RAGPipeline`: Main pipeline controller.
+  - `ExamQuestion`: Structure for storing exam questions with metadata
+    ```python
+    @dataclass
+    class ExamQuestion:
+        question_id: str
+        question: str
+        context: List[str]
+        difficulty: int
+        topic: str
+        context_metadata: List[Dict[str, any]]
+        approved: bool
+        teacher_notes: Optional[str]
+    ```
+  - `RAGPipeline`: Main pipeline controller with enhanced context retrieval
 - **Key Features**:
-  - JSON-based question storage and retrieval.
-  - Enhanced context relevance scoring.
   - **Two-Round Semantic Search**:
-    - **First Round**: Retrieves a broad set of knowledge content related to the topic to ensure a wide context for question generation.
-    - **Second Round**: Refines the search results by selecting one context and performing a focused search to generate a specific question based on that content.
-  - Question generation with GPT-4, ensuring questions are concise and directly answerable from the provided context.
-  - Answer evaluation with detailed feedback, focusing on clarity and relevance.
-- **Integration**: Connects PDF processing with the examination system, allowing for dynamic question generation based on course materials.
+    1. `get_broad_context`: First round broad search
+       - Topic-based semantic search
+       - Returns top-k * 3 initial results
+       - Calculates relevance scores
+       - Filters and sorts by relevance
+    2. `get_relevant_context`: Second round focused search
+       - Question-specific semantic search
+       - Enhanced keyword-based scoring
+       - Returns most relevant context subset
+       - Maintains metadata for traceability
+  - **Question Generation**:
+    - Uses GPT-4o-mini-2024-07-18 model
+    - Controlled creativity with temperature=0.7
+    - Generates focused, topic-specific questions
+    - Maintains context traceability with metadata
+  - **Answer Evaluation**:
+    - Comprehensive evaluation criteria
+    - Provides numerical scoring (0-100)
+    - Detailed feedback on student responses
+    - Identifies correct aspects and areas for improvement
+  - **Data Management**:
+    - JSON-based persistent storage
+    - Automatic question ID generation
+    - UTF-8 encoding support
+    - Structured metadata tracking
+- **Integration**:
+  - Seamless connection with PDF processing module
+  - Direct integration with OpenAI API
+  - Structured logging system
+  - Error handling and recovery
 
 #### 3. Examination System (`rag/core.py`)
 - **Status**: Conceptual framework demonstration
@@ -323,3 +358,72 @@ The system requires proper configuration of:
 - Knowledge base PDFs in `knowledge/pdf/`
 - Vector database workspace settings
 - Data storage directory for generated questions
+
+
+## References & Acknowledgments
+
+### Core Technologies
+1. **Sentence Transformers**
+```bibtex
+@inproceedings{reimers-2019-sentence-bert,
+    title = "Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks",
+    author = "Reimers, Nils and Gurevych, Iryna",
+    booktitle = "Proceedings of EMNLP-IJCNLP 2019",
+    year = "2019",
+    publisher = "Association for Computational Linguistics",
+    url = "https://arxiv.org/abs/1908.10084",
+}
+```
+
+2. **LangChain Text Splitting**
+```bibtex
+@misc{langchain2023,
+    author = {Chase Harrison and others},
+    title = {LangChain: Building applications with LLMs through composability},
+    year = {2023},
+    publisher = {GitHub},
+    url = {https://github.com/hwchase17/langchain}
+}
+```
+
+3. **DocArray**
+```bibtex
+@misc{docarray2022,
+    title = {DocArray: The data structure for unstructured data},
+    author = {Han Xiao and others},
+    year = {2022},
+    publisher = {GitHub},
+    url = {https://github.com/docarray/docarray}
+}
+```
+
+### Libraries & Tools
+- **PyMuPDF (fitz)**: PDF processing and text extraction
+- **NLTK**: Natural language processing toolkit
+- **all-MiniLM-L6-v2**: Pretrained sentence transformer model from Microsoft Research
+- **OpenAI GPT-4**: Large language model for question generation and evaluation
+
+### Methodologies
+1. **Recursive Text Splitting**
+```bibtex
+@article{recursive-splitting,
+    title = {Recursive Text Splitting for Long Document Processing},
+    author = {LangChain Contributors},
+    year = {2023},
+    url = {https://python.langchain.com/docs/modules/data_connection/document_transformers/text_splitters/recursive_text_splitter}
+}
+```
+
+2. **Two-Round Semantic Search**
+```bibtex
+@article{semantic-search,
+    title = {Dense Passage Retrieval for Open-Domain Question Answering},
+    author = {Karpukhin, Vladimir and Oğuz, Barlas and Min, Sewon and Lewis, Patrick and Wu, Ledell and Edunov, Sergey and Chen, Danqi and Yih, Wen-tau},
+    journal = {Proceedings of EMNLP},
+    year = {2020},
+    url = {https://arxiv.org/abs/2004.04906}
+}
+```
+
+### License
+This project is built upon various open-source technologies and research works. Please refer to individual licenses of the referenced works for usage terms.
