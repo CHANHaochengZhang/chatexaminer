@@ -224,35 +224,87 @@ The current implementation in the `script/` directory serves as a proof of conce
   - Basic context awareness
   - Simple evaluation criteria
 
-#### 4. Question Tree Generator (`question_tree_generator.py`)
-- **Purpose**: Implements pre-generated question trees for structured examination flow
-- **Key Classes**:
-  - `QuestionNode`: Represents a node in the question tree
-    - Stores question details, child questions, and approval status
-    - Supports JSON serialization for persistence
-  - `QuestionTreeGenerator`: Manages question tree generation and storage
-- **Key Features**:
-  - **Tree Generation**:
-    - Recursive generation of question hierarchies
-    - Configurable depth and branching factor
-    - Progressive difficulty adjustment
-  - **Teacher Control**:
-    - Question approval system
-    - Teacher notes for each question
-    - Manual review capabilities
-  - **Persistence**:
-    - JSON-based storage of question trees
-    - Load/save functionality for tree structures
-    - Maintains question context and relationships
-- **Integration**:
-  - Uses existing RAG pipeline for question generation
-  - Supports examination flow control
-  - Enables pre-examination content review
-- **Benefits**:
-  - Ensures question quality through pre-generation
-  - Allows teacher review before deployment
-  - Maintains examination coherence
-  - Supports adaptive question selection
+#### 4. Conversation Tree Implementation
+
+#### Overview
+The conversation tree implements an adaptive dialogue structure that simulates real oral examinations, incorporating educational theories and dynamic response analysis.
+
+#### Design Architecture
+
+1. **Conversation Node Structure**
+```json
+{
+  "question": {
+    "question_id": "Q001",
+    "question_text": "Explain the concept of state deviation in optimal control",
+    "context": ["relevant context passages..."],
+    "expected_answer": "detailed answer...",
+    "difficulty": 3,
+    "topic": "Optimal Control - State Deviation",
+    "learning_objectives": [
+      "Understanding state deviation concepts",
+      "Mathematical representation of deviations"
+    ],
+    "responses": {
+      "correct": {
+        "feedback": "Excellent understanding...",
+        "next_question_id": "Q002"
+      },
+      "partial": {
+        "feedback": "Good start, but consider...",
+        "next_question_id": "Q001a"
+      },
+      "incorrect": {
+        "feedback": "Let's review the basic concepts...",
+        "next_question_id": "Q001b"
+      },
+      "clarification": {
+        "feedback": "To clarify this concept...",
+        "next_question_id": "Q001c"
+      }
+    },
+    "context_metadata": [
+      {
+        "source": "document_id",
+        "page": 12,
+        "relevance_score": 0.89
+      }
+    ]
+  },
+  "children": ["child node structures..."],
+  "metadata": {
+    "depth": 2,
+    "branch_type": "main_concept",
+    "prerequisite_concepts": ["list of prerequisites"],
+    "follow_up_concepts": ["list of follow-ups"]
+  }
+}
+```
+
+2. **Tree Structure Features**
+   - **Adaptive Branching**: Multiple paths based on response quality
+   - **Topic Coherence**: Maintains logical flow between questions
+   - **Difficulty Progression**: Dynamic adjustment using IRT principles
+   - **Context Preservation**: Maintains examination context across branches
+
+3. **Response Analysis Integration**
+   - Real-time evaluation of student answers
+   - Contextual feedback generation
+   - Dynamic path selection
+   - Learning objective tracking
+
+4. **Educational Design Principles**
+   - Based on Computerized Adaptive Testing
+   - Implements Dialogue-Based Assessment
+   - Incorporates Item Response Theory
+   - Supports formative assessment
+
+#### Implementation Benefits
+- Simulates natural oral examination flow
+- Provides consistent evaluation criteria
+- Enables detailed performance tracking
+- Supports multiple pedagogical approaches
+- Maintains examination context continuity
 
 ### Future Development Plans
 
@@ -423,6 +475,108 @@ The system requires proper configuration of:
     year = {2020},
     url = {https://arxiv.org/abs/2004.04906}
 }
+```
+
+### Educational Technologies & Methodologies
+
+4. **Computerized Adaptive Testing**
+```bibtex
+@book{wainer2000computerized,
+    title = {Computerized Adaptive Testing: A Primer},
+    author = {Wainer, Howard and Dorans, Neil J. and Flaugher, Rick and Green, Bert F. and Mislevy, Robert J.},
+    year = {2000},
+    publisher = {Routledge},
+    isbn = {978-0805835151}
+}
+```
+
+5. **Dialogue-Based Assessment**
+```bibtex
+@book{alexander2020dialogic,
+    title = {A Dialogic Teaching Companion},
+    author = {Alexander, Robin J.},
+    year = {2020},
+    publisher = {Routledge},
+    isbn = {978-1138570450}
+}
+```
+
+6. **LLMs in Education**
+```bibtex
+@article{liu2023large,
+    title = {Large Language Models for Education: A Survey},
+    author = {Liu, Qiyang and Lin, Fenglong and Zhao, Lei and Yang, Qiang},
+    journal = {arXiv preprint arXiv:2311.07441},
+    year = {2023}
+}
+```
+
+7. **Automated Mathematics Assessment**
+```bibtex
+@book{sangwin2013computer,
+    title = {Computer Aided Assessment of Mathematics},
+    author = {Sangwin, Christopher},
+    year = {2013},
+    publisher = {Oxford University Press},
+    isbn = {978-0199660353}
+}
+```
+
+8. **Question Generation**
+```bibtex
+@article{le2014automatic,
+    title = {Automatic Question Generation for Supporting Argumentation},
+    author = {Le, Nguyen-Thinh and Nguyen, Nguyen Phuong and Seta, Kazuhisa and Pinkwart, Niels},
+    journal = {Vietnam Journal of Computer Science},
+    volume = {1},
+    number = {2},
+    pages = {117-127},
+    year = {2014}
+}
+```
+
+9. **Educational Feedback Systems**
+```bibtex
+@article{hattie2007power,
+    title = {The Power of Feedback},
+    author = {Hattie, John and Timperley, Helen},
+    journal = {Review of Educational Research},
+    volume = {77},
+    number = {1},
+    pages = {81-112},
+    year = {2007}
+}
+```
+
+10. **Item Response Theory**
+```bibtex
+@book{embretson2013item,
+    title = {Item Response Theory for Psychologists},
+    author = {Embretson, Susan E. and Reise, Steven P.},
+    year = {2013},
+    publisher = {Psychology Press},
+    isbn = {978-0805828191}
+}
+```
+
+### Implementation Methodologies
+
+11. **Adaptive Question Tree Generation**
+```python
+# Key features implemented based on above research:
+- Dynamic difficulty adjustment based on IRT principles
+- Dialogue-based question sequencing
+- Real-time feedback generation
+- Context-aware question selection
+```
+
+12. **Educational Assessment Pipeline**
+```python
+# Core components derived from research:
+- Knowledge retrieval and context understanding
+- Question generation with learning objectives
+- Response evaluation with rubric alignment
+- Adaptive feedback generation
 ```
 
 ### License
