@@ -160,7 +160,7 @@ class RAGPipeline:
     def focused_search(
         self, selected_context: Dict[str, Any], top_k: int = 3
     ) -> List[Dict[str, Any]]:
-        """Second round search: Get focused context based on selected content"""
+        """Second round search: Get focused context based on selected content and ensure continuity"""
         context_embedding = model.encode(selected_context["text"])
         query_doc = KnowledgeDoc(
             text=selected_context["text"],
@@ -168,58 +168,101 @@ class RAGPipeline:
             metadata=DocumentMetadata(filename="query", page_number=0, chunk_index=0),
         )
 
+        # Get initial results
         results = db.search(
             inputs=DocList[KnowledgeDoc]([query_doc]),
-            limit=top_k,
+            limit=top_k * 2,  # Get more results initially to find continuous chunks
         )
 
-        focused_contexts = [
-            {"text": match.text, "metadata": match.metadata}
-            for match in results[0].matches
-        ]
+        # Group contexts by file and page
+        grouped_contexts = {}
+        for match in results[0].matches:
+            key = (match.metadata.filename, match.metadata.page_number)
+            if key not in grouped_contexts:
+                grouped_contexts[key] = []
+            grouped_contexts[key].append(
+                {
+                    "text": match.text,
+                    "metadata": match.metadata,
+                    "chunk_index": match.metadata.chunk_index,
+                }
+            )
+
+        # Find continuous chunks
+        continuous_contexts = []
+        for contexts in grouped_contexts.values():
+            # Sort by chunk index
+            contexts.sort(key=lambda x: x["chunk_index"])
+
+            # Find continuous sequences
+            current_sequence = []
+            for i, context in enumerate(contexts):
+                if not current_sequence:
+                    current_sequence.append(context)
+                elif context["chunk_index"] == current_sequence[-1]["chunk_index"] + 1:
+                    current_sequence.append(context)
+                else:
+                    # If sequence breaks, store if it's the longest so far
+                    if len(current_sequence) > len(continuous_contexts):
+                        continuous_contexts = current_sequence
+                    current_sequence = [context]
+
+            # Check final sequence
+            if len(current_sequence) > len(continuous_contexts):
+                continuous_contexts = current_sequence
+
+        # Take up to top_k continuous contexts
+        focused_contexts = continuous_contexts[:top_k]
 
         # Log focused contexts
-        logging.info(f"Focused contexts based on selected context: {focused_contexts}")
+        logging.info(f"Selected continuous contexts: {focused_contexts}")
+        logging.info(f"Chunks selected: {[c['chunk_index'] for c in focused_contexts]}")
 
         return focused_contexts
 
     def generate_question(self, topic: str, difficulty: int) -> ExamQuestion:
-        """Generate new exam question using two-round search"""
+        """Generate new exam question using continuous context chunks"""
         # First round: Get broad context
         broad_contexts = self.get_broad_context(topic, top_k=15)
 
-        # Filter broad contexts to ensure relevance to the topic
+        # Enhanced filtering with scoring
         topic_keywords = set(topic.lower().split())
-        filtered_contexts = [
-            context
-            for context in broad_contexts
-            if any(keyword in context["text"].lower() for keyword in topic_keywords)
-        ]
+        scored_contexts = []
 
-        if not filtered_contexts:
+        for context in broad_contexts:
+            # Calculate relevance score
+            context_text = context["text"].lower()
+            keyword_matches = sum(
+                1 for keyword in topic_keywords if keyword in context_text
+            )
+            score = keyword_matches / len(topic_keywords)
+
+            scored_contexts.append(
+                {
+                    "text": context["text"],
+                    "metadata": context["metadata"],
+                    "score": score,
+                }
+            )
+
+        # Sort by relevance
+        scored_contexts.sort(key=lambda x: x["score"], reverse=True)
+        if not scored_contexts:
             raise ValueError(f"No relevant contexts found for topic '{topic}'")
 
-        # Randomly select one context for focused search
-        selected_context = random.choice(filtered_contexts)
+        # Get continuous focused contexts
+        best_context = scored_contexts[0]  # 保存最佳上下文
+        focused_contexts = self.focused_search(best_context)
 
-        # Log selected context
-        logging.info(f"Selected context for focused search: {selected_context}")
-
-        # Second round: Get focused context
-        focused_contexts = self.focused_search(selected_context)
-
-        # Extract key concepts and terms from the selected context
-        context_text = "\n\n".join(c["text"] for c in focused_contexts)
-
-        # Log context text
-        logging.info(f"Context text for question generation: {context_text}")
+        # Combine continuous contexts
+        context_text = "\n".join(c["text"] for c in focused_contexts)
 
         # Enhanced prompt for specific question generation
         prompt = f"""Based on the following specific context, generate a precise and focused exam question related to the topic '{topic}'.
 
 Topic: {topic}
 Difficulty: {difficulty}/5
-Selected Content: {selected_context['text'][:200]}...
+Selected Content: {best_context['text'][:200]}...
 
 Requirements:
 1. Focus on a single, specific concept, formula, or relationship related to the topic
@@ -266,7 +309,7 @@ Generate a focused question that tests understanding of a specific aspect from t
                     "filename": c["metadata"].filename,
                     "page_number": c["metadata"].page_number,
                     "chunk_index": c["metadata"].chunk_index,
-                    "selected_context": selected_context["text"][:200],
+                    "selected_context": best_context["text"][:200],  # 使用best_context
                 }
                 for c in focused_contexts
             ],

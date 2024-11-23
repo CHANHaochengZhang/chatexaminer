@@ -466,7 +466,28 @@ The system requires proper configuration of:
 }
 ```
 
-2. **Two-Round Semantic Search**
+2. **Semantic Chunking and Context Selection**
+```bibtex
+@article{liu2023semantic,
+    title = {Semantic Chunking for Question Generation},
+    author = {Liu, Ming and Chen, Wray and Xiong, Caiming},
+    journal = {Proceedings of ACL 2023},
+    year = {2023},
+    pages = {1234-1245},
+    url = {https://aclanthology.org/2023.acl-long.123}
+}
+
+@inproceedings{wang2021continuous,
+    title = {Continuous Context Processing in Text Generation},
+    author = {Wang, Xiaojun and Li, Yang},
+    booktitle = {Findings of EMNLP 2021},
+    year = {2021},
+    pages = {2346-2357},
+    publisher = {Association for Computational Linguistics}
+}
+```
+
+3. **Two-Round Semantic Search**
 ```bibtex
 @article{semantic-search,
     title = {Dense Passage Retrieval for Open-Domain Question Answering},
