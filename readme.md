@@ -454,6 +454,10 @@ The system requires proper configuration of:
 - **NLTK**: Natural language processing toolkit
 - **all-MiniLM-L6-v2**: Pretrained sentence transformer model from Microsoft Research
 - **OpenAI GPT-4**: Large language model for question generation and evaluation
+- **DocArray**: Document array data structure for vector search
+- **SentenceTransformers**: For text embedding generation
+- **python-dotenv**: Environment variable management
+- **Logging**: Python standard logging for operation tracking
 
 ### Methodologies
 1. **Recursive Text Splitting**
@@ -465,6 +469,8 @@ The system requires proper configuration of:
     url = {https://python.langchain.com/docs/modules/data_connection/document_transformers/text_splitters/recursive_text_splitter}
 }
 ```
+- Splits documents recursively based on multiple delimiters while preserving semantic meaning
+- Maintains context coherence across splits for better information retrieval
 
 2. **Semantic Chunking and Context Selection**
 ```bibtex
@@ -476,7 +482,11 @@ The system requires proper configuration of:
     pages = {1234-1245},
     url = {https://aclanthology.org/2023.acl-long.123}
 }
+```
+- Chunks text based on semantic units rather than fixed length
+- Preserves contextual relationships between segments
 
+```bibtex
 @inproceedings{wang2021continuous,
     title = {Continuous Context Processing in Text Generation},
     author = {Wang, Xiaojun and Li, Yang},
@@ -486,6 +496,8 @@ The system requires proper configuration of:
     publisher = {Association for Computational Linguistics}
 }
 ```
+- Maintains continuous context flow during text generation
+- Reduces information loss between context transitions
 
 3. **Two-Round Semantic Search**
 ```bibtex
@@ -497,10 +509,12 @@ The system requires proper configuration of:
     url = {https://arxiv.org/abs/2004.04906}
 }
 ```
+- First round retrieves broad context using dense embeddings
+- Second round refines results based on question-specific relevance
 
 ### Educational Technologies & Methodologies
 
-4. **Computerized Adaptive Testing**
+1. **Computerized Adaptive Testing**
 ```bibtex
 @book{wainer2000computerized,
     title = {Computerized Adaptive Testing: A Primer},
@@ -510,8 +524,10 @@ The system requires proper configuration of:
     isbn = {978-0805835151}
 }
 ```
+- Adapts test difficulty based on student performance in real-time
+- Uses statistical models to select optimal next questions
 
-5. **Dialogue-Based Assessment**
+2. **Dialogue-Based Assessment**
 ```bibtex
 @book{alexander2020dialogic,
     title = {A Dialogic Teaching Companion},
@@ -521,8 +537,10 @@ The system requires proper configuration of:
     isbn = {978-1138570450}
 }
 ```
+- Employs interactive dialogue for deeper learning assessment
+- Focuses on student-teacher conversation patterns
 
-6. **LLMs in Education**
+3. **LLMs in Education**
 ```bibtex
 @article{liu2023large,
     title = {Large Language Models for Education: A Survey},
@@ -531,8 +549,10 @@ The system requires proper configuration of:
     year = {2023}
 }
 ```
+- Explores LLM applications in educational contexts
+- Addresses personalized learning and automated assessment
 
-7. **Automated Mathematics Assessment**
+4. **Automated Mathematics Assessment**
 ```bibtex
 @book{sangwin2013computer,
     title = {Computer Aided Assessment of Mathematics},
@@ -542,8 +562,10 @@ The system requires proper configuration of:
     isbn = {978-0199660353}
 }
 ```
+- Implements automated evaluation of mathematical responses
+- Provides instant feedback on mathematical reasoning
 
-8. **Question Generation**
+5. **Question Generation**
 ```bibtex
 @article{le2014automatic,
     title = {Automatic Question Generation for Supporting Argumentation},
@@ -555,8 +577,10 @@ The system requires proper configuration of:
     year = {2014}
 }
 ```
+- Generates contextually relevant questions automatically
+- Supports development of argumentative skills
 
-9. **Educational Feedback Systems**
+6. **Educational Feedback Systems**
 ```bibtex
 @article{hattie2007power,
     title = {The Power of Feedback},
@@ -568,8 +592,10 @@ The system requires proper configuration of:
     year = {2007}
 }
 ```
+- Emphasizes timely and specific feedback delivery
+- Links feedback to learning objectives and outcomes
 
-10. **Item Response Theory**
+7. **Item Response Theory**
 ```bibtex
 @book{embretson2013item,
     title = {Item Response Theory for Psychologists},
@@ -579,6 +605,38 @@ The system requires proper configuration of:
     isbn = {978-0805828191}
 }
 ```
+- Models relationship between ability and item response
+- Enables adaptive test item selection and scoring
+
+#### Adaptive Testing Methodologies
+
+8. **Elements of Adaptive Testing**
+```bibtex
+@book{van2010elements,
+    title = {Elements of Adaptive Testing},
+    author = {van der Linden, W. J. and Glas, C. A. W.},
+    year = {2010},
+    publisher = {Springer},
+    isbn = {978-0387854571}
+}
+```
+- Dynamically adjusts test difficulty based on previous responses
+- Uses probabilistic models to optimize question selection
+
+9. **Adaptive Educational Systems**
+```bibtex
+@incollection{shute2012adaptive,
+    title = {Adaptive Educational Systems},
+    author = {Shute, V. J. and Zapata-Rivera, D.},
+    booktitle = {Adaptive Technologies for Training and Education},
+    editor = {Durlach, P. J. and Lesgold, A. M.},
+    year = {2012},
+    publisher = {Cambridge University Press},
+    pages = {7-27}
+}
+```
+- Personalizes learning paths based on student performance
+- Implements real-time assessment and feedback loops
 
 ### Implementation Methodologies
 
