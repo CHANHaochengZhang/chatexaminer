@@ -67,6 +67,13 @@ class ExamQuestion:
     context_metadata: List[Dict[str, any]] = field(default_factory=list)
     approved: bool = False
     teacher_notes: Optional[str] = None
+    expected_answers: Dict[str, Dict[str, str]] = field(
+        default_factory=lambda: {
+            "correct": {"example": ""},
+            "partial": {"example": ""},
+            "incorrect": {"example": ""},
+        }
+    )
 
 
 class RAGPipeline:
@@ -78,9 +85,12 @@ class RAGPipeline:
     def load_questions(self) -> Dict[str, ExamQuestion]:
         """Load existing questions from JSON file"""
         if self.questions_file.exists():
-            with open(self.questions_file, "r", encoding="utf-8") as f:
-                data = json.load(f)
-                return {qid: ExamQuestion(**q) for qid, q in data.items()}
+            try:
+                with open(self.questions_file, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    return {qid: ExamQuestion(**q) for qid, q in data.items()}
+            except json.JSONDecodeError:
+                return {}
         return {}
 
     def save_questions(self):
@@ -299,7 +309,63 @@ Generate a focused question that tests understanding of a specific aspect from t
             temperature=0.7,
         )
 
-        # Create question object
+        # 添加生成答案的prompt
+        answer_prompt = f"""Question: {response.choices[0].message.content.strip()}
+
+Context from textbook (p.{selected_context["metadata"].page_number}):
+{context_text}
+
+Learning objective: Understand {topic.lower()}
+
+Generate three student answer examples that:
+- Use concepts directly from the textbook
+- Reflect typical student understanding levels
+- Keep answers within 2-3 sentences
+
+Format as JSON:
+{{
+    "correct": {{
+        "example": "complete answer with all key points from the textbook"
+    }},
+    "partial": {{
+        "example": "answer with some correct points but missing critical details"
+    }},
+    "incorrect": {{
+        "example": "answer showing common student misconception about this topic"
+    }}
+}}"""
+
+        # 生成答案
+        answer_response = client.chat.completions.create(
+            model="gpt-4o-mini-2024-07-18",
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are an expert at generating example answers. Always respond in valid JSON format.",
+                },
+                {
+                    "role": "user",
+                    "content": answer_prompt,
+                },
+            ],
+            temperature=0.7,
+        )
+
+        # 添加错误处理和日志记录
+        try:
+            response_content = answer_response.choices[0].message.content.strip()
+            logging.info(f"GPT Response: {response_content}")
+            expected_answers = json.loads(response_content)
+        except json.JSONDecodeError as e:
+            logging.error(f"JSON decode error: {e}")
+            # 提供默认答案结构
+            expected_answers = {
+                "correct": {"example": "Default correct answer"},
+                "partial": {"example": "Default partial answer"},
+                "incorrect": {"example": "Default incorrect answer"},
+            }
+
+        # 创建问题对象时包含预期答案
         question = ExamQuestion(
             question_id=f"Q{len(self.questions) + 1}",
             question=response.choices[0].message.content.strip(),
@@ -309,12 +375,13 @@ Generate a focused question that tests understanding of a specific aspect from t
                     "filename": c["metadata"].filename,
                     "page_number": c["metadata"].page_number,
                     "chunk_index": c["metadata"].chunk_index,
-                    "selected_context": best_context["text"][:200],  # 使用best_context
+                    "selected_context": best_context["text"][:200],
                 }
                 for c in focused_contexts
             ],
             difficulty=difficulty,
             topic=topic,
+            expected_answers=expected_answers,  # 添加预期答案
         )
 
         self.questions[question.question_id] = question
@@ -358,6 +425,8 @@ Please provide:
 
         return response.choices[0].message.content.strip()
 
+
+# 集成方法，产生和topic相关的所以问题
 
 # %%
 # Example usage
