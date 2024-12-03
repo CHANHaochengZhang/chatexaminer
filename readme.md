@@ -177,6 +177,7 @@ project_root/
 │   │   └── services/          # Business Logic Layer
 │   │       └── rag_service.py # RAG Service Implementation
 │   └── requirements.txt        # Server Dependencies
+├── Makefile                    # Development automation
 └── .env                        # Environment Configuration
 ```
 
