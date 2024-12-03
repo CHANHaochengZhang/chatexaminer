@@ -56,6 +56,31 @@ ChatExaminer is a proof-of-concept AI-powered oral examination system that aims 
 
 ## Technical Architecture
 
+### Core Dependencies
+
+- **Web Framework**
+  - FastAPI (0.88.0): High-performance web API framework
+  - Uvicorn (0.23.1): ASGI server
+
+- **Configuration & Environment**
+  - python-dotenv (1.0.0): Environment variable management
+  - pydantic (1.10.13): Data validation
+  - python-decouple (3.8): Configuration management
+
+- **AI & NLP**
+  - OpenAI (>=1.10.0,<2.0.0): GPT API integration
+  - LangChain (0.0.350): LLM application framework
+  - sentence-transformers (2.2.2): Text embeddings
+  - huggingface-hub (0.16.4): Model management
+  - transformers (4.30.2): Transformer models
+
+- **Data Processing**
+  - numpy (1.26.0): Numerical computing
+  - pandas (2.1.1): Data analysis
+  - PyMuPDF (1.23.8): PDF processing
+  - docarray (>=0.34.0): Document processing
+  - vectordb (0.0.21): Vector database
+
 ### System Architecture
 
 The architecture of ChatExaminer consists of the following core components:
@@ -141,7 +166,18 @@ project_root/
 │   └── rag/
 │       ├── core.py              # Core concepts demonstration (PoC)
 │       └── question_tree_generator.py  # Question tree generation implementation
-└── .env                         # Environment configuration
+├── server/                      # FastAPI Server Implementation
+│   ├── app/
+│   │   ├── api/                # API Layer
+│   │   │   ├── v1/            # API Version 1
+│   │   │   │   ├── endpoints/ # API Endpoints
+│   │   │   │   └── api.py     # API Router Configuration
+│   │   ├── core/              # Core Components
+│   │   │   └── config.py      # Application Configuration
+│   │   └── services/          # Business Logic Layer
+│   │       └── rag_service.py # RAG Service Implementation
+│   └── requirements.txt        # Server Dependencies
+└── .env                        # Environment Configuration
 ```
 
 ### Proof of Concept Implementation
