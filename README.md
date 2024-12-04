@@ -130,8 +130,8 @@ This project addresses the following research questions:
 ## Development Status
 
 Current development focuses on:
-- [ ] Knowledge base integration
-- [ ] Question generation algorithms
+- [✅] Knowledge base integration
+- [✅] Question generation algorithms
 - [ ] Interactive dialogue management
 - [ ] Evaluation metrics implementation
 - [ ] Teacher control interface
