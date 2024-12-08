@@ -143,7 +143,7 @@ class ConversationTreeGenerator:
         return root_node
 
     def _generate_subtopic(self, topic: str, response_type: str) -> str:
-        """根据回答类型生成子主题"""
+        """Generate subtopic based on response type"""
         if response_type == "correct":
             return f"{topic} - Advanced Concepts"
         elif response_type == "partial":

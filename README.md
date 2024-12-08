@@ -261,7 +261,32 @@ The current implementation in the `script/` directory serves as a proof of conce
   - Basic context awareness
   - Simple evaluation criteria
 
-#### 4. Conversation Tree Implementation
+#### 4. Glicko-2 Rating System (`evaluation/glicko.py`)
+
+The Glicko-2 rating system, originally designed for chess rankings, has been adapted for educational assessment to provide dynamic evaluation of student abilities:
+
+**Key Components:**
+- Rating (1500 initial): Represents student's ability level
+- RD (350 initial): Rating deviation, measures uncertainty
+- Volatility (0.06 initial): Tracks performance consistency
+
+**Features:**
+- Dynamic ability tracking
+- Confidence-based assessment
+- Performance stability measurement
+- Adaptive difficulty adjustment
+
+**Implementation Benefits:**
+- More accurate than simple scoring
+- Considers answer quality and question difficulty
+- Provides confidence intervals for assessments
+- Enables personalized learning paths
+- Tracks long-term progress reliably
+
+**Academic Foundation:**
+Based on Glickman's statistical model for paired comparisons, adapted for educational assessment with modifications for question difficulty scaling and performance evaluation.
+
+#### 5. Conversation Tree Implementation
 
 #### Overview
 The conversation tree implements an adaptive dialogue structure that simulates real oral examinations, incorporating educational theories and dynamic response analysis.
