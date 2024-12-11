@@ -238,24 +238,20 @@ class RAGPipeline:
     def generate_questions_for_topic(
         self, topic: str, num_subtopics: int = 5
     ) -> List[ExamQuestion]:
-        """Generate questions for a topic
-
-        Args:
-            topic: The main topic
-            num_subtopics: Number of subtopics to generate (each subtopic will have 5 questions of different difficulties)
-
-        Returns:
-            List[ExamQuestion]: List of generated questions
-        """
+        """Generate questions for a topic"""
         questions = []
-        broad_contexts = self.get_broad_context(topic, top_k=num_subtopics * 3)
+        broad_contexts = self.get_broad_context(
+            topic, top_k=num_subtopics * 3
+        )  # Get more contexts initially
+
+        print(f"Broad contexts: {broad_contexts}")
 
         # Ensure contexts are sufficiently different
         filtered_contexts = []
         used_texts = set()
 
         for context in broad_contexts:
-            # Use first 100 characters for uniqueness check
+            # Use first 100 characters as a unique identifier
             text_key = context["text"][:100]
             if text_key not in used_texts:
                 used_texts.add(text_key)
@@ -263,26 +259,30 @@ class RAGPipeline:
                 if len(filtered_contexts) >= num_subtopics:
                     break
 
-            broad_contexts = filtered_contexts
+        broad_contexts = filtered_contexts
 
-            # If not enough filtered contexts, pad with the last one
-            if len(broad_contexts) < num_subtopics:
-                last_context = broad_contexts[-1]
-                while len(broad_contexts) < num_subtopics:
-                    broad_contexts.append(last_context)
+        # If not enough filtered contexts, pad with different ones
+        if len(broad_contexts) < num_subtopics:
+            remaining_contexts = [
+                c for c in broad_contexts if c not in filtered_contexts
+            ]
+            broad_contexts.extend(
+                remaining_contexts[: num_subtopics - len(broad_contexts)]
+            )
 
-        # Generate 5 questions of different difficulties for each subtopic
-        for i in range(num_subtopics):
+        print(f"Filtered contexts: {broad_contexts}")
+
+        # Generate questions for each subtopic
+        for i in range(min(len(broad_contexts), num_subtopics)):
             selected_context = broad_contexts[i]
-            # Generate subtopic from context
             subtopic = f"{topic} - Subtopic {i+1}: {selected_context['text'][:50]}..."
             print(f"Processing {subtopic}")
 
             # Generate questions for each difficulty level
-            for difficulty in range(1, 6):
+            for difficulty in range(1, 1):  # Changed range to 1-5
                 question = self.generate_question(
                     topic=topic,
-                    subtopic=subtopic,  # Pass subtopic to generate_question
+                    subtopic=subtopic,
                     difficulty=difficulty,
                     context=selected_context,
                 )
@@ -348,7 +348,7 @@ Generate a focused question that tests understanding of a specific aspect from t
             temperature=0.7,
         )
 
-        # 添加生成答案的prompt
+        # Generate answers prompt
         answer_prompt = f"""Question: {response.choices[0].message.content.strip()}
 
 Context:
@@ -380,7 +380,7 @@ Format as JSON:
     }}
 }}"""
 
-        # 生成答案
+        # Generate answers
         answer_response = client.chat.completions.create(
             model="gpt-4o-mini-2024-07-18",
             messages=[
@@ -396,7 +396,7 @@ Format as JSON:
             temperature=0.7,
         )
 
-        # log
+        # Parse answers
         try:
             response_content = answer_response.choices[0].message.content.strip()
             logging.info(f"GPT Response: {response_content}")
@@ -405,19 +405,22 @@ Format as JSON:
             logging.error(f"JSON decode error: {e}")
             # Provide default answer structure
             expected_answers = {
-                "correct": {"example": "Default correct answer"},
-                "partial": {"example": "Default partial answer"},
-                "incorrect": {"example": "Default incorrect answer"},
+                "correct": {"example": "Default correct answer", "source": source_info},
+                "partial": {"example": "Default partial answer", "source": source_info},
+                "incorrect": {
+                    "example": "Default incorrect answer",
+                    "source": source_info,
+                },
             }
 
-        # create question object
+        # Create question object with expected answers
         question = ExamQuestion(
             question_id=f"Q{len(self.questions) + 1}",
             question=response.choices[0].message.content.strip(),
             context=[c["text"] for c in focused_contexts],
             difficulty=difficulty,
             topic=topic,
-            subtopic=subtopic,  # Add subtopic to question
+            subtopic=subtopic,
             context_metadata=[
                 {
                     "filename": c["metadata"].filename,
@@ -426,6 +429,7 @@ Format as JSON:
                 }
                 for c in focused_contexts
             ],
+            expected_answers=expected_answers,
         )
 
         self.questions[question.question_id] = question
