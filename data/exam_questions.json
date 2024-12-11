@@ -1535,5 +1535,547 @@
         "source": "Source: 02465_Notes.pdf, Page 187"
       }
     }
+  },
+  "Q41": {
+    "question_id": "Q41",
+    "question": "What is the purpose of the initial guess in direct methods for optimal control?",
+    "context": [
+      "chapter direct methods section deterministic problem solved using open loop control optimal policy sequence actions found optimization since models used control x f x u deterministic one expect optimal control intrinsically tied simple optimization therefore explore optimization based methods optimal control chapter optimization since chapter treat optimization useful discuss optimization abstract point view proceeding non linear optimization general non linear optimization problem sometimes known non linear pro gram typically take following abstract definition minimization problem non linear pro gram z rn minz e z subject h z g z zlow z zupp functions e h g goal find optimal z minimizes expression general ways solve problem however assuming problem complicated methods sequential convex programming may yield sequential convex programming good results therefore assume access way solving problem section without understanding works important note methods work well need initial guess",
+      "programming may yield sequential convex programming good results therefore assume access way solving problem section without understanding works important note methods work well need initial guess solution performance depends good guess instance satisfy constraints recommended compute gradient hessian e well jacobians g h"
+    ],
+    "difficulty": 1,
+    "topic": "Direct Methods for Optimal Control",
+    "context_metadata": [
+      {
+        "filename": "02465_Notes.pdf",
+        "page_number": 187,
+        "chunk_index": 0,
+        "selected_context": "chapter direct methods section deterministic problem solved using open loop control optimal policy sequence actions found optimization since models used control x f x u deterministic one expect optima"
+      },
+      {
+        "filename": "02465_Notes.pdf",
+        "page_number": 187,
+        "chunk_index": 1,
+        "selected_context": "chapter direct methods section deterministic problem solved using open loop control optimal policy sequence actions found optimization since models used control x f x u deterministic one expect optima"
+      }
+    ],
+    "approved": false,
+    "teacher_notes": null,
+    "expected_answers": {
+      "correct": {
+        "example": "The initial guess in direct methods for optimal control is crucial because it serves as a starting point for the optimization process. Since the methods often rely on sequential convex programming, having a good initial guess can significantly influence the quality of the solution and the convergence speed. Without it, the methods may struggle to find an optimal solution effectively.",
+        "source": "Source: 02465_Notes.pdf, Page 187"
+      },
+      "partial": {
+        "example": "The initial guess helps in solving the optimization problem in direct methods for optimal control. It is important because it provides a reference point for the optimization, but the specific effects of a poor guess are not clearly explained.",
+        "source": "Source: 02465_Notes.pdf, Page 187"
+      },
+      "incorrect": {
+        "example": "The initial guess in direct methods is not important at all, as the optimization process can find the optimal solution regardless of where it starts. The methods usually guarantee convergence to a solution without needing an initial guess.",
+        "source": "Source: 02465_Notes.pdf, Page 187"
+      }
+    }
+  },
+  "Q42": {
+    "question_id": "Q42",
+    "question": "What does the symbol 'u' represent in the context of optimization-based methods?",
+    "context": [
+      "pid control approaches control rule based methods build u x directly optimization based methods u arg min u ju x dp inspired planning methods dtu compute lecture february"
+    ],
+    "difficulty": 2,
+    "topic": "Direct Methods for Optimal Control",
+    "context_metadata": [
+      {
+        "filename": "Lecture_4-handout.pdf",
+        "page_number": 15,
+        "chunk_index": 0,
+        "selected_context": "pid control approaches control rule based methods build u x directly optimization based methods u arg min u ju x dp inspired planning methods dtu compute lecture february"
+      }
+    ],
+    "approved": false,
+    "teacher_notes": null,
+    "expected_answers": {
+      "correct": {
+        "example": "In the context of optimization-based methods, the symbol 'u' represents the control input that is determined by optimizing a specific cost function. This is derived from the arg min operation, where 'u' minimizes the cost associated with the difference between the desired output 'x' and the predicted output 'dp'.",
+        "source": "Source: Lecture_4-handout.pdf, Page 15"
+      },
+      "partial": {
+        "example": "'u' in optimization-based methods refers to the control action that aims to minimize some cost function. However, the details of how 'u' is computed or the specific role of 'dp' in this minimization are not clearly stated.",
+        "source": "Source: Lecture_4-handout.pdf, Page 15"
+      },
+      "incorrect": {
+        "example": "'u' represents a random variable used in PID control methods and is not related to any optimization process. It does not involve minimizing any cost function or output differences.",
+        "source": "Source: Lecture_4-handout.pdf, Page 15"
+      }
+    }
+  },
+  "Q43": {
+    "question_id": "Q43",
+    "question": "What does setting the derivative of \\( j_n \\) equal to zero help find?",
+    "context": [
+      "applying dp algorithm eq directly j n xn min un rm xt n qn xn ut n rn un xt nvnxn inserting dynamics eq becomes j n xn min un rm xt n qn xn ut n rn un xn bn un tvn xn bn un rearranging j n xn min un rm xt n qn n vnan xn ut n rn bt n vnbn un ut n bt n vnan xn find optimum setting derivative equal zero j n un xn rn bt n vnbn un bt n vnan xn setting zero yields u n rn bt n vnbn bt n vnan ln xn write u n ln xn time varying linear feedback policy plugging policy j n xn xt n qn lt n rn ln bn ln tvn bn ln xn optimal policy always linear optimal cost go always quadratic dp recursion may recursively performed backward time minimization may performed analytically formally rn bt n vnbn therefore local minima global minima technical note cost go remains positive semi definite quadratic function state"
+    ],
+    "difficulty": 3,
+    "topic": "Direct Methods for Optimal Control",
+    "context_metadata": [
+      {
+        "filename": "02465_Notes.pdf",
+        "page_number": 203,
+        "chunk_index": 0,
+        "selected_context": "applying dp algorithm eq directly j n xn min un rm xt n qn xn ut n rn un xt nvnxn inserting dynamics eq becomes j n xn min un rm xt n qn xn ut n rn un xn bn un tvn xn bn un rearranging j n xn min un r"
+      }
+    ],
+    "approved": false,
+    "teacher_notes": null,
+    "expected_answers": {
+      "correct": {
+        "example": "Default correct answer"
+      },
+      "partial": {
+        "example": "Default partial answer"
+      },
+      "incorrect": {
+        "example": "Default incorrect answer"
+      }
+    }
+  },
+  "Q44": {
+    "question_id": "Q44",
+    "question": "What is a limitation of using closed loop controllers in direct methods for optimal control?",
+    "context": [
+      "transcription methods choice made optimizing action values known shoot ing optimizing state action values fact known colloca shooting tion fundamental choice numerical algorithm optimizing discretized collocation problem later method collocation produces numerically stable algorithms therefore preferred variety contexts also easier implement since modern optimization software quadratic programs allows us specify cost functions constraints per variable basis eq rather requiring us figure matrices q q eq easy implement comments optimizing discrete problem disadvantage optimizing discrete control problem eq n large optimization may numerically costly point becoming unfeasible furthermore although solve discrete problem exactly actual environment diverge solution due discretization error closed loop controller cannot trusted certain number time steps might discourage us using method directly limitations addressed produce powerful control methods see algorithm discuss lmpc controller",
+      "closed loop controller cannot trusted certain number time steps might discourage us using method directly limitations addressed produce powerful control methods see algorithm discuss lmpc controller section direct collocation section consider important class solution methods assume assume good approximation underlying dynamical model x f x u concerned planning optimal trajectory examples situations could bring satellite orbit landing space shuttle within class problems direct collocation methods simply direct direct colloca tion methods methods perhaps best method trajectory optimization benefit easily incorporating non linear constraints non typical cost functions easiest way think direct methods extension simple discrete optimization approach previous chapter applied directly dynamical model f rather discrete approximation problem formulation problem consider general optimal control problem discussed chapter recall tf refer start end time control functions x"
+    ],
+    "difficulty": 4,
+    "topic": "Direct Methods for Optimal Control",
+    "context_metadata": [
+      {
+        "filename": "02465_Notes.pdf",
+        "page_number": 189,
+        "chunk_index": 0,
+        "selected_context": "closed loop controller cannot trusted certain number time steps might discourage us using method directly limitations addressed produce powerful control methods see algorithm discuss lmpc controller s"
+      },
+      {
+        "filename": "02465_Notes.pdf",
+        "page_number": 189,
+        "chunk_index": 1,
+        "selected_context": "closed loop controller cannot trusted certain number time steps might discourage us using method directly limitations addressed produce powerful control methods see algorithm discuss lmpc controller s"
+      }
+    ],
+    "approved": false,
+    "teacher_notes": null,
+    "expected_answers": {
+      "correct": {
+        "example": "A limitation of using closed loop controllers in direct methods for optimal control is that they cannot be trusted for certain time steps, which may lead to suboptimal trajectory planning. This limitation is significant because it can discourage the direct application of powerful control methods, such as those discussed in the context of the linear model predictive control (LMPC) and direct collocation methods.",
+        "source": "Source: 02465_Notes.pdf, Page 189"
+      },
+      "partial": {
+        "example": "One limitation of closed loop controllers is that they may not work well for every time step, which is a concern when planning optimal trajectories. This could affect the effectiveness of direct methods mentioned, but the textbook does not elaborate on specific scenarios where this might happen.",
+        "source": "Source: 02465_Notes.pdf, Page 189"
+      },
+      "incorrect": {
+        "example": "Closed loop controllers are always reliable and can be used directly without any limitations in optimal control problems. The textbook emphasizes that these controllers apply equally to any situation, including those involving complex trajectories like satellite orbit.",
+        "source": "Source: 02465_Notes.pdf, Page 189"
+      }
+    }
+  },
+  "Q45": {
+    "question_id": "Q45",
+    "question": "What is the role of the variable \\( u \\) in the Mars landing control problem?",
+    "context": [
+      "environment robot actions learning state dynamics internal state interpreter observation cost time really important sequential non data must optimize behavior dynamical systems using information becomes progressively available systems evolve future cost state system depend current actions state dtu compute lecture february reinforcement learning control alpha go self learning go supercomputer defeated world champion lee sedol notable mentions atari dota starcraft ii learners general approach reinforcement learning search trees dtu compute lecture february reinforcement learning control chatgpt dtu compute lecture february reinforcement learning control decision problem environment robot actions learning state dynamics internal state interpreter observation cost state configuration environment x action either discrete vector u cost reward number depends state x action u dtu compute lecture february examples example mars landing time continuous state actions x position velocity fuel mass",
+      "x action either discrete vector u cost reward number depends state x action u dtu compute lecture february examples example mars landing time continuous state actions x position velocity fuel mass u thruster outputs dynamics smooth differential equation x f x u cost land right place use little fuel kill anyone constraints thrusters deliver limited force ship cannot go mars etc objective determine u minimize final cost really important constraints learning lecture car random py dtu compute lecture february mars examples inventory control order quantity item period k n meet stochastic demand xk stock beginning kth period uk stock ordered beginning kth period wk demand k th period dynamics xk xk uk wk cost per new unit c cost hold xk units r xk r xk cuk select actions u un minimize cost want proven optimal rule ordering dtu compute lecture february inventory"
+    ],
+    "difficulty": 5,
+    "topic": "Direct Methods for Optimal Control",
+    "context_metadata": [
+      {
+        "filename": "Lecture_1-6up-handout.pdf",
+        "page_number": 3,
+        "chunk_index": 0,
+        "selected_context": "control problem example mars landing time continuous state actions x position velocity temperature fuel mass u thruster outputs dynamics smooth time dependent x f x u cost land right place use little "
+      },
+      {
+        "filename": "Lecture_1-6up-handout.pdf",
+        "page_number": 3,
+        "chunk_index": 1,
+        "selected_context": "control problem example mars landing time continuous state actions x position velocity temperature fuel mass u thruster outputs dynamics smooth time dependent x f x u cost land right place use little "
+      }
+    ],
+    "approved": false,
+    "teacher_notes": null,
+    "expected_answers": {
+      "correct": {
+        "example": "Default correct answer"
+      },
+      "partial": {
+        "example": "Default partial answer"
+      },
+      "incorrect": {
+        "example": "Default incorrect answer"
+      }
+    }
+  },
+  "Q46": {
+    "question_id": "Q46",
+    "question": "What is the role of the initial guess in direct methods for optimal control?",
+    "context": [
+      "chapter direct methods section deterministic problem solved using open loop control optimal policy sequence actions found optimization since models used control x f x u deterministic one expect optimal control intrinsically tied simple optimization therefore explore optimization based methods optimal control chapter optimization since chapter treat optimization useful discuss optimization abstract point view proceeding non linear optimization general non linear optimization problem sometimes known non linear pro gram typically take following abstract definition minimization problem non linear pro gram z rn minz e z subject h z g z zlow z zupp functions e h g goal find optimal z minimizes expression general ways solve problem however assuming problem complicated methods sequential convex programming may yield sequential convex programming good results therefore assume access way solving problem section without understanding works important note methods work well need initial guess",
+      "programming may yield sequential convex programming good results therefore assume access way solving problem section without understanding works important note methods work well need initial guess solution performance depends good guess instance satisfy constraints recommended compute gradient hessian e well jacobians g h"
+    ],
+    "difficulty": 1,
+    "topic": "Direct Methods for Optimal Control",
+    "context_metadata": [
+      {
+        "filename": "02465_Notes.pdf",
+        "page_number": 187,
+        "chunk_index": 0,
+        "selected_context": "chapter direct methods section deterministic problem solved using open loop control optimal policy sequence actions found optimization since models used control x f x u deterministic one expect optima"
+      },
+      {
+        "filename": "02465_Notes.pdf",
+        "page_number": 187,
+        "chunk_index": 1,
+        "selected_context": "chapter direct methods section deterministic problem solved using open loop control optimal policy sequence actions found optimization since models used control x f x u deterministic one expect optima"
+      }
+    ],
+    "approved": false,
+    "teacher_notes": null,
+    "expected_answers": {
+      "correct": {
+        "example": "The initial guess in direct methods for optimal control is crucial because it serves as the starting point for the optimization process. Since these methods involve complex optimization problems, a good initial guess can significantly influence the efficiency and success of finding the optimal control policy sequence. Without a suitable initial guess, the optimization may fail to converge to an optimal solution.",
+        "source": "Source: 02465_Notes.pdf, Page 187"
+      },
+      "partial": {
+        "example": "The initial guess is important in direct methods for optimal control because it helps in solving optimization problems. If the guess is not good, it might lead to difficulties in finding the optimal control policy, but the text does not explain why it’s critical.",
+        "source": "Source: 02465_Notes.pdf, Page 187"
+      },
+      "incorrect": {
+        "example": "The initial guess is not relevant in direct methods for optimal control since the optimization process can always find a solution regardless of where it starts. Therefore, it doesn’t really matter what the initial guess is.",
+        "source": "Source: 02465_Notes.pdf, Page 187"
+      }
+    }
+  },
+  "Q47": {
+    "question_id": "Q47",
+    "question": "What role does the initial guess play in direct methods for optimal control?",
+    "context": [
+      "chapter direct methods section deterministic problem solved using open loop control optimal policy sequence actions found optimization since models used control x f x u deterministic one expect optimal control intrinsically tied simple optimization therefore explore optimization based methods optimal control chapter optimization since chapter treat optimization useful discuss optimization abstract point view proceeding non linear optimization general non linear optimization problem sometimes known non linear pro gram typically take following abstract definition minimization problem non linear pro gram z rn minz e z subject h z g z zlow z zupp functions e h g goal find optimal z minimizes expression general ways solve problem however assuming problem complicated methods sequential convex programming may yield sequential convex programming good results therefore assume access way solving problem section without understanding works important note methods work well need initial guess",
+      "programming may yield sequential convex programming good results therefore assume access way solving problem section without understanding works important note methods work well need initial guess solution performance depends good guess instance satisfy constraints recommended compute gradient hessian e well jacobians g h"
+    ],
+    "difficulty": 2,
+    "topic": "Direct Methods for Optimal Control",
+    "context_metadata": [
+      {
+        "filename": "02465_Notes.pdf",
+        "page_number": 187,
+        "chunk_index": 0,
+        "selected_context": "chapter direct methods section deterministic problem solved using open loop control optimal policy sequence actions found optimization since models used control x f x u deterministic one expect optima"
+      },
+      {
+        "filename": "02465_Notes.pdf",
+        "page_number": 187,
+        "chunk_index": 1,
+        "selected_context": "chapter direct methods section deterministic problem solved using open loop control optimal policy sequence actions found optimization since models used control x f x u deterministic one expect optima"
+      }
+    ],
+    "approved": false,
+    "teacher_notes": null,
+    "expected_answers": {
+      "correct": {
+        "example": "The initial guess is crucial in direct methods for optimal control because it significantly influences the convergence and efficiency of the optimization process. These methods rely on non-linear programming techniques, and a good initial guess can lead to better results in minimizing the objective function as outlined in the context of sequential convex programming.",
+        "source": "Source: 02465_Notes.pdf, Page 187"
+      },
+      "partial": {
+        "example": "The initial guess plays a role in direct methods for optimal control, as it is used for finding the optimal control actions. However, it is not clear how it affects the optimization process overall.",
+        "source": "Source: 02465_Notes.pdf, Page 187"
+      },
+      "incorrect": {
+        "example": "The initial guess does not matter much in direct methods for optimal control since the optimization methods can find the solution regardless of where they start. Therefore, any random guess is sufficient.",
+        "source": "Source: 02465_Notes.pdf, Page 187"
+      }
+    }
+  },
+  "Q48": {
+    "question_id": "Q48",
+    "question": "What is the role of the initial guess in sequential convex programming for optimal control?",
+    "context": [
+      "chapter direct methods section deterministic problem solved using open loop control optimal policy sequence actions found optimization since models used control x f x u deterministic one expect optimal control intrinsically tied simple optimization therefore explore optimization based methods optimal control chapter optimization since chapter treat optimization useful discuss optimization abstract point view proceeding non linear optimization general non linear optimization problem sometimes known non linear pro gram typically take following abstract definition minimization problem non linear pro gram z rn minz e z subject h z g z zlow z zupp functions e h g goal find optimal z minimizes expression general ways solve problem however assuming problem complicated methods sequential convex programming may yield sequential convex programming good results therefore assume access way solving problem section without understanding works important note methods work well need initial guess",
+      "programming may yield sequential convex programming good results therefore assume access way solving problem section without understanding works important note methods work well need initial guess solution performance depends good guess instance satisfy constraints recommended compute gradient hessian e well jacobians g h"
+    ],
+    "difficulty": 3,
+    "topic": "Direct Methods for Optimal Control",
+    "context_metadata": [
+      {
+        "filename": "02465_Notes.pdf",
+        "page_number": 187,
+        "chunk_index": 0,
+        "selected_context": "chapter direct methods section deterministic problem solved using open loop control optimal policy sequence actions found optimization since models used control x f x u deterministic one expect optima"
+      },
+      {
+        "filename": "02465_Notes.pdf",
+        "page_number": 187,
+        "chunk_index": 1,
+        "selected_context": "chapter direct methods section deterministic problem solved using open loop control optimal policy sequence actions found optimization since models used control x f x u deterministic one expect optima"
+      }
+    ],
+    "approved": false,
+    "teacher_notes": null,
+    "expected_answers": {
+      "correct": {
+        "example": "The initial guess in sequential convex programming is crucial as it serves as the starting point for the optimization process. A good initial guess can lead to faster convergence to the optimal control policy, especially in complex non-linear problems, as stated in the context of optimal control methods discussed in the textbook.",
+        "source": "Source: 02465_Notes.pdf, Page 187"
+      },
+      "partial": {
+        "example": "The initial guess is important in sequential convex programming, as it affects how the optimization proceeds. If the guess is far off, it might take longer to find the optimal solution, but the details on how this works are not fully explained.",
+        "source": "Source: 02465_Notes.pdf, Page 187"
+      },
+      "incorrect": {
+        "example": "The initial guess does not really matter in sequential convex programming because the methods can always find the optimal solution regardless of where they start. Therefore, any guess will lead to the same results in the end.",
+        "source": "Source: 02465_Notes.pdf, Page 187"
+      }
+    }
+  },
+  "Q49": {
+    "question_id": "Q49",
+    "question": "What is the role of the initial guess in direct methods for optimal control?",
+    "context": [
+      "chapter direct methods section deterministic problem solved using open loop control optimal policy sequence actions found optimization since models used control x f x u deterministic one expect optimal control intrinsically tied simple optimization therefore explore optimization based methods optimal control chapter optimization since chapter treat optimization useful discuss optimization abstract point view proceeding non linear optimization general non linear optimization problem sometimes known non linear pro gram typically take following abstract definition minimization problem non linear pro gram z rn minz e z subject h z g z zlow z zupp functions e h g goal find optimal z minimizes expression general ways solve problem however assuming problem complicated methods sequential convex programming may yield sequential convex programming good results therefore assume access way solving problem section without understanding works important note methods work well need initial guess",
+      "programming may yield sequential convex programming good results therefore assume access way solving problem section without understanding works important note methods work well need initial guess solution performance depends good guess instance satisfy constraints recommended compute gradient hessian e well jacobians g h"
+    ],
+    "difficulty": 4,
+    "topic": "Direct Methods for Optimal Control",
+    "context_metadata": [
+      {
+        "filename": "02465_Notes.pdf",
+        "page_number": 187,
+        "chunk_index": 0,
+        "selected_context": "chapter direct methods section deterministic problem solved using open loop control optimal policy sequence actions found optimization since models used control x f x u deterministic one expect optima"
+      },
+      {
+        "filename": "02465_Notes.pdf",
+        "page_number": 187,
+        "chunk_index": 1,
+        "selected_context": "chapter direct methods section deterministic problem solved using open loop control optimal policy sequence actions found optimization since models used control x f x u deterministic one expect optima"
+      }
+    ],
+    "approved": false,
+    "teacher_notes": null,
+    "expected_answers": {
+      "correct": {
+        "example": "The initial guess plays a crucial role in direct methods for optimal control as it provides a starting point for the optimization process. Since these methods often rely on iterative techniques like sequential convex programming, a good initial guess can significantly affect the convergence and efficiency of finding the optimal control policy sequence. Without a suitable initial guess, the methods may not yield good results.",
+        "source": "Source: 02465_Notes.pdf, Page 187"
+      },
+      "partial": {
+        "example": "The initial guess is important in direct methods for optimal control because it helps in finding the optimal solution. It impacts how quickly the optimization method can converge, but the text does not detail how it affects the results directly.",
+        "source": "Source: 02465_Notes.pdf, Page 187"
+      },
+      "incorrect": {
+        "example": "The initial guess is not important in direct methods for optimal control since the methods will find the optimal solution regardless of where they start. Therefore, any random guess will work just fine.",
+        "source": "Source: 02465_Notes.pdf, Page 187"
+      }
+    }
+  },
+  "Q50": {
+    "question_id": "Q50",
+    "question": "What is the role of the initial guess in sequential convex programming for optimal control?",
+    "context": [
+      "chapter direct methods section deterministic problem solved using open loop control optimal policy sequence actions found optimization since models used control x f x u deterministic one expect optimal control intrinsically tied simple optimization therefore explore optimization based methods optimal control chapter optimization since chapter treat optimization useful discuss optimization abstract point view proceeding non linear optimization general non linear optimization problem sometimes known non linear pro gram typically take following abstract definition minimization problem non linear pro gram z rn minz e z subject h z g z zlow z zupp functions e h g goal find optimal z minimizes expression general ways solve problem however assuming problem complicated methods sequential convex programming may yield sequential convex programming good results therefore assume access way solving problem section without understanding works important note methods work well need initial guess",
+      "programming may yield sequential convex programming good results therefore assume access way solving problem section without understanding works important note methods work well need initial guess solution performance depends good guess instance satisfy constraints recommended compute gradient hessian e well jacobians g h"
+    ],
+    "difficulty": 5,
+    "topic": "Direct Methods for Optimal Control",
+    "context_metadata": [
+      {
+        "filename": "02465_Notes.pdf",
+        "page_number": 187,
+        "chunk_index": 0,
+        "selected_context": "chapter direct methods section deterministic problem solved using open loop control optimal policy sequence actions found optimization since models used control x f x u deterministic one expect optima"
+      },
+      {
+        "filename": "02465_Notes.pdf",
+        "page_number": 187,
+        "chunk_index": 1,
+        "selected_context": "chapter direct methods section deterministic problem solved using open loop control optimal policy sequence actions found optimization since models used control x f x u deterministic one expect optima"
+      }
+    ],
+    "approved": false,
+    "teacher_notes": null,
+    "expected_answers": {
+      "correct": {
+        "example": "The initial guess in sequential convex programming is crucial as it serves as the starting point for the optimization process. A good initial guess can lead to better convergence towards the optimal control policy, especially since the optimization methods used are sensitive to this starting point.",
+        "source": "Source: 02465_Notes.pdf, Page 187"
+      },
+      "partial": {
+        "example": "The initial guess is important in sequential convex programming because it influences the optimization results. It helps in finding the optimal control, but the specifics of how it affects the outcome are not fully clear.",
+        "source": "Source: 02465_Notes.pdf, Page 187"
+      },
+      "incorrect": {
+        "example": "The initial guess is not very important in sequential convex programming, as the methods will eventually find the optimal solution regardless of where you start. Therefore, any random guess should work just fine.",
+        "source": "Source: 02465_Notes.pdf, Page 187"
+      }
+    }
+  },
+  "Q51": {
+    "question_id": "Q51",
+    "question": "What does the symbol 'u' represent in optimization based methods?",
+    "context": [
+      "pid control approaches control rule based methods build u x directly optimization based methods u arg min u ju x dp inspired planning methods dtu compute lecture february"
+    ],
+    "difficulty": 1,
+    "topic": "Direct Methods for Optimal Control",
+    "context_metadata": [
+      {
+        "filename": "Lecture_4-handout.pdf",
+        "page_number": 15,
+        "chunk_index": 0,
+        "selected_context": "pid control approaches control rule based methods build u x directly optimization based methods u arg min u ju x dp inspired planning methods dtu compute lecture february"
+      }
+    ],
+    "approved": false,
+    "teacher_notes": null,
+    "expected_answers": {
+      "correct": {
+        "example": "In optimization-based methods, the symbol 'u' represents the control input that minimizes a cost function. Specifically, it is defined as 'u = arg min u ||x - dp||', which indicates that 'u' is chosen to achieve the best performance as per the optimization criteria outlined in the lecture.",
+        "source": "Source: Lecture_4-handout.pdf, Page 15"
+      },
+      "partial": {
+        "example": "'u' in optimization-based methods is related to the control input, but I think it might just involve minimizing the error or some cost. It seems like 'u' is significant in finding the optimal control strategy, as mentioned in the lecture.",
+        "source": "Source: Lecture_4-handout.pdf, Page 15"
+      },
+      "incorrect": {
+        "example": "'u' represents the system output in optimization-based methods. It's used to directly control the system without any optimization, as I understand from the lecture.",
+        "source": "Source: Lecture_4-handout.pdf, Page 15"
+      }
+    }
+  },
+  "Q52": {
+    "question_id": "Q52",
+    "question": "What does the symbol 'u' represent in optimization-based methods for control?",
+    "context": [
+      "pid control approaches control rule based methods build u x directly optimization based methods u arg min u ju x dp inspired planning methods dtu compute lecture february"
+    ],
+    "difficulty": 2,
+    "topic": "Direct Methods for Optimal Control",
+    "context_metadata": [
+      {
+        "filename": "Lecture_4-handout.pdf",
+        "page_number": 15,
+        "chunk_index": 0,
+        "selected_context": "pid control approaches control rule based methods build u x directly optimization based methods u arg min u ju x dp inspired planning methods dtu compute lecture february"
+      }
+    ],
+    "approved": false,
+    "teacher_notes": null,
+    "expected_answers": {
+      "correct": {
+        "example": "In optimization-based methods for control, the symbol 'u' represents the control input that is computed by minimizing a cost function. Specifically, 'u' is defined as u = arg min u ||J(u, x)||, where J denotes the cost associated with the state x and control u, indicating that the control strategy is directly derived from an optimization process.",
+        "source": "Source: Lecture_4-handout.pdf, Page 15"
+      },
+      "partial": {
+        "example": "'u' in optimization-based methods is the control signal that we want to optimize. It is related to minimizing some cost, but I’m not sure about the exact equation or details on how it links to the state x.",
+        "source": "Source: Lecture_4-handout.pdf, Page 15"
+      },
+      "incorrect": {
+        "example": "'u' represents the disturbance in the system that needs to be controlled. It's not about optimization but rather adjusting the system parameters to achieve stability.",
+        "source": "Source: Lecture_4-handout.pdf, Page 15"
+      }
+    }
+  },
+  "Q53": {
+    "question_id": "Q53",
+    "question": "What does 'u arg min u ju x' represent in optimization-based methods?",
+    "context": [
+      "pid control approaches control rule based methods build u x directly optimization based methods u arg min u ju x dp inspired planning methods dtu compute lecture february"
+    ],
+    "difficulty": 3,
+    "topic": "Direct Methods for Optimal Control",
+    "context_metadata": [
+      {
+        "filename": "Lecture_4-handout.pdf",
+        "page_number": 15,
+        "chunk_index": 0,
+        "selected_context": "pid control approaches control rule based methods build u x directly optimization based methods u arg min u ju x dp inspired planning methods dtu compute lecture february"
+      }
+    ],
+    "approved": false,
+    "teacher_notes": null,
+    "expected_answers": {
+      "correct": {
+        "example": "'u arg min u ju x' represents the optimization process of finding the control input 'u' that minimizes the cost function 'ju x'. This is a fundamental concept in optimization-based methods, where the goal is to determine the best control action based on performance criteria. Such methods are essential in achieving optimal control in dynamic systems.",
+        "source": "Source: Lecture_4-handout.pdf, Page 15"
+      },
+      "partial": {
+        "example": "'u arg min u ju x' is about finding 'u' that minimizes a certain function. It relates to optimization-based methods but doesn't explain what 'ju x' specifically refers to or its significance in control systems.",
+        "source": "Source: Lecture_4-handout.pdf, Page 15"
+      },
+      "incorrect": {
+        "example": "'u arg min u ju x' is a type of PID controller that directly computes the optimal control input. It does not involve any optimization and is simply a formula used for control purposes.",
+        "source": "Source: Lecture_4-handout.pdf, Page 15"
+      }
+    }
+  },
+  "Q54": {
+    "question_id": "Q54",
+    "question": "What does \\( u \\) represent in optimization-based methods for control?",
+    "context": [
+      "pid control approaches control rule based methods build u x directly optimization based methods u arg min u ju x dp inspired planning methods dtu compute lecture february"
+    ],
+    "difficulty": 4,
+    "topic": "Direct Methods for Optimal Control",
+    "context_metadata": [
+      {
+        "filename": "Lecture_4-handout.pdf",
+        "page_number": 15,
+        "chunk_index": 0,
+        "selected_context": "pid control approaches control rule based methods build u x directly optimization based methods u arg min u ju x dp inspired planning methods dtu compute lecture february"
+      }
+    ],
+    "approved": false,
+    "teacher_notes": null,
+    "expected_answers": {
+      "correct": {
+        "example": "Default correct answer"
+      },
+      "partial": {
+        "example": "Default partial answer"
+      },
+      "incorrect": {
+        "example": "Default incorrect answer"
+      }
+    }
+  },
+  "Q55": {
+    "question_id": "Q55",
+    "question": "What does the symbol 'u' represent in optimization-based methods for control?",
+    "context": [
+      "pid control approaches control rule based methods build u x directly optimization based methods u arg min u ju x dp inspired planning methods dtu compute lecture february"
+    ],
+    "difficulty": 5,
+    "topic": "Direct Methods for Optimal Control",
+    "context_metadata": [
+      {
+        "filename": "Lecture_4-handout.pdf",
+        "page_number": 15,
+        "chunk_index": 0,
+        "selected_context": "pid control approaches control rule based methods build u x directly optimization based methods u arg min u ju x dp inspired planning methods dtu compute lecture february"
+      }
+    ],
+    "approved": false,
+    "teacher_notes": null,
+    "expected_answers": {
+      "correct": {
+        "example": "In optimization-based methods for control, the symbol 'u' represents the control input that is determined by minimizing a cost function. This approach directly computes 'u' by solving the equation 'u = arg min u ||x - d||', where 'x' is the state and 'd' is the desired trajectory.",
+        "source": "Source: Lecture_4-handout.pdf, Page 15"
+      },
+      "partial": {
+        "example": "'u' in optimization-based methods is related to the control input that aims to optimize performance. It involves minimizing a function, but I am not sure about the specific equation or how 'x' and 'd' are defined.",
+        "source": "Source: Lecture_4-handout.pdf, Page 15"
+      },
+      "incorrect": {
+        "example": "'u' represents the error in the control system, which is calculated based on the difference between the current state and the desired state. I think it is directly related to PID control methods rather than optimization.",
+        "source": "Source: Lecture_4-handout.pdf, Page 15"
+      }
+    }
   }
 }

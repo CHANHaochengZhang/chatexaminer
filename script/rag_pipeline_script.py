@@ -103,7 +103,7 @@ class RAGPipeline:
                 {qid: asdict(q) for qid, q in self.questions.items()},
                 f,
                 indent=2,
-                ensure_ascii=False,  # 支持中文等非ASCII字符
+                ensure_ascii=False,  # Support non-ASCII characters
             )
 
     def get_relevant_context(self, question: str, top_k: int = 5) -> List[str]:
@@ -230,41 +230,91 @@ class RAGPipeline:
 
         return focused_contexts
 
-    def generate_question(self, topic: str, difficulty: int) -> ExamQuestion:
-        """Generate new exam question using continuous context chunks"""
-        # First round: Get broad context
-        broad_contexts = self.get_broad_context(topic, top_k=15)
+    def generate_questions_for_topic(
+        self, topic: str, num_subtopics: int = 5
+    ) -> List[ExamQuestion]:
+        """Generate questions for a topic
 
-        # Enhanced filtering with scoring
-        topic_keywords = set(topic.lower().split())
-        scored_contexts = []
+        Args:
+            topic: The main topic
+            num_subtopics: Number of subtopics to generate (each subtopic will have 5 questions of different difficulties)
 
-        for context in broad_contexts:
-            # Calculate relevance score
-            context_text = context["text"].lower()
-            keyword_matches = sum(
-                1 for keyword in topic_keywords if keyword in context_text
+        Returns:
+            List[ExamQuestion]: List of generated questions
+        """
+        questions = []
+        # Get broader context and sort by relevance
+        broad_contexts = self.get_broad_context(
+            topic, top_k=num_subtopics * 3
+        )  # Get more contexts for selection
+
+        if not broad_contexts:
+            logging.warning(
+                f"No context found for topic '{topic}', using topic as context"
             )
-            score = keyword_matches / len(topic_keywords)
+            context = {
+                "text": topic,
+                "metadata": DocumentMetadata(
+                    filename="default", page_number=0, chunk_index=0
+                ),
+            }
+            broad_contexts = [context] * num_subtopics
+        else:
+            # Ensure contexts are sufficiently different
+            filtered_contexts = []
+            used_texts = set()
 
-            scored_contexts.append(
-                {
-                    "text": context["text"],
-                    "metadata": context["metadata"],
-                    "score": score,
-                }
-            )
+            for context in broad_contexts:
+                # Use first 100 characters for uniqueness check
+                text_key = context["text"][:100]
+                if text_key not in used_texts:
+                    used_texts.add(text_key)
+                    filtered_contexts.append(context)
+                    if len(filtered_contexts) >= num_subtopics:
+                        break
 
-        # Sort by relevance
-        scored_contexts.sort(key=lambda x: x["score"], reverse=True)
-        if not scored_contexts:
-            raise ValueError(f"No relevant contexts found for topic '{topic}'")
+            broad_contexts = filtered_contexts
 
-        # Get continuous focused contexts
-        best_context = scored_contexts[0]  # 保存最佳上下文
-        focused_contexts = self.focused_search(best_context)
+            # If not enough filtered contexts, pad with the last one
+            if len(broad_contexts) < num_subtopics:
+                last_context = broad_contexts[-1]
+                while len(broad_contexts) < num_subtopics:
+                    broad_contexts.append(last_context)
 
-        # Combine continuous contexts
+        # Generate 5 questions of different difficulties for each subtopic
+        for i in range(num_subtopics):
+            selected_context = broad_contexts[i]  # Select context for this subtopic
+            print(f"Processing subtopic {i+1} with context: {selected_context}")
+
+            # Generate questions for each difficulty level
+            for difficulty in range(1, 6):  # Difficulties 1-5
+                question = self.generate_question(
+                    topic=topic, difficulty=difficulty, context=selected_context
+                )
+                questions.append(question)
+
+        return questions
+
+    def generate_question(
+        self, topic: str, difficulty: int, context: Dict[str, Any]
+    ) -> ExamQuestion:
+        """生成单个问题
+
+        Args:
+            topic: 主题
+            difficulty: 难度等级
+            context: 预选的上下文
+        """
+        # 使用传入的上下文
+        selected_context = context
+
+        # 添加文件名和页码信息
+        source_info = f"Source: {selected_context['metadata'].filename}, Page {selected_context['metadata'].page_number}"
+
+        # 获取连续的上下文
+        focused_contexts = self.focused_search(selected_context)
+
+        # 合并上下文文本
         context_text = "\n".join(c["text"] for c in focused_contexts)
 
         # Enhanced prompt for specific question generation
@@ -272,7 +322,7 @@ class RAGPipeline:
 
 Topic: {topic}
 Difficulty: {difficulty}/5
-Selected Content: {best_context['text'][:200]}...
+Selected Content: {selected_context['text'][:200]}...
 
 Requirements:
 1. Focus on a single, specific concept, formula, or relationship related to the topic
@@ -312,8 +362,10 @@ Generate a focused question that tests understanding of a specific aspect from t
         # 添加生成答案的prompt
         answer_prompt = f"""Question: {response.choices[0].message.content.strip()}
 
-Context from textbook (p.{selected_context["metadata"].page_number}):
-{context_text}
+Context:
+{selected_context["text"]}
+
+{source_info}
 
 Learning objective: Understand {topic.lower()}
 
@@ -321,17 +373,21 @@ Generate three student answer examples that:
 - Use concepts directly from the textbook
 - Reflect typical student understanding levels
 - Keep answers within 2-3 sentences
+- Reference specific content from {source_info}
 
 Format as JSON:
 {{
     "correct": {{
-        "example": "complete answer with all key points from the textbook"
+        "example": "complete answer with all key points",
+        "source": "{source_info}"
     }},
     "partial": {{
-        "example": "answer with some correct points but missing critical details"
+        "example": "answer with some correct points but missing critical details",
+        "source": "{source_info}"
     }},
     "incorrect": {{
-        "example": "answer showing common student misconception about this topic"
+        "example": "answer showing common misconception",
+        "source": "{source_info}"
     }}
 }}"""
 
@@ -351,21 +407,21 @@ Format as JSON:
             temperature=0.7,
         )
 
-        # 添加错误处理和日志记录
+        # log
         try:
             response_content = answer_response.choices[0].message.content.strip()
             logging.info(f"GPT Response: {response_content}")
             expected_answers = json.loads(response_content)
         except json.JSONDecodeError as e:
             logging.error(f"JSON decode error: {e}")
-            # 提供默认答案结构
+            # Provide default answer structure
             expected_answers = {
                 "correct": {"example": "Default correct answer"},
                 "partial": {"example": "Default partial answer"},
                 "incorrect": {"example": "Default incorrect answer"},
             }
 
-        # 创建问题对象时包含预期答案
+        # create question object
         question = ExamQuestion(
             question_id=f"Q{len(self.questions) + 1}",
             question=response.choices[0].message.content.strip(),
@@ -375,13 +431,13 @@ Format as JSON:
                     "filename": c["metadata"].filename,
                     "page_number": c["metadata"].page_number,
                     "chunk_index": c["metadata"].chunk_index,
-                    "selected_context": best_context["text"][:200],
+                    "selected_context": selected_context["text"][:200],
                 }
                 for c in focused_contexts
             ],
             difficulty=difficulty,
             topic=topic,
-            expected_answers=expected_answers,  # 添加预期答案
+            expected_answers=expected_answers,  # Add expected answers
         )
 
         self.questions[question.question_id] = question
@@ -426,30 +482,18 @@ Please provide:
         return response.choices[0].message.content.strip()
 
 
-# 集成方法，产生和topic相关的所以问题
-
 # %%
 # Example usage
 if __name__ == "__main__":
     rag = RAGPipeline()
 
-    # Generate new question
-    # question = rag.generate_question(
-    #     topic="Direct methods for optimal control",
-    #     difficulty=1,
-    # )
-    # print(f"Generated Question: {question.question}\n")
-    # logging.info(f"Generated Question: {question.question}\n")
-    for i in range(10):
-        difficulty = (i % 5) + 1
-        question = rag.generate_question(
-            topic="Direct Methods for Optimal Control - Continuous-Time Control Problem and Discrete Optimization using Trapezoid Collocation",
-            difficulty=difficulty,
-        )
-        print(f"Generated Question (Difficulty {difficulty}): {question.question}\n")
-        logging.info(
-            f"Generated Question (Difficulty {difficulty}): {question.question}\n"
-        )
+    questions = rag.generate_questions_for_topic(
+        topic="Direct Methods for Optimal Control", num_subtopics=2
+    )
+
+    for q in questions:
+        print(f"\nQuestion {q.question_id} (Difficulty: {q.difficulty}):")
+        print(q.question)
 
     # Evaluate answer
 #     answer = """Direct Collocation Methods
