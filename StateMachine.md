@@ -114,3 +114,48 @@ AI Examiner: [Provides final evaluation and feedback]
 - Each topic has associated context and expected answers
 - Responses are evaluated against predefined criteria
 - Final evaluation includes specific improvement suggestions
+
+```python
+def generate_prompt(self, state: ExamState, context: Dict) -> str:
+    """Generate appropriate prompt based on current state"""
+    prompts = {
+        ExamState.INIT: """You are an AI examiner for the course 'Introduction to Reinforcement Learning and Control Theory'.
+        Maintain a professional but friendly tone. Start by introducing yourself and explaining the exam format.
+        Current topic: {topic}""",
+
+        ExamState.QUESTIONING: """Based on the student's previous response: {last_response}
+        Understanding level: {understanding_level}
+        Question history: {question_history}
+
+        Generate a natural follow-up question that:
+        1. Builds on their demonstrated knowledge
+        2. Maintains coherence with previous questions
+        3. Matches difficulty level {difficulty}
+        4. Relates to the topic {topic}
+
+        Respond in a conversational way, acknowledging their previous answer.""",
+
+        ExamState.EXPLAINING: """The student has shown difficulty understanding: {confusion_point}
+
+        Provide a helpful explanation that:
+        1. Breaks down the concept
+        2. Uses analogies if appropriate
+        3. Doesn't give away answers
+        4. Guides them back to the topic
+
+        Maintain an encouraging tone.""",
+
+        ExamState.EVALUATING: """Review the entire conversation:
+        {conversation_history}
+
+        Generate a comprehensive evaluation that:
+        1. Analyzes their understanding
+        2. Highlights strengths
+        3. Suggests improvements
+        4. Provides a final score
+
+        Keep the tone constructive and encouraging."""
+    }
+
+    return prompts[state].format(**context)
+```
