@@ -64,14 +64,15 @@ class ExamQuestion:
     context: List[str]
     difficulty: int
     topic: str
+    subtopic: str
     context_metadata: List[Dict[str, any]] = field(default_factory=list)
     approved: bool = False
     teacher_notes: Optional[str] = None
     expected_answers: Dict[str, Dict[str, str]] = field(
         default_factory=lambda: {
-            "correct": {"example": ""},
-            "partial": {"example": ""},
-            "incorrect": {"example": ""},
+            "correct": {"example": "", "source": ""},
+            "partial": {"example": "", "source": ""},
+            "incorrect": {"example": "", "source": ""},
         }
     )
 
@@ -88,6 +89,10 @@ class RAGPipeline:
             try:
                 with open(self.questions_file, "r", encoding="utf-8") as f:
                     data = json.load(f)
+                    # Add default subtopic if missing
+                    for q in data.values():
+                        if "subtopic" not in q:
+                            q["subtopic"] = ""  # Empty string as default
                     return {qid: ExamQuestion(**q) for qid, q in data.items()}
             except json.JSONDecodeError:
                 return {}
@@ -243,35 +248,20 @@ class RAGPipeline:
             List[ExamQuestion]: List of generated questions
         """
         questions = []
-        # Get broader context and sort by relevance
-        broad_contexts = self.get_broad_context(
-            topic, top_k=num_subtopics * 3
-        )  # Get more contexts for selection
+        broad_contexts = self.get_broad_context(topic, top_k=num_subtopics * 3)
 
-        if not broad_contexts:
-            logging.warning(
-                f"No context found for topic '{topic}', using topic as context"
-            )
-            context = {
-                "text": topic,
-                "metadata": DocumentMetadata(
-                    filename="default", page_number=0, chunk_index=0
-                ),
-            }
-            broad_contexts = [context] * num_subtopics
-        else:
-            # Ensure contexts are sufficiently different
-            filtered_contexts = []
-            used_texts = set()
+        # Ensure contexts are sufficiently different
+        filtered_contexts = []
+        used_texts = set()
 
-            for context in broad_contexts:
-                # Use first 100 characters for uniqueness check
-                text_key = context["text"][:100]
-                if text_key not in used_texts:
-                    used_texts.add(text_key)
-                    filtered_contexts.append(context)
-                    if len(filtered_contexts) >= num_subtopics:
-                        break
+        for context in broad_contexts:
+            # Use first 100 characters for uniqueness check
+            text_key = context["text"][:100]
+            if text_key not in used_texts:
+                used_texts.add(text_key)
+                filtered_contexts.append(context)
+                if len(filtered_contexts) >= num_subtopics:
+                    break
 
             broad_contexts = filtered_contexts
 
@@ -283,38 +273,37 @@ class RAGPipeline:
 
         # Generate 5 questions of different difficulties for each subtopic
         for i in range(num_subtopics):
-            selected_context = broad_contexts[i]  # Select context for this subtopic
-            print(f"Processing subtopic {i+1} with context: {selected_context}")
+            selected_context = broad_contexts[i]
+            # Generate subtopic from context
+            subtopic = f"{topic} - Subtopic {i+1}: {selected_context['text'][:50]}..."
+            print(f"Processing {subtopic}")
 
             # Generate questions for each difficulty level
-            for difficulty in range(1, 6):  # Difficulties 1-5
+            for difficulty in range(1, 6):
                 question = self.generate_question(
-                    topic=topic, difficulty=difficulty, context=selected_context
+                    topic=topic,
+                    subtopic=subtopic,  # Pass subtopic to generate_question
+                    difficulty=difficulty,
+                    context=selected_context,
                 )
                 questions.append(question)
 
         return questions
 
     def generate_question(
-        self, topic: str, difficulty: int, context: Dict[str, Any]
+        self, topic: str, subtopic: str, difficulty: int, context: Dict[str, Any]
     ) -> ExamQuestion:
-        """生成单个问题
-
-        Args:
-            topic: 主题
-            difficulty: 难度等级
-            context: 预选的上下文
-        """
-        # 使用传入的上下文
+        """Generate a single question"""
+        # Use the provided context
         selected_context = context
 
-        # 添加文件名和页码信息
+        # Add filename and page number information
         source_info = f"Source: {selected_context['metadata'].filename}, Page {selected_context['metadata'].page_number}"
 
-        # 获取连续的上下文
+        # Retrieve focused contexts
         focused_contexts = self.focused_search(selected_context)
 
-        # 合并上下文文本
+        # Combine context texts
         context_text = "\n".join(c["text"] for c in focused_contexts)
 
         # Enhanced prompt for specific question generation
@@ -426,18 +415,17 @@ Format as JSON:
             question_id=f"Q{len(self.questions) + 1}",
             question=response.choices[0].message.content.strip(),
             context=[c["text"] for c in focused_contexts],
+            difficulty=difficulty,
+            topic=topic,
+            subtopic=subtopic,  # Add subtopic to question
             context_metadata=[
                 {
                     "filename": c["metadata"].filename,
                     "page_number": c["metadata"].page_number,
                     "chunk_index": c["metadata"].chunk_index,
-                    "selected_context": selected_context["text"][:200],
                 }
                 for c in focused_contexts
             ],
-            difficulty=difficulty,
-            topic=topic,
-            expected_answers=expected_answers,  # Add expected answers
         )
 
         self.questions[question.question_id] = question
