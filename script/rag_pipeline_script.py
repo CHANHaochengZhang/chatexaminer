@@ -279,7 +279,7 @@ class RAGPipeline:
             print(f"Processing {subtopic}")
 
             # Generate questions for each difficulty level
-            for difficulty in range(1, 1):  # Changed range to 1-5
+            for difficulty in range(1, 6):  # Changed range to 1-5
                 question = self.generate_question(
                     topic=topic,
                     subtopic=subtopic,
@@ -480,7 +480,7 @@ if __name__ == "__main__":
     rag = RAGPipeline()
 
     questions = rag.generate_questions_for_topic(
-        topic="Direct Methods for Optimal Control", num_subtopics=2
+        topic="Direct Methods for Optimal Control", num_subtopics=5
     )
 
     for q in questions:
