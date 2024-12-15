@@ -152,33 +152,48 @@ OPENAI_API_KEY=<your-openai-api-key>
 
 ### Directory Structure
 ```
-project_root/
+chatexaminer/
 ├── knowledge/
-│   └── pdf/                     # PDF knowledge base files
-├── data/                        # Generated data storage
-│   ├── exam_questions.json      # Generated exam questions
-│   └── logs/                    # Log files for the application
-│       ├── rag_pipeline.log      # Log for RAG pipeline operations
-│       └── rag_pipeline_iteration1.log  # Log for iteration 1 operations
-├── script/                      # Proof of Concept Implementation
-│   ├── pdf_load.py              # Basic PDF processing (PoC)
-│   ├── rag_pipeline_script.py    # Simple RAG pipeline (PoC)
-│   └── rag/
-│       ├── core.py              # Core concepts demonstration (PoC)
-│       └── question_tree_generator.py  # Question tree generation implementation
-├── server/                      # FastAPI Server Implementation
+│   └── pdf/                     # PDF knowledge base files for course materials
+├── data/
+│   ├── exam_questions.json      # Generated and cached exam questions
+│   ├── conversation_trees/      # Generated dialogue trees
+│   └── logs/                    # Application logs
+│       ├── rag_pipeline.log     # RAG operations logging
+│       └── state_machine.log    # State transitions logging
+├── script/
+│   ├── pdf_load.py             # PDF processing and vectorization
+│   ├── rag_pipeline_script.py  # RAG pipeline implementation
+│   └── conversation_tree_generator.py  # Dynamic question tree generation
+├── server/
 │   ├── app/
-│   │   ├── api/                # API Layer
-│   │   │   ├── v1/            # API Version 1
-│   │   │   │   ├── endpoints/ # API Endpoints
-│   │   │   │   └── api.py     # API Router Configuration
-│   │   ├── core/              # Core Components
-│   │   │   └── config.py      # Application Configuration
-│   │   └── services/          # Business Logic Layer
-│   │       └── rag_service.py # RAG Service Implementation
-│   └── requirements.txt        # Server Dependencies
-├── Makefile                    # Development automation
-└── .env                        # Environment Configuration
+│   │   ├── api/
+│   │   │   ├── v1/
+│   │   │   │   ├── endpoints/  # API endpoints
+│   │   │   │   │   ├── exam.py      # Exam control endpoints
+│   │   │   │   │   └── health.py    # System health checks
+│   │   │   │   └── api.py     # API router configuration
+│   │   ├── core/
+│   │   │   ├── config.py      # Application settings
+│   │   │   └── security.py    # Authentication & authorization
+│   │   ├── models/
+│   │   │   ├── exam.py        # Exam session models
+│   │   │   └── state.py       # State machine models
+│   │   └── services/
+│   │       ├── assistant.py    # OpenAI function calling service
+│   │       ├── state_machine.py # Examination state management
+│   │       ├── exam_service.py # Exam business logic
+│   │       └── rag_service.py  # RAG integration service
+│   └── requirements.txt
+├── tests/                      # Test suites
+│   ├── test_rag.py
+│   ├── test_state_machine.py
+│   └── test_assistant.py
+├── docs/
+│   ├── StateMachine.md        # State machine documentation
+│   └── API.md                 # API documentation
+├── Makefile                   # Development automation
+└── .env                      # Environment configuration
 ```
 
 ### Proof of Concept Implementation
