@@ -2,20 +2,31 @@
 # Import required libraries
 import os
 import re
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List
 
+# Add server directory to Python path
+SERVER_DIR = Path(__file__).parent.parent.parent
+sys.path.append(str(SERVER_DIR))
+
+import logging
+from typing import Dict, List, Optional
+
 import fitz  # PyMuPDF
 import nltk
+from app.core.config import settings
+from app.models.document import DocumentMetadata, KnowledgeDoc
 from docarray import BaseDoc, DocList
 from docarray.typing import NdArray
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from nltk.corpus import stopwords
 from PyPDF2 import PdfReader
+from sentence_transformers import SentenceTransformer
 from vectordb import InMemoryExactNNVectorDB
 
-ROOT_DIR = Path(__file__).parent.parent
+ROOT_DIR = Path(__file__).parent.parent.parent.parent
 PDF_DIR = ROOT_DIR / "knowledge" / "pdf"
 
 # Download required NLTK data
@@ -42,24 +53,6 @@ def clean_text(text: str, stop_words: set) -> str:
     cleaned_words = [word for word in words if word not in stop_words]
 
     return " ".join(cleaned_words)
-
-
-@dataclass
-class DocumentMetadata:
-    """Metadata for document chunks"""
-
-    filename: str
-    page_number: int
-    chunk_index: int
-    # difficulty_level: Optional[int] = None
-
-
-class KnowledgeDoc(BaseDoc):
-    """Document schema with metadata"""
-
-    text: str
-    embedding: NdArray[384]
-    metadata: DocumentMetadata
 
 
 def extract_and_chunk_pdfs(

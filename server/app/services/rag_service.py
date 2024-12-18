@@ -8,8 +8,10 @@ sys.path.append(str(ROOT_DIR))
 sys.path.append(str(SCRIPT_DIR))
 
 from app.core.config import settings
-from conversation_tree_generator import ConversationTreeGenerator
-from rag_pipeline_script import RAGPipeline
+from app.models.document import DocumentMetadata, KnowledgeDoc
+from app.models.question import ExamQuestion
+from app.scripts.conversation_tree_generator import ConversationTreeGenerator
+from app.scripts.rag_pipeline import RAGPipeline
 
 
 class RAGService:

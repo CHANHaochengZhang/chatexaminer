@@ -16,7 +16,7 @@ from openai import OpenAI
 from pdf_load import DocumentMetadata, KnowledgeDoc, db, model
 
 # Define project paths
-ROOT_DIR = Path(__file__).parent.parent
+ROOT_DIR = Path(__file__).parent.parent.parent.parent
 DATA_DIR = ROOT_DIR / "data"
 LOG_DIR = DATA_DIR / "logs"
 QUESTIONS_FILE = DATA_DIR / "exam_questions.json"
