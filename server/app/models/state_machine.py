@@ -11,6 +11,7 @@ class ExamState(str, Enum):
     EXPLAINING = "EXPLAINING"
     EVALUATING = "EVALUATING"
     COMPLETED = "COMPLETED"
+    PREPARATION = "PREPARATION"  # 新增状态
 
 
 class StateTransition(BaseModel):
@@ -18,6 +19,12 @@ class StateTransition(BaseModel):
     to_state: ExamState
     condition: str
     metadata: Optional[Dict[str, Any]] = None
+
+
+class StateResponse(BaseModel):
+    next_state: ExamState
+    confidence: int
+    reason: str
 
 
 class ExamStateMachine:
@@ -35,7 +42,14 @@ class ExamStateMachine:
 
         # 定义允许的状态转换和条件
         self.allowed_transitions = {
-            ExamState.INIT: [(ExamState.TOPIC_SELECTED, "select_topic()")],
+            ExamState.INIT: [
+                (ExamState.PREPARATION, "student_not_ready"),
+                (ExamState.TOPIC_SELECTED, "student_ready"),
+            ],
+            ExamState.PREPARATION: [
+                (ExamState.INIT, "need_more_preparation"),
+                (ExamState.TOPIC_SELECTED, "student_ready"),
+            ],
             ExamState.TOPIC_SELECTED: [(ExamState.QUESTIONING, "start_exam()")],
             ExamState.QUESTIONING: [
                 (ExamState.EXPLAINING, "student_confused/need_clarification"),
@@ -46,7 +60,6 @@ class ExamStateMachine:
             ExamState.EVALUATING: [
                 (ExamState.COMPLETED, "generate_final_evaluation()")
             ],
-            ExamState.COMPLETED: [],
         }
 
     def can_transition_to(self, new_state: ExamState) -> bool:

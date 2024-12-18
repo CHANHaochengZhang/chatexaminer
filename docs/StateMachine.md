@@ -9,9 +9,14 @@ The AI Examiner implements an intelligent dialogue system for conducting oral ex
 stateDiagram-v2
     [*] --> INIT
 
-    INIT --> TOPIC_SELECTED: select_random_topic()
+    INIT --> PREPARATION: student_not_ready
+    PREPARATION --> INIT: need_more_preparation
+    PREPARATION --> TOPIC_SELECTED: student_ready
+
+    INIT --> TOPIC_SELECTED: student_ready
     note right of INIT
         Initial difficulty = 3
+        Check student readiness
     end note
 
     TOPIC_SELECTED --> QUESTIONING: start_exam()
@@ -48,7 +53,51 @@ stateDiagram-v2
     COMPLETED --> [*]
 ```
 
-## State Transitions
+## State Descriptions
+
+### 1. INIT
+- Initialize examination session
+- Check student readiness
+- Load question bank and topics
+
+### 2. PREPARATION
+- Handle pre-exam questions
+- Explain exam procedures
+- Confirm language preferences
+- Check student comfort level
+
+### 3. TOPIC_SELECTED
+- Randomly select topic and subtopic
+- Load relevant pre-generated questions
+- Prepare evaluation criteria
+
+### 4. QUESTIONING
+- Core examination state
+- Dynamic question selection based on:
+  - Current difficulty level
+  - Student performance
+  - Question history
+- Immediate evaluation of each response
+
+### 5. EXPLAINING
+- Provide concept explanations and hints
+- Track hint request frequency
+- Ensure no answer disclosure
+- Hint requests affect final score
+
+### 6. EVALUATING
+- Comprehensive assessment of all responses
+- Consider hint request frequency
+- Generate detailed feedback
+
+### 7. COMPLETED
+- Generate final evaluation report
+- Save conversation history
+- Provide improvement suggestions
+
+## Implementation Notes
+
+### State Transitions
 Using OpenAI Function Calling for state transitions:
 ```python
 {
@@ -58,66 +107,10 @@ Using OpenAI Function Calling for state transitions:
         "hint_requested": bool,
         "difficulty": int,
         "topic": str,
-        "subtopic": str
+        "subtopic": str,
+        "student_ready": bool
     }
 }
-```
-
-## State Descriptions
-
-### 1. INIT
-- Initialize examination session
-- Set initial difficulty to 3
-- Load question bank and topics
-
-### 2. TOPIC_SELECTED
-- Randomly select topic and subtopic
-- Load relevant pre-generated questions
-- Prepare evaluation criteria
-
-### 3. QUESTIONING
-- Core examination state
-- Dynamic question selection based on:
-  - Current difficulty level
-  - Student performance
-  - Question history
-- Immediate evaluation of each response
-
-### 4. EXPLAINING
-- Provide concept explanations and hints
-- Track hint request frequency
-- Ensure no answer disclosure
-- Hint requests affect final score
-
-### 5. EVALUATING
-- Comprehensive assessment of all responses
-- Consider hint request frequency
-- Generate detailed feedback
-
-### 6. COMPLETED
-- Generate final evaluation report
-- Save conversation history
-- Provide improvement suggestions
-
-## Implementation Notes
-
-### Simulation Testing
-```python
-class Teacher:
-    def respond(self, text: str, metadata: dict) -> Tuple[str, dict]:
-        """Process student response and determine next action"""
-        pass
-
-class Student:
-    def respond(self, text: str, metadata: dict) -> Tuple[str, dict]:
-        """Generate responses based on different ability levels"""
-        pass
-```
-
-### Data Storage
-```
-conversations/
-└── {teacher}_{student}_{conversation_id}.json
 ```
 
 ### Evaluation Criteria

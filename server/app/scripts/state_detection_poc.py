@@ -12,7 +12,7 @@ SERVER_DIR = Path(__file__).parent.parent.parent
 sys.path.append(str(SERVER_DIR))
 
 from app.core.config import settings
-from app.models.state_machine import ExamStateMachine
+from app.models.state_machine import ExamStateMachine, StateResponse
 
 
 class ExamState(str, Enum):
@@ -22,12 +22,6 @@ class ExamState(str, Enum):
     EXPLAINING = "EXPLAINING"
     EVALUATING = "EVALUATING"
     COMPLETED = "COMPLETED"
-
-
-class StateResponse(BaseModel):
-    next_state: ExamState
-    confidence: int
-    reason: str
 
 
 functions = [
