@@ -9,8 +9,13 @@ The AI Examiner implements an intelligent dialogue system for conducting oral ex
 stateDiagram-v2
     [*] --> INIT
 
-    INIT --> TOPIC_SELECTED: student_ready
+    INIT --> INIT: simple_greeting
+    INIT --> TOPIC_SELECTED: topic_mentioned
     note right of INIT
+        States:
+        - Simple greeting
+        - Casual conversation
+        - Topic selection
         Initial difficulty = 3
     end note
 
@@ -20,11 +25,16 @@ stateDiagram-v2
         for selected topic
     end note
 
-    QUESTIONING --> EXPLAINING: intention="need_clarification"
-    EXPLAINING --> QUESTIONING: provide_explanation()
+    QUESTIONING --> EXPLAINING: student_confused
+    EXPLAINING --> EXPLAINING: needs_more_explanation
+    EXPLAINING --> QUESTIONING: confirms_understanding
     note right of EXPLAINING
+        States:
+        - Student still confused
+        - Student needs clarification
+        - Student confirms understanding
+        - Student ready to answer
         Tracks hint requests
-        Affects final evaluation
     end note
 
     QUESTIONING --> QUESTIONING: evaluate_response()/\nselect_next_question()
@@ -61,12 +71,16 @@ stateDiagram-v2
 
 ### 1. INIT
 - Initialize examination session
-- Load question bank and topics
+- Handle greetings and casual conversation
+- Wait for topic selection
+- Load available topics
+- Stay in INIT until specific topic mentioned
 
 ### 2. TOPIC_SELECTED
-- Randomly select topic and subtopic
+- Topic has been explicitly mentioned
 - Load relevant pre-generated questions
 - Prepare evaluation criteria
+- Wait for exam start confirmation
 
 ### 3. QUESTIONING
 - Core examination state
@@ -76,7 +90,9 @@ stateDiagram-v2
 
 ### 4. EXPLAINING
 - Provide concept explanations
-- Track hint requests
+- Can remain in state if more explanation needed
+- Only exit when student confirms understanding
+- Track hint request frequency
 - Ensure no answer disclosure
 
 ### 5. PAUSED
@@ -107,8 +123,8 @@ Using OpenAI Function Calling:
         "hint_requested": bool,
         "difficulty": int,
         "topic": str,
-        "pause_reason": str,  # New field
-        "resume_time": int    # New field
+        "is_greeting": bool,    # New field
+        "topic_mentioned": bool  # New field
     }
 }
 ```

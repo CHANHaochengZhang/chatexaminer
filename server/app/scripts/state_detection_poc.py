@@ -48,9 +48,10 @@ State Machine Rules:
 1. INIT -> TOPIC_SELECTED: When student greets or shows readiness
 2. TOPIC_SELECTED -> QUESTIONING: When student indicates readiness to start exam
 3. QUESTIONING -> EXPLAINING: When student shows confusion
-4. EXPLAINING -> QUESTIONING: After providing explanation
-5. QUESTIONING -> QUESTIONING: After normal response
-6. QUESTIONING -> EVALUATING: When completed
+4. EXPLAINING -> QUESTIONING: Only after student confirms understanding
+5. EXPLAINING -> EXPLAINING: When student needs more clarification
+6. QUESTIONING -> QUESTIONING: After normal response
+7. QUESTIONING -> EVALUATING: When completed
 
 Key indicators for TOPIC_SELECTED -> QUESTIONING:
 - Student asks for questions
@@ -77,6 +78,11 @@ Confidence levels:
 4: Quite confident - Response gives clear indication
 5: Very confident - Response gives explicit indication
 
+Key indicators for EXPLAINING state:
+- Student still confused: "I still don't understand", "Could you explain more"
+- Student understands: "I understand now", "That makes sense", "Okay, I get it"
+- Student ready to answer: "Let me try to answer", "I'll answer now"
+
 Current context will be provided in each request."""
 
 
@@ -94,8 +100,10 @@ Student response: "{student_response}"
 Context: {json.dumps(context) if context else 'No additional context'}
 
 Determine the next state based on this response.
-If in TOPIC_SELECTED state and student is ready to start, transition to QUESTIONING.
-If transitioning to TOPIC_SELECTED state, you must identify the topic.
+If in EXPLAINING state, carefully check if student needs more explanation or is ready to continue.
+For INIT state:
+- Stay in INIT if just greeting or casual conversation
+- Move to TOPIC_SELECTED only when a specific topic is mentioned
 """,
         },
     ]
@@ -109,12 +117,14 @@ If transitioning to TOPIC_SELECTED state, you must identify the topic.
 
     result = json.loads(response.choices[0].message.function_call.arguments)
 
-    # If in TOPIC_SELECTED state and student is ready, transition to QUESTIONING
-    if current_state == ExamState.TOPIC_SELECTED and any(
-        keyword in student_response.lower()
-        for keyword in ["start", "begin", "question", "ready", "let's go"]
-    ):
-        result["next_state"] = ExamState.QUESTIONING.value
+    # Special handling for INIT state
+    if current_state == ExamState.INIT:
+        # Check if response is just a greeting
+        greetings = ["hi", "hello", "hey", "good morning", "good afternoon"]
+        if student_response.lower().strip() in greetings:
+            result["next_state"] = ExamState.INIT.value
+            result["reason"] = "Simple greeting, waiting for topic selection"
+            return StateResponse(**result)
 
     return StateResponse(**result)
 
