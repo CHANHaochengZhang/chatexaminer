@@ -12,17 +12,7 @@ SERVER_DIR = Path(__file__).parent.parent.parent
 sys.path.append(str(SERVER_DIR))
 
 from app.core.config import settings
-from app.models.state_machine import ExamStateMachine, StateResponse
-
-
-class ExamState(str, Enum):
-    INIT = "INIT"
-    TOPIC_SELECTED = "TOPIC_SELECTED"
-    QUESTIONING = "QUESTIONING"
-    EXPLAINING = "EXPLAINING"
-    EVALUATING = "EVALUATING"
-    COMPLETED = "COMPLETED"
-
+from app.models.state_machine import ExamState, ExamStateMachine, StateResponse
 
 functions = [
     {
@@ -55,13 +45,17 @@ functions = [
 system_prompt = """You are an AI exam state analyzer. Determine the next state based on the student's response.
 
 State Machine Rules:
-1. INIT -> TOPIC_SELECTED: When topic is selected
-2. TOPIC_SELECTED -> QUESTIONING: When exam starts
-3. QUESTIONING -> EXPLAINING: When student shows confusion or requests clarification
+1. INIT -> TOPIC_SELECTED: When student greets or shows readiness
+2. TOPIC_SELECTED -> QUESTIONING: When student indicates readiness to start exam
+3. QUESTIONING -> EXPLAINING: When student shows confusion
 4. EXPLAINING -> QUESTIONING: After providing explanation
-5. QUESTIONING -> QUESTIONING: After normal response, continue with next question
-6. QUESTIONING -> EVALUATING: When required questions are completed
-7. EVALUATING -> COMPLETED: After generating final evaluation
+5. QUESTIONING -> QUESTIONING: After normal response
+6. QUESTIONING -> EVALUATING: When completed
+
+Key indicators for TOPIC_SELECTED -> QUESTIONING:
+- Student asks for questions
+- Student indicates readiness to begin
+- Student confirms topic selection
 
 Context tracking:
 - Number of questions answered
@@ -99,6 +93,8 @@ Student response: "{student_response}"
 Context: {json.dumps(context) if context else 'No additional context'}
 
 Determine the next state based on this response.
+If in TOPIC_SELECTED state and student is ready to start, transition to QUESTIONING.
+If transitioning to TOPIC_SELECTED state, you must identify the topic.
 """,
         },
     ]
@@ -111,6 +107,14 @@ Determine the next state based on this response.
     )
 
     result = json.loads(response.choices[0].message.function_call.arguments)
+
+    # 如果在 TOPIC_SELECTED 状态且学生准备开始，转到 QUESTIONING
+    if current_state == ExamState.TOPIC_SELECTED and any(
+        keyword in student_response.lower()
+        for keyword in ["start", "begin", "question", "ready", "let's go"]
+    ):
+        result["next_state"] = ExamState.QUESTIONING.value
+
     return StateResponse(**result)
 
 

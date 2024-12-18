@@ -11,7 +11,8 @@ class ExamState(str, Enum):
     EXPLAINING = "EXPLAINING"
     EVALUATING = "EVALUATING"
     COMPLETED = "COMPLETED"
-    PREPARATION = "PREPARATION"  # 新增状态
+    PREPARATION = "PREPARATION"
+    PAUSED = "PAUSED"  # 新增状态
 
 
 class StateTransition(BaseModel):
@@ -55,10 +56,14 @@ class ExamStateMachine:
                 (ExamState.EXPLAINING, "student_confused/need_clarification"),
                 (ExamState.EVALUATING, "questions_completed"),
                 (ExamState.QUESTIONING, "good_response/select_next_question"),
+                (ExamState.PAUSED, "student_needs_break"),  # 新增转换
             ],
             ExamState.EXPLAINING: [(ExamState.QUESTIONING, "provide_explanation()")],
             ExamState.EVALUATING: [
                 (ExamState.COMPLETED, "generate_final_evaluation()")
+            ],
+            ExamState.PAUSED: [
+                (ExamState.QUESTIONING, "resume_exam"),  # 可以返回继续考试
             ],
         }
 
@@ -113,7 +118,16 @@ class ExamStateMachine:
         self.context.update(metadata)
 
         # 特殊处理
-        if self.current_state == ExamState.QUESTIONING:
+        if self.current_state == ExamState.TOPIC_SELECTED:
+            # 确保 topic 被设置
+            if "topic" not in metadata or metadata["topic"] is None:
+                raise ValueError(
+                    "Topic must be specified when transitioning to TOPIC_SELECTED state"
+                )
+            self.context["topic"] = metadata["topic"]
+            self.context["subtopic"] = metadata.get("subtopic")
+
+        elif self.current_state == ExamState.QUESTIONING:
             if "response_quality" in metadata:
                 self.context["response_quality"].append(metadata["response_quality"])
             self.context["questions_answered"] += 1
