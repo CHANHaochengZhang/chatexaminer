@@ -158,13 +158,10 @@ chatexaminer/
 ├── data/
 │   ├── exam_questions.json      # Generated and cached exam questions
 │   ├── conversation_trees/      # Generated dialogue trees
+│   ├── vectorDB_workspace/      # Vector database storage
 │   └── logs/                    # Application logs
 │       ├── rag_pipeline.log     # RAG operations logging
 │       └── state_machine.log    # State transitions logging
-├── script/
-│   ├── pdf_load.py             # PDF processing and vectorization
-│   ├── rag_pipeline_script.py  # RAG pipeline implementation
-│   └── conversation_tree_generator.py  # Dynamic question tree generation
 ├── server/
 │   ├── app/
 │   │   ├── api/
@@ -178,17 +175,19 @@ chatexaminer/
 │   │   │   └── security.py    # Authentication & authorization
 │   │   ├── models/
 │   │   │   ├── exam.py        # Exam session models
-│   │   │   └── state.py       # State machine models
+│   │   │   ├── state.py       # State machine models
+│   │   │   ├── document.py    # Document and metadata models
+│   │   │   └── question.py    # Question structure models
+│   │   ├── scripts/           # Processing scripts
+│   │   │   ├── pdf_load.py    # PDF processing and vectorization
+│   │   │   ├── rag_pipeline.py # RAG pipeline implementation
+│   │   │   └── conversation_tree_generator.py  # Question tree generation
 │   │   └── services/
 │   │       ├── assistant.py    # OpenAI function calling service
 │   │       ├── state_machine.py # Examination state management
 │   │       ├── exam_service.py # Exam business logic
 │   │       └── rag_service.py  # RAG integration service
 │   └── requirements.txt
-├── tests/                      # Test suites
-│   ├── test_rag.py
-│   ├── test_state_machine.py
-│   └── test_assistant.py
 ├── docs/
 │   ├── StateMachine.md        # State machine documentation
 │   └── API.md                 # API documentation

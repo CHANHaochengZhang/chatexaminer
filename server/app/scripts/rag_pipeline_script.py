@@ -3,11 +3,11 @@
 import json
 import logging
 import os
-import random
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+from app.models.question import ExamQuestion
 from docarray import DocList
 
 # Set OpenAI API key
@@ -55,28 +55,6 @@ DATA_DIR.mkdir(exist_ok=True)
 
 # %%
 # Define RAG pipeline
-@dataclass
-class ExamQuestion:
-    """Structure for exam questions"""
-
-    question_id: str
-    question: str
-    context: List[str]
-    difficulty: int
-    topic: str
-    subtopic: str
-    context_metadata: List[Dict[str, any]] = field(default_factory=list)
-    approved: bool = False
-    teacher_notes: Optional[str] = None
-    expected_answers: Dict[str, Dict[str, str]] = field(
-        default_factory=lambda: {
-            "correct": {"example": "", "source": ""},
-            "partial": {"example": "", "source": ""},
-            "incorrect": {"example": "", "source": ""},
-        }
-    )
-
-
 class RAGPipeline:
     def __init__(self, questions_file: Path = QUESTIONS_FILE):
         """Initialize RAG pipeline with specified questions file path"""
@@ -480,7 +458,7 @@ if __name__ == "__main__":
     rag = RAGPipeline()
 
     questions = rag.generate_questions_for_topic(
-        topic="Direct Methods for Optimal Control", num_subtopics=5
+        topic="Direct Methods for Optimal Control", num_subtopics=1
     )
 
     for q in questions:

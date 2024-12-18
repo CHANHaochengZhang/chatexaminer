@@ -21,7 +21,7 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s",
 )
 
-ROOT_DIR = Path(__file__).parent.parent
+ROOT_DIR = Path(__file__).parent.parent.parent.parent
 env_path = ROOT_DIR / ".env"
 
 print(f"Current working directory: {os.getcwd()}")
