@@ -2522,3 +2522,463 @@ In your response, ensure to reference the concepts of policy sequences and the t
     }
 }
 2024-12-12 16:59:11,010 - ERROR - JSON decode error: Invalid \escape: line 3 column 79 (char 97)
+2024-12-18 14:23:56,275 - INFO - Broad contexts for topic 'Direct Methods for Optimal Control': [{'text': 'chapter direct methods section deterministic problem solved using open loop control optimal policy sequence actions found optimization since models used control x f x u deterministic one expect optimal control intrinsically tied simple optimization therefore explore optimization based methods optimal control chapter optimization since chapter treat optimization useful discuss optimization abstract point view proceeding non linear optimization general non linear optimization problem sometimes known non linear pro gram typically take following abstract definition minimization problem non linear pro gram z rn minz e z subject h z g z zlow z zupp functions e h g goal find optimal z minimizes expression general ways solve problem however assuming problem complicated methods sequential convex programming may yield sequential convex programming good results therefore assume access way solving problem section without understanding works important note methods work well need initial guess', 'metadata': DocumentMetadata(filename='02465_Notes.pdf', page_number=187, chunk_index=0)}, {'text': 'pid control approaches control rule based methods build u x directly optimization based methods u arg min u ju x dp inspired planning methods dtu compute lecture february', 'metadata': DocumentMetadata(filename='Lecture_4-handout.pdf', page_number=15, chunk_index=0)}, {'text': 'applying dp algorithm eq directly j n xn min un rm xt n qn xn ut n rn un xt nvnxn inserting dynamics eq becomes j n xn min un rm xt n qn xn ut n rn un xn bn un tvn xn bn un rearranging j n xn min un rm xt n qn n vnan xn ut n rn bt n vnbn un ut n bt n vnan xn find optimum setting derivative equal zero j n un xn rn bt n vnbn un bt n vnan xn setting zero yields u n rn bt n vnbn bt n vnan ln xn write u n ln xn time varying linear feedback policy plugging policy j n xn xt n qn lt n rn ln bn ln tvn bn ln xn optimal policy always linear optimal cost go always quadratic dp recursion may recursively performed backward time minimization may performed analytically formally rn bt n vnbn therefore local minima global minima technical note cost go remains positive semi definite quadratic function state', 'metadata': DocumentMetadata(filename='02465_Notes.pdf', page_number=203, chunk_index=0)}, {'text': 'closed loop controller cannot trusted certain number time steps might discourage us using method directly limitations addressed produce powerful control methods see algorithm discuss lmpc controller section direct collocation section consider important class solution methods assume assume good approximation underlying dynamical model x f x u concerned planning optimal trajectory examples situations could bring satellite orbit landing space shuttle within class problems direct collocation methods simply direct direct colloca tion methods methods perhaps best method trajectory optimization benefit easily incorporating non linear constraints non typical cost functions easiest way think direct methods extension simple discrete optimization approach previous chapter applied directly dynamical model f rather discrete approximation problem formulation problem consider general optimal control problem discussed chapter recall tf refer start end time control functions x', 'metadata': DocumentMetadata(filename='02465_Notes.pdf', page_number=189, chunk_index=1)}, {'text': 'control problem example mars landing time continuous state actions x position velocity temperature fuel mass u thruster outputs dynamics smooth time dependent x f x u cost land right place use little fuel kill anyone constraints thrusters deliver limited force ship cannot go mars etc objective determine u minimize final cost really important constraints learning lecture car random py dtu compute lecture february mars', 'metadata': DocumentMetadata(filename='Lecture_3-handout.pdf', page_number=18, chunk_index=0)}, {'text': 'control problem special cases minimum time cf c cost tf tf coordinate takes particular value cf x tf x c cost x tf x minimize energy used c force distance cost tf force velocity energy dtu compute lecture february', 'metadata': DocumentMetadata(filename='Lecture_3-handout.pdf', page_number=27, chunk_index=0)}, {'text': 'reading material chapter learning objectives discretization control problem control environments exact solution linear problems pid control dtu compute lecture february', 'metadata': DocumentMetadata(filename='Lecture_4-handout.pdf', page_number=3, chunk_index=0)}, {'text': 'reading material section chapter alternative formulations dp learning objectives reformulations dp control problem simulating control problem dtu compute lecture february', 'metadata': DocumentMetadata(filename='Lecture_3-handout.pdf', page_number=3, chunk_index=0)}, {'text': 'reading material chapter learning objectives direct methods optimal control trajectory planning linear quadratic problems using optimization trajectory planning using trapezoidal collocation dtu compute lecture march', 'metadata': DocumentMetadata(filename='Lecture_5-handout.pdf', page_number=3, chunk_index=0)}, {'text': 'control two problems problem need model policy improvement arg max e r v solution estimate save q instead v arg maxa q problem acting greedily means q values estimated mc solution greedy argmax q otherwise dtu compute lecture april', 'metadata': DocumentMetadata(filename='Lecture_10-handout.pdf', page_number=22, chunk_index=0)}, {'text': 'principle optimality summary discrete stochastic decision problem states x xn controls u un wk pk wk wk xk uk k n random disturbances system evolves xk fk xk k xk wk k n time k possible states actions xk sk uk ak xk policy sequence functions n k sk ak xk cost starting x j x e gn xn n k gk xk k xk wk control problem given x determine optimal policy minimizing x arg min n j x dtu compute lecture february', 'metadata': DocumentMetadata(filename='Lecture_2-handout.pdf', page_number=13, chunk_index=0)}, {'text': 'make following observation suppose define deviations state control xk xk xk uk uk uk move term xk left hand side eq allows us rewrite system terms deviations get xk ak xk bk uk linear xk uk similarly quadratically expand arbitrary cost function obtain usual quadratic form ck xk uk x k cxx k xk c x k xk u k cuu k uk c u k uk u k cux k xk ck cn xn x ncxx n xn c x n xn ck b words considered function xk uk entire problem linear quadratic form therefore apply lqr problem obtain optimal controller lk lk controller deviation state xk computes deviation optimal control u k lk xk lk insert definition xk uk obtain optimal response state xk u k uk lk xk xk lk summarize given nominal trajectory xk uk compute response u k state using linearized model since nominal trajectory ideally close optimal path therefore compute new nominal trajectory setting x equal initial state x compute following states letting uk u k computed using eq using eq compute xk procedure repeated using new nominal trajectory', 'metadata': DocumentMetadata(filename='02465_Notes.pdf', page_number=214, chunk_index=0)}, {'text': 'control problem resources references https en wikipedia org overview alternative discretization approaches ode discrete system https en wikipedia org wiki discretization noam brown anton bakhtin adam lerer qucheng gong combining deep reinforcement learning search imperfect information games tue herlau sequential decision making freely available online dtu compute lecture february', 'metadata': DocumentMetadata(filename='Lecture_3-handout.pdf', page_number=36, chunk_index=0)}, {'text': 'optimal policy equation eq denotes average cost policy e take fixed policy initialize x allow system evolve step n expected reward consider initial state x fixed consider function allows us define optimal cost function denoted j x mini optimal cost func tion mizing eq admissible policies j x min j x function map initial state x optimal cost j x allows us define goal control reinforcement learning namely find policy achieves minimum arg min j x optimization set denote set admissible policies e k xk ak xk point make observations although especially last may obvious consider methods solving minimization problem eq minimization task eq considers fixed x therefore policy first stage arbitrary states policy minimize expression unique consequence point simple fact several points may minimize function instance x n n minimize sin x worry following minimizing policy starting x minimizing policy starting another state x might disagree action take later e follow arrive xk k could case following xk', 'metadata': DocumentMetadata(filename='02465_Notes.pdf', page_number=86, chunk_index=0)}, {'text': 'control problem cost policy state action trajectories x u satisfy constraints said admissible cost function form ju x tf cf tf x x tf mayer term tf c x u lagrange term note sometimes write ju x tf often dtu compute lecture february', 'metadata': DocumentMetadata(filename='Lecture_3-handout.pdf', page_number=26, chunk_index=0)}]
+2024-12-18 14:23:56,337 - INFO - Selected continuous contexts: [{'text': 'chapter direct methods section deterministic problem solved using open loop control optimal policy sequence actions found optimization since models used control x f x u deterministic one expect optimal control intrinsically tied simple optimization therefore explore optimization based methods optimal control chapter optimization since chapter treat optimization useful discuss optimization abstract point view proceeding non linear optimization general non linear optimization problem sometimes known non linear pro gram typically take following abstract definition minimization problem non linear pro gram z rn minz e z subject h z g z zlow z zupp functions e h g goal find optimal z minimizes expression general ways solve problem however assuming problem complicated methods sequential convex programming may yield sequential convex programming good results therefore assume access way solving problem section without understanding works important note methods work well need initial guess', 'metadata': DocumentMetadata(filename='02465_Notes.pdf', page_number=187, chunk_index=0), 'chunk_index': 0}, {'text': 'programming may yield sequential convex programming good results therefore assume access way solving problem section without understanding works important note methods work well need initial guess solution performance depends good guess instance satisfy constraints recommended compute gradient hessian e well jacobians g h', 'metadata': DocumentMetadata(filename='02465_Notes.pdf', page_number=187, chunk_index=1), 'chunk_index': 1}]
+2024-12-18 14:23:56,338 - INFO - Chunks selected: [0, 1]
+2024-12-18 14:23:58,062 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:24:04,780 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:24:04,781 - INFO - GPT Response: {
+    "correct": {
+        "example": "The primary goal in a non-linear programming minimization problem is to find an optimal solution z that minimizes the expression e(z), subject to constraints h(z) and g(z). This involves utilizing methods like sequential convex programming to efficiently solve complex problems while needing a good initial guess.",
+        "source": "Source: 02465_Notes.pdf, Page 187"
+    },
+    "partial": {
+        "example": "In a non-linear programming minimization problem, the main objective is to minimize a function e(z). It is important to consider constraints, but I am not sure what they specifically are.",
+        "source": "Source: 02465_Notes.pdf, Page 187"
+    },
+    "incorrect": {
+        "example": "The goal of a non-linear programming minimization problem is to maximize the function e(z) without considering any constraints. This means you can just pick any value for z to get the highest output.",
+        "source": "Source: 02465_Notes.pdf, Page 187"
+    }
+}
+2024-12-18 14:24:04,841 - INFO - Selected continuous contexts: [{'text': 'chapter direct methods section deterministic problem solved using open loop control optimal policy sequence actions found optimization since models used control x f x u deterministic one expect optimal control intrinsically tied simple optimization therefore explore optimization based methods optimal control chapter optimization since chapter treat optimization useful discuss optimization abstract point view proceeding non linear optimization general non linear optimization problem sometimes known non linear pro gram typically take following abstract definition minimization problem non linear pro gram z rn minz e z subject h z g z zlow z zupp functions e h g goal find optimal z minimizes expression general ways solve problem however assuming problem complicated methods sequential convex programming may yield sequential convex programming good results therefore assume access way solving problem section without understanding works important note methods work well need initial guess', 'metadata': DocumentMetadata(filename='02465_Notes.pdf', page_number=187, chunk_index=0), 'chunk_index': 0}, {'text': 'programming may yield sequential convex programming good results therefore assume access way solving problem section without understanding works important note methods work well need initial guess solution performance depends good guess instance satisfy constraints recommended compute gradient hessian e well jacobians g h', 'metadata': DocumentMetadata(filename='02465_Notes.pdf', page_number=187, chunk_index=1), 'chunk_index': 1}]
+2024-12-18 14:24:04,841 - INFO - Chunks selected: [0, 1]
+2024-12-18 14:24:05,747 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:24:10,439 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:24:10,455 - INFO - GPT Response: {
+    "correct": {
+        "example": "In direct methods for optimal control, open-loop control is used to solve deterministic problems. The optimal policy involves a sequence of actions derived from optimization techniques, where the models of control are deterministic and tied to simple optimization processes.",
+        "source": "Source: 02465_Notes.pdf, Page 187"
+    },
+    "partial": {
+        "example": "Deterministic problems in direct methods are solved using open-loop control, which involves some sort of optimization. However, the details about how the optimal policy is derived from these techniques are not fully explained.",
+        "source": "Source: 02465_Notes.pdf, Page 187"
+    },
+    "incorrect": {
+        "example": "Deterministic problems are solved using closed-loop control in direct methods for optimal control. This means that the control actions are adjusted based on real-time feedback from the system.",
+        "source": "Source: 02465_Notes.pdf, Page 187"
+    }
+}
+2024-12-18 14:24:10,498 - INFO - Selected continuous contexts: [{'text': 'chapter direct methods section deterministic problem solved using open loop control optimal policy sequence actions found optimization since models used control x f x u deterministic one expect optimal control intrinsically tied simple optimization therefore explore optimization based methods optimal control chapter optimization since chapter treat optimization useful discuss optimization abstract point view proceeding non linear optimization general non linear optimization problem sometimes known non linear pro gram typically take following abstract definition minimization problem non linear pro gram z rn minz e z subject h z g z zlow z zupp functions e h g goal find optimal z minimizes expression general ways solve problem however assuming problem complicated methods sequential convex programming may yield sequential convex programming good results therefore assume access way solving problem section without understanding works important note methods work well need initial guess', 'metadata': DocumentMetadata(filename='02465_Notes.pdf', page_number=187, chunk_index=0), 'chunk_index': 0}, {'text': 'programming may yield sequential convex programming good results therefore assume access way solving problem section without understanding works important note methods work well need initial guess solution performance depends good guess instance satisfy constraints recommended compute gradient hessian e well jacobians g h', 'metadata': DocumentMetadata(filename='02465_Notes.pdf', page_number=187, chunk_index=1), 'chunk_index': 1}]
+2024-12-18 14:24:10,498 - INFO - Chunks selected: [0, 1]
+2024-12-18 14:24:11,071 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:24:14,345 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:24:14,347 - INFO - GPT Response: {
+    "correct": {
+        "example": "The initial guess in direct methods for optimal control is crucial because it serves as the starting point for the optimization process. A good initial guess can significantly impact the efficiency and outcome of methods like sequential convex programming, as the problem can become complicated without it.",
+        "source": "Source: 02465_Notes.pdf, Page 187"
+    },
+    "partial": {
+        "example": "The initial guess is important in direct methods for optimal control because it helps in finding the optimal control policy. However, the textbook does not elaborate much on how it affects the optimization process.",
+        "source": "Source: 02465_Notes.pdf, Page 187"
+    },
+    "incorrect": {
+        "example": "The initial guess does not matter in direct methods for optimal control since the optimization will find the best solution regardless of where it starts. Therefore, any guess can work.",
+        "source": "Source: 02465_Notes.pdf, Page 187"
+    }
+}
+2024-12-18 14:24:14,388 - INFO - Selected continuous contexts: [{'text': 'chapter direct methods section deterministic problem solved using open loop control optimal policy sequence actions found optimization since models used control x f x u deterministic one expect optimal control intrinsically tied simple optimization therefore explore optimization based methods optimal control chapter optimization since chapter treat optimization useful discuss optimization abstract point view proceeding non linear optimization general non linear optimization problem sometimes known non linear pro gram typically take following abstract definition minimization problem non linear pro gram z rn minz e z subject h z g z zlow z zupp functions e h g goal find optimal z minimizes expression general ways solve problem however assuming problem complicated methods sequential convex programming may yield sequential convex programming good results therefore assume access way solving problem section without understanding works important note methods work well need initial guess', 'metadata': DocumentMetadata(filename='02465_Notes.pdf', page_number=187, chunk_index=0), 'chunk_index': 0}, {'text': 'programming may yield sequential convex programming good results therefore assume access way solving problem section without understanding works important note methods work well need initial guess solution performance depends good guess instance satisfy constraints recommended compute gradient hessian e well jacobians g h', 'metadata': DocumentMetadata(filename='02465_Notes.pdf', page_number=187, chunk_index=1), 'chunk_index': 1}]
+2024-12-18 14:24:14,388 - INFO - Chunks selected: [0, 1]
+2024-12-18 14:24:14,954 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:24:20,937 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:24:20,938 - INFO - GPT Response: {
+    "correct": {
+        "example": "Initial guesses in direct methods for optimal control are crucial because they significantly influence the convergence and efficiency of optimization algorithms. Since these methods often rely on sequential convex programming, a good initial guess can lead to finding an optimal control policy that minimizes the objective function effectively.",
+        "source": "Source: 02465_Notes.pdf, Page 187"
+    },
+    "partial": {
+        "example": "Initial guesses are important in direct methods for optimal control as they help in the optimization process. However, the text does not explain why they are particularly critical for finding the optimal control policy.",
+        "source": "Source: 02465_Notes.pdf, Page 187"
+    },
+    "incorrect": {
+        "example": "Initial guesses are not necessary for direct methods in optimal control since the methods can find the optimal solution without them. The optimization process works independently of any starting point.",
+        "source": "Source: 02465_Notes.pdf, Page 187"
+    }
+}
+2024-12-18 14:24:20,981 - INFO - Selected continuous contexts: [{'text': 'chapter direct methods section deterministic problem solved using open loop control optimal policy sequence actions found optimization since models used control x f x u deterministic one expect optimal control intrinsically tied simple optimization therefore explore optimization based methods optimal control chapter optimization since chapter treat optimization useful discuss optimization abstract point view proceeding non linear optimization general non linear optimization problem sometimes known non linear pro gram typically take following abstract definition minimization problem non linear pro gram z rn minz e z subject h z g z zlow z zupp functions e h g goal find optimal z minimizes expression general ways solve problem however assuming problem complicated methods sequential convex programming may yield sequential convex programming good results therefore assume access way solving problem section without understanding works important note methods work well need initial guess', 'metadata': DocumentMetadata(filename='02465_Notes.pdf', page_number=187, chunk_index=0), 'chunk_index': 0}, {'text': 'programming may yield sequential convex programming good results therefore assume access way solving problem section without understanding works important note methods work well need initial guess solution performance depends good guess instance satisfy constraints recommended compute gradient hessian e well jacobians g h', 'metadata': DocumentMetadata(filename='02465_Notes.pdf', page_number=187, chunk_index=1), 'chunk_index': 1}]
+2024-12-18 14:24:20,981 - INFO - Chunks selected: [0, 1]
+2024-12-18 14:24:21,819 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:24:26,177 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:24:26,191 - INFO - GPT Response: {
+    "correct": {
+        "example": "The initial guess plays a crucial role in direct methods for optimal control as it serves as a starting point for the optimization process. A good initial guess can significantly enhance the convergence of methods like sequential convex programming, ensuring that the optimization reaches an effective solution to minimize the given expression. Without a suitable initial guess, the optimization may not perform well.",
+        "source": "Source: 02465_Notes.pdf, Page 187"
+    },
+    "partial": {
+        "example": "An initial guess is important in direct methods because it helps in finding the optimal control policy. It can affect how well the optimization techniques work, but the specific methods like sequential convex programming are not fully explained in relation to the initial guess.",
+        "source": "Source: 02465_Notes.pdf, Page 187"
+    },
+    "incorrect": {
+        "example": "The initial guess in direct methods is not really important since the optimization methods can find the solution regardless of where they start. As a result, any random guess should work fine.",
+        "source": "Source: 02465_Notes.pdf, Page 187"
+    }
+}
+2024-12-18 14:24:26,220 - INFO - Selected continuous contexts: [{'text': 'pid control approaches control rule based methods build u x directly optimization based methods u arg min u ju x dp inspired planning methods dtu compute lecture february', 'metadata': DocumentMetadata(filename='Lecture_4-handout.pdf', page_number=15, chunk_index=0), 'chunk_index': 0}]
+2024-12-18 14:24:26,220 - INFO - Chunks selected: [0]
+2024-12-18 14:24:26,922 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:24:31,414 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:24:31,419 - INFO - GPT Response: {
+    "correct": {
+        "example": "The expression 'u arg min u ju x dp' represents the optimal control input 'u' that minimizes the cost function 'ju' over a given trajectory 'x'. This optimization approach is fundamental in deriving control rules that lead to optimal performance in dynamic systems.",
+        "source": "Source: Lecture_4-handout.pdf, Page 15"
+    },
+    "partial": {
+        "example": "The term 'u arg min' indicates finding the best control input 'u' for a certain problem. It involves minimizing some cost, but I don't fully understand what 'ju' and 'x dp' exactly represent in this context.",
+        "source": "Source: Lecture_4-handout.pdf, Page 15"
+    },
+    "incorrect": {
+        "example": "The phrase 'u arg min' means to simply choose any control input 'u' without needing to minimize anything. It's just a way to state that we can pick 'u' freely without constraints.",
+        "source": "Source: Lecture_4-handout.pdf, Page 15"
+    }
+}
+2024-12-18 14:24:31,449 - INFO - Selected continuous contexts: [{'text': 'pid control approaches control rule based methods build u x directly optimization based methods u arg min u ju x dp inspired planning methods dtu compute lecture february', 'metadata': DocumentMetadata(filename='Lecture_4-handout.pdf', page_number=15, chunk_index=0), 'chunk_index': 0}]
+2024-12-18 14:24:31,449 - INFO - Chunks selected: [0]
+2024-12-18 14:24:31,964 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:24:36,487 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:24:36,490 - INFO - GPT Response: {
+    "correct": {
+        "example": "In optimization-based methods for control, the symbol 'u' represents the control input that minimizes a given cost function. Specifically, it is determined through the optimization process where 'u' is the argument that minimizes the cost associated with the system's performance, as discussed in the optimization framework on Page 15.",
+        "source": "Source: Lecture_4-handout.pdf, Page 15"
+    },
+    "partial": {
+        "example": "'u' is related to the control input in optimization-based methods, but I think it might also involve some form of planning. It is mentioned that 'u' is computed to minimize a cost, but I'm not sure about the specifics of the cost function.",
+        "source": "Source: Lecture_4-handout.pdf, Page 15"
+    },
+    "incorrect": {
+        "example": "'u' refers to the output of the control system and is used to directly manipulate the system's parameters. It does not involve any optimization process but is rather a fixed input for the PID controller.",
+        "source": "Source: Lecture_4-handout.pdf, Page 15"
+    }
+}
+2024-12-18 14:24:36,530 - INFO - Selected continuous contexts: [{'text': 'pid control approaches control rule based methods build u x directly optimization based methods u arg min u ju x dp inspired planning methods dtu compute lecture february', 'metadata': DocumentMetadata(filename='Lecture_4-handout.pdf', page_number=15, chunk_index=0), 'chunk_index': 0}]
+2024-12-18 14:24:36,530 - INFO - Chunks selected: [0]
+2024-12-18 14:24:37,261 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:24:41,819 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:24:41,820 - INFO - GPT Response: {
+    "correct": {
+        "example": "The expression 'u arg min u ju x' represents the solution to an optimization problem in optimal control, where we seek to minimize a cost function 'ju x' with respect to the control variable 'u'. This method directly relates to how we can derive control actions that optimize performance criteria over a given trajectory. Such approaches are essential in direct methods for optimal control as discussed in Lecture 4.",
+        "source": "Source: Lecture_4-handout.pdf, Page 15"
+    },
+    "partial": {
+        "example": "The term 'u arg min u ju x' indicates a minimization process in control systems, but I think it mostly refers to finding the best 'u' that makes 'ju x' smallest. While this is part of optimization methods, I’m not sure how it ties into direct methods specifically.",
+        "source": "Source: Lecture_4-handout.pdf, Page 15"
+    },
+    "incorrect": {
+        "example": "'u arg min u ju x' is about setting 'u' to a fixed value that doesn't change as the system runs. It seems like a way to simplify control methods instead of optimizing them, which doesn't fit with the concepts in optimal control discussed in the lecture.",
+        "source": "Source: Lecture_4-handout.pdf, Page 15"
+    }
+}
+2024-12-18 14:24:41,850 - INFO - Selected continuous contexts: [{'text': 'pid control approaches control rule based methods build u x directly optimization based methods u arg min u ju x dp inspired planning methods dtu compute lecture february', 'metadata': DocumentMetadata(filename='Lecture_4-handout.pdf', page_number=15, chunk_index=0), 'chunk_index': 0}]
+2024-12-18 14:24:41,851 - INFO - Chunks selected: [0]
+2024-12-18 14:24:42,441 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:24:47,371 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:24:47,381 - INFO - GPT Response: {
+    "correct": {
+        "example": "In the context of direct methods for optimal control, 'u arg min u ju x' represents the control input 'u' that minimizes the cost function 'J(u, x)'. This optimization is crucial for determining the best control strategy that leads to the desired system behavior.",
+        "source": "Source: Lecture_4-handout.pdf, Page 15"
+    },
+    "partial": {
+        "example": "'u arg min u ju x' seems to refer to finding a control input 'u' that minimizes something related to the system's performance. However, I'm not entirely sure what 'J' represents in this context.",
+        "source": "Source: Lecture_4-handout.pdf, Page 15"
+    },
+    "incorrect": {
+        "example": "'u arg min u ju x' is just a formula for PID control and doesn't really relate to optimization. It seems like it’s just a way to calculate the control input without any specific criteria for minimization.",
+        "source": "Source: Lecture_4-handout.pdf, Page 15"
+    }
+}
+2024-12-18 14:24:47,420 - INFO - Selected continuous contexts: [{'text': 'pid control approaches control rule based methods build u x directly optimization based methods u arg min u ju x dp inspired planning methods dtu compute lecture february', 'metadata': DocumentMetadata(filename='Lecture_4-handout.pdf', page_number=15, chunk_index=0), 'chunk_index': 0}]
+2024-12-18 14:24:47,421 - INFO - Chunks selected: [0]
+2024-12-18 14:24:48,073 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:24:52,215 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:24:52,216 - INFO - GPT Response: {
+    "correct": {
+        "example": "'u arg min u ju x' represents the optimal control input 'u' that minimizes the cost function 'J(u, x)', where 'x' is the state of the system. This formulation is crucial in optimization methods as it directly links the control input to the performance of the system, allowing for efficient computation of optimal solutions.",
+        "source": "Source: Lecture_4-handout.pdf, Page 15"
+    },
+    "partial": {
+        "example": "'u arg min u ju x' is about finding the best control input 'u' for a system. It relates to optimizing the system's performance, but I’m not sure how 'x' fits into this optimization.",
+        "source": "Source: Lecture_4-handout.pdf, Page 15"
+    },
+    "incorrect": {
+        "example": "'u arg min u ju x' means that we just need to find any control input 'u' without considering the system's state 'x'. It seems like it's just a random process of choosing 'u' to make things work.",
+        "source": "Source: Lecture_4-handout.pdf, Page 15"
+    }
+}
+2024-12-18 14:24:52,305 - INFO - Selected continuous contexts: [{'text': 'applying dp algorithm eq directly j n xn min un rm xt n qn xn ut n rn un xt nvnxn inserting dynamics eq becomes j n xn min un rm xt n qn xn ut n rn un xn bn un tvn xn bn un rearranging j n xn min un rm xt n qn n vnan xn ut n rn bt n vnbn un ut n bt n vnan xn find optimum setting derivative equal zero j n un xn rn bt n vnbn un bt n vnan xn setting zero yields u n rn bt n vnbn bt n vnan ln xn write u n ln xn time varying linear feedback policy plugging policy j n xn xt n qn lt n rn ln bn ln tvn bn ln xn optimal policy always linear optimal cost go always quadratic dp recursion may recursively performed backward time minimization may performed analytically formally rn bt n vnbn therefore local minima global minima technical note cost go remains positive semi definite quadratic function state', 'metadata': DocumentMetadata(filename='02465_Notes.pdf', page_number=203, chunk_index=0), 'chunk_index': 0}]
+2024-12-18 14:24:52,305 - INFO - Chunks selected: [0]
+2024-12-18 14:24:52,861 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:24:58,154 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:24:58,165 - INFO - GPT Response: {
+    "correct": {
+        "example": "Setting the derivative equal to zero helps find the optimal control input that minimizes the cost function in optimal control problems. This approach is grounded in the idea that at the optimum, the change in the cost with respect to the control input is zero, indicating that we've reached a local minimum, which can be confirmed as a global minimum due to the quadratic nature of the cost function.",
+        "source": "Source: 02465_Notes.pdf, Page 203"
+    },
+    "partial": {
+        "example": "By setting the derivative to zero, we can find the control input that minimizes the cost function. This is important in optimal control, but I think it only works for local minima and not necessarily global ones.",
+        "source": "Source: 02465_Notes.pdf, Page 203"
+    },
+    "incorrect": {
+        "example": "Setting the derivative equal to zero is just a step that makes the calculations easier, and it doesn't really help in finding the optimal control. The control input can be any value as long as it fits the equations provided.",
+        "source": "Source: 02465_Notes.pdf, Page 203"
+    }
+}
+2024-12-18 14:24:58,282 - INFO - Selected continuous contexts: [{'text': 'applying dp algorithm eq directly j n xn min un rm xt n qn xn ut n rn un xt nvnxn inserting dynamics eq becomes j n xn min un rm xt n qn xn ut n rn un xn bn un tvn xn bn un rearranging j n xn min un rm xt n qn n vnan xn ut n rn bt n vnbn un ut n bt n vnan xn find optimum setting derivative equal zero j n un xn rn bt n vnbn un bt n vnan xn setting zero yields u n rn bt n vnbn bt n vnan ln xn write u n ln xn time varying linear feedback policy plugging policy j n xn xt n qn lt n rn ln bn ln tvn bn ln xn optimal policy always linear optimal cost go always quadratic dp recursion may recursively performed backward time minimization may performed analytically formally rn bt n vnbn therefore local minima global minima technical note cost go remains positive semi definite quadratic function state', 'metadata': DocumentMetadata(filename='02465_Notes.pdf', page_number=203, chunk_index=0), 'chunk_index': 0}]
+2024-12-18 14:24:58,283 - INFO - Chunks selected: [0]
+2024-12-18 14:24:59,041 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:25:04,169 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:25:04,173 - INFO - GPT Response: {
+    "correct": {
+        "example": "Setting the derivative of \( j_n \) with respect to \( u_n \) equal to zero determines the optimal control input that minimizes the cost function. This reflects the necessary condition for optimality in dynamic programming, ensuring that the feedback policy derived is linear and leads to a quadratic cost function. Furthermore, the solution guarantees that local minima are also global minima in this context.",
+        "source": "Source: 02465_Notes.pdf, Page 203"
+    },
+    "partial": {
+        "example": "Setting the derivative of \( j_n \) with respect to \( u_n \) to zero helps in finding the minimum of the cost function, but it may not always guarantee the global minimum. The process indicates a local optimum, which is important for determining the feedback policy.",
+        "source": "Source: 02465_Notes.pdf, Page 203"
+    },
+    "incorrect": {
+        "example": "Setting the derivative of \( j_n \) with respect to \( u_n \) to zero is simply a way to solve for \( u_n \), but it does not actually relate to the optimal control problem. It is more about finding values rather than determining costs in dynamic programming.",
+        "source": "Source: 02465_Notes.pdf, Page 203"
+    }
+}
+2024-12-18 14:25:04,174 - ERROR - JSON decode error: Invalid \escape: line 3 column 47 (char 65)
+2024-12-18 14:25:04,297 - INFO - Selected continuous contexts: [{'text': 'applying dp algorithm eq directly j n xn min un rm xt n qn xn ut n rn un xt nvnxn inserting dynamics eq becomes j n xn min un rm xt n qn xn ut n rn un xn bn un tvn xn bn un rearranging j n xn min un rm xt n qn n vnan xn ut n rn bt n vnbn un ut n bt n vnan xn find optimum setting derivative equal zero j n un xn rn bt n vnbn un bt n vnan xn setting zero yields u n rn bt n vnbn bt n vnan ln xn write u n ln xn time varying linear feedback policy plugging policy j n xn xt n qn lt n rn ln bn ln tvn bn ln xn optimal policy always linear optimal cost go always quadratic dp recursion may recursively performed backward time minimization may performed analytically formally rn bt n vnbn therefore local minima global minima technical note cost go remains positive semi definite quadratic function state', 'metadata': DocumentMetadata(filename='02465_Notes.pdf', page_number=203, chunk_index=0), 'chunk_index': 0}]
+2024-12-18 14:25:04,297 - INFO - Chunks selected: [0]
+2024-12-18 14:25:04,843 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:25:09,275 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:25:09,276 - INFO - GPT Response: {
+    "correct": {
+        "example": "Setting the derivative of \( j_n \) equal to zero is fundamental in optimal control as it helps find the optimal control policy by identifying the conditions for which the cost function \( j_n \) is minimized. This process leads to determining linear feedback policies, which are essential for achieving optimal performance in a time-varying system. By ensuring that the cost-to-go remains positive semi-definite, we can confirm that we are approaching a global minimum.",
+        "source": "Source: 02465_Notes.pdf, Page 203"
+    },
+    "partial": {
+        "example": "By setting the derivative of \( j_n \) to zero, we find the optimal control inputs that minimize the cost function. This approach shows that the optimal policy can be expressed as a linear function, but it doesn't explain how this relates to the quadratic nature of the cost function or its implications for local versus global minima.",
+        "source": "Source: 02465_Notes.pdf, Page 203"
+    },
+    "incorrect": {
+        "example": "Setting the derivative of \( j_n \) equal to zero is irrelevant because the cost function can just be minimized directly without considering derivatives. The optimal control can be determined by looking at the initial conditions alone, rather than analyzing the feedback policy.",
+        "source": "Source: 02465_Notes.pdf, Page 203"
+    }
+}
+2024-12-18 14:25:09,276 - ERROR - JSON decode error: Invalid \escape: line 3 column 47 (char 65)
+2024-12-18 14:25:09,367 - INFO - Selected continuous contexts: [{'text': 'applying dp algorithm eq directly j n xn min un rm xt n qn xn ut n rn un xt nvnxn inserting dynamics eq becomes j n xn min un rm xt n qn xn ut n rn un xn bn un tvn xn bn un rearranging j n xn min un rm xt n qn n vnan xn ut n rn bt n vnbn un ut n bt n vnan xn find optimum setting derivative equal zero j n un xn rn bt n vnbn un bt n vnan xn setting zero yields u n rn bt n vnbn bt n vnan ln xn write u n ln xn time varying linear feedback policy plugging policy j n xn xt n qn lt n rn ln bn ln tvn bn ln xn optimal policy always linear optimal cost go always quadratic dp recursion may recursively performed backward time minimization may performed analytically formally rn bt n vnbn therefore local minima global minima technical note cost go remains positive semi definite quadratic function state', 'metadata': DocumentMetadata(filename='02465_Notes.pdf', page_number=203, chunk_index=0), 'chunk_index': 0}]
+2024-12-18 14:25:09,368 - INFO - Chunks selected: [0]
+2024-12-18 14:25:10,071 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:25:14,094 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:25:14,096 - INFO - GPT Response: {
+    "correct": {
+        "example": "Setting the derivative of \( j_n \) equal to zero yields \( u_n \) as the optimal control input that minimizes the cost function. This is derived from the dynamics of the system and illustrates that the optimal policy is linear, ensuring that the cost-to-go remains a positive semi-definite quadratic function. Thus, it confirms that both local and global minima can be achieved through this approach.",
+        "source": "Source: 02465_Notes.pdf, Page 203"
+    },
+    "partial": {
+        "example": "By setting the derivative of \( j_n \) to zero, we can find the optimal control \( u_n \). This process involves rearranging the cost function but does not address whether the resulting policy is linear or how it relates to the cost-to-go.",
+        "source": "Source: 02465_Notes.pdf, Page 203"
+    },
+    "incorrect": {
+        "example": "Setting the derivative of \( j_n \) to zero means that \( u_n \) will always be zero, which simplifies the problem. This wrongly assumes that the optimal control does not depend on other factors like the state variables or the cost function's quadratic nature.",
+        "source": "Source: 02465_Notes.pdf, Page 203"
+    }
+}
+2024-12-18 14:25:14,096 - ERROR - JSON decode error: Invalid \escape: line 3 column 47 (char 65)
+2024-12-18 14:25:14,192 - INFO - Selected continuous contexts: [{'text': 'applying dp algorithm eq directly j n xn min un rm xt n qn xn ut n rn un xt nvnxn inserting dynamics eq becomes j n xn min un rm xt n qn xn ut n rn un xn bn un tvn xn bn un rearranging j n xn min un rm xt n qn n vnan xn ut n rn bt n vnbn un ut n bt n vnan xn find optimum setting derivative equal zero j n un xn rn bt n vnbn un bt n vnan xn setting zero yields u n rn bt n vnbn bt n vnan ln xn write u n ln xn time varying linear feedback policy plugging policy j n xn xt n qn lt n rn ln bn ln tvn bn ln xn optimal policy always linear optimal cost go always quadratic dp recursion may recursively performed backward time minimization may performed analytically formally rn bt n vnbn therefore local minima global minima technical note cost go remains positive semi definite quadratic function state', 'metadata': DocumentMetadata(filename='02465_Notes.pdf', page_number=203, chunk_index=0), 'chunk_index': 0}]
+2024-12-18 14:25:14,192 - INFO - Chunks selected: [0]
+2024-12-18 14:25:14,924 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:25:20,797 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:25:20,798 - INFO - GPT Response: {
+    "correct": {
+        "example": "The symbol \( j_n \) represents the cost-to-go function in optimal control, which is dependent on the state \( x_n \), the control input \( u_n \), and includes various parameters such as the running cost \( r_n \) and the terminal cost \( q_n \). It quantifies the minimum cost from state \( x_n \) to the final state, allowing for the evaluation of optimal control policies. This is crucial in dynamic programming as it provides a recursive relationship for determining the optimal control sequence.",
+        "source": "Source: 02465_Notes.pdf, Page 203"
+    },
+    "partial": {
+        "example": "The symbol \( j_n \) refers to a function used in optimal control that involves state and control inputs. It helps in determining costs but does not fully explain how it is derived from the dynamics or how it connects to policies.",
+        "source": "Source: 02465_Notes.pdf, Page 203"
+    },
+    "incorrect": {
+        "example": "I think \( j_n \) is just a variable that represents the input control for the system. It doesn't really relate to costs or anything like that, and it seems more about inputs rather than the overall control strategy.",
+        "source": "Source: 02465_Notes.pdf, Page 203"
+    }
+}
+2024-12-18 14:25:20,798 - ERROR - JSON decode error: Invalid \escape: line 3 column 32 (char 50)
+2024-12-18 14:25:20,848 - INFO - Selected continuous contexts: [{'text': 'transcription methods choice made optimizing action values known shoot ing optimizing state action values fact known colloca shooting tion fundamental choice numerical algorithm optimizing discretized collocation problem later method collocation produces numerically stable algorithms therefore preferred variety contexts also easier implement since modern optimization software quadratic programs allows us specify cost functions constraints per variable basis eq rather requiring us figure matrices q q eq easy implement comments optimizing discrete problem disadvantage optimizing discrete control problem eq n large optimization may numerically costly point becoming unfeasible furthermore although solve discrete problem exactly actual environment diverge solution due discretization error closed loop controller cannot trusted certain number time steps might discourage us using method directly limitations addressed produce powerful control methods see algorithm discuss lmpc controller', 'metadata': DocumentMetadata(filename='02465_Notes.pdf', page_number=189, chunk_index=0), 'chunk_index': 0}, {'text': 'closed loop controller cannot trusted certain number time steps might discourage us using method directly limitations addressed produce powerful control methods see algorithm discuss lmpc controller section direct collocation section consider important class solution methods assume assume good approximation underlying dynamical model x f x u concerned planning optimal trajectory examples situations could bring satellite orbit landing space shuttle within class problems direct collocation methods simply direct direct colloca tion methods methods perhaps best method trajectory optimization benefit easily incorporating non linear constraints non typical cost functions easiest way think direct methods extension simple discrete optimization approach previous chapter applied directly dynamical model f rather discrete approximation problem formulation problem consider general optimal control problem discussed chapter recall tf refer start end time control functions x', 'metadata': DocumentMetadata(filename='02465_Notes.pdf', page_number=189, chunk_index=1), 'chunk_index': 1}]
+2024-12-18 14:25:20,848 - INFO - Chunks selected: [0, 1]
+2024-12-18 14:25:21,429 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:25:25,720 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:25:25,721 - INFO - GPT Response: {
+    "correct": {
+        "example": "One disadvantage of optimizing discrete control problems using direct methods is that they often rely on a good approximation of the underlying dynamical model. If this approximation is inaccurate, it can lead to suboptimal trajectories. Additionally, while direct collocation methods allow for the incorporation of non-linear constraints, they may struggle with complex dynamics and require careful formulation to achieve reliable results.",
+        "source": "Source: 02465_Notes.pdf, Page 189"
+    },
+    "partial": {
+        "example": "A disadvantage of using direct methods for discrete control problems is that they assume a good approximation of the dynamical model. If the model is not accurate, the results may not be optimal, but direct methods can still be beneficial for certain types of problems.",
+        "source": "Source: 02465_Notes.pdf, Page 189"
+    },
+    "incorrect": {
+        "example": "Direct methods for optimizing control problems are always reliable and do not have any disadvantages. They can handle any type of dynamic model and produce optimal solutions without needing to consider the underlying model's accuracy.",
+        "source": "Source: 02465_Notes.pdf, Page 189"
+    }
+}
+2024-12-18 14:25:25,762 - INFO - Selected continuous contexts: [{'text': 'transcription methods choice made optimizing action values known shoot ing optimizing state action values fact known colloca shooting tion fundamental choice numerical algorithm optimizing discretized collocation problem later method collocation produces numerically stable algorithms therefore preferred variety contexts also easier implement since modern optimization software quadratic programs allows us specify cost functions constraints per variable basis eq rather requiring us figure matrices q q eq easy implement comments optimizing discrete problem disadvantage optimizing discrete control problem eq n large optimization may numerically costly point becoming unfeasible furthermore although solve discrete problem exactly actual environment diverge solution due discretization error closed loop controller cannot trusted certain number time steps might discourage us using method directly limitations addressed produce powerful control methods see algorithm discuss lmpc controller', 'metadata': DocumentMetadata(filename='02465_Notes.pdf', page_number=189, chunk_index=0), 'chunk_index': 0}, {'text': 'closed loop controller cannot trusted certain number time steps might discourage us using method directly limitations addressed produce powerful control methods see algorithm discuss lmpc controller section direct collocation section consider important class solution methods assume assume good approximation underlying dynamical model x f x u concerned planning optimal trajectory examples situations could bring satellite orbit landing space shuttle within class problems direct collocation methods simply direct direct colloca tion methods methods perhaps best method trajectory optimization benefit easily incorporating non linear constraints non typical cost functions easiest way think direct methods extension simple discrete optimization approach previous chapter applied directly dynamical model f rather discrete approximation problem formulation problem consider general optimal control problem discussed chapter recall tf refer start end time control functions x', 'metadata': DocumentMetadata(filename='02465_Notes.pdf', page_number=189, chunk_index=1), 'chunk_index': 1}]
+2024-12-18 14:25:25,762 - INFO - Chunks selected: [0, 1]
+2024-12-18 14:25:26,372 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:25:30,204 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:25:30,205 - INFO - GPT Response: {
+    "correct": {
+        "example": "Direct collocation methods in trajectory optimization offer several advantages, including the ability to easily incorporate nonlinear constraints and atypical cost functions. These methods provide a powerful framework for solving complex optimal control problems, such as planning trajectories for satellite orbits and landing space shuttles, by treating the optimization as a discrete problem that directly utilizes the underlying dynamical model.",
+        "source": "Source: 02465_Notes.pdf, Page 189"
+    },
+    "partial": {
+        "example": "One advantage of direct collocation methods is that they can handle nonlinear constraints, which is important in trajectory optimization. They allow for a straightforward optimization approach, but I think they might not always work well with all types of dynamical models.",
+        "source": "Source: 02465_Notes.pdf, Page 189"
+    },
+    "incorrect": {
+        "example": "Direct collocation methods are used because they are the only way to optimize trajectories for any type of dynamical system. They do not need to consider constraints or cost functions, making them very simple to apply.",
+        "source": "Source: 02465_Notes.pdf, Page 189"
+    }
+}
+2024-12-18 14:25:30,252 - INFO - Selected continuous contexts: [{'text': 'transcription methods choice made optimizing action values known shoot ing optimizing state action values fact known colloca shooting tion fundamental choice numerical algorithm optimizing discretized collocation problem later method collocation produces numerically stable algorithms therefore preferred variety contexts also easier implement since modern optimization software quadratic programs allows us specify cost functions constraints per variable basis eq rather requiring us figure matrices q q eq easy implement comments optimizing discrete problem disadvantage optimizing discrete control problem eq n large optimization may numerically costly point becoming unfeasible furthermore although solve discrete problem exactly actual environment diverge solution due discretization error closed loop controller cannot trusted certain number time steps might discourage us using method directly limitations addressed produce powerful control methods see algorithm discuss lmpc controller', 'metadata': DocumentMetadata(filename='02465_Notes.pdf', page_number=189, chunk_index=0), 'chunk_index': 0}, {'text': 'closed loop controller cannot trusted certain number time steps might discourage us using method directly limitations addressed produce powerful control methods see algorithm discuss lmpc controller section direct collocation section consider important class solution methods assume assume good approximation underlying dynamical model x f x u concerned planning optimal trajectory examples situations could bring satellite orbit landing space shuttle within class problems direct collocation methods simply direct direct colloca tion methods methods perhaps best method trajectory optimization benefit easily incorporating non linear constraints non typical cost functions easiest way think direct methods extension simple discrete optimization approach previous chapter applied directly dynamical model f rather discrete approximation problem formulation problem consider general optimal control problem discussed chapter recall tf refer start end time control functions x', 'metadata': DocumentMetadata(filename='02465_Notes.pdf', page_number=189, chunk_index=1), 'chunk_index': 1}]
+2024-12-18 14:25:30,252 - INFO - Chunks selected: [0, 1]
+2024-12-18 14:25:30,903 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:25:35,284 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:25:35,286 - INFO - GPT Response: {
+    "correct": {
+        "example": "A limitation of closed loop controllers in direct methods for optimal control is their reliance on a good approximation of the underlying dynamical model, which can lead to inaccuracies if the model does not reflect the true system dynamics. This is particularly critical in scenarios like satellite orbit or landing a space shuttle, where precise control is necessary. Additionally, closed loop controllers might discourage the use of direct methods due to their sensitivity to time steps.",
+        "source": "Source: 02465_Notes.pdf, Page 189"
+    },
+    "partial": {
+        "example": "Closed loop controllers in direct methods can be limited because they depend on an accurate model of the system dynamics. If the model is not accurate, it might lead to poor control performance, especially in complex scenarios like space missions.",
+        "source": "Source: 02465_Notes.pdf, Page 189"
+    },
+    "incorrect": {
+        "example": "Closed loop controllers are not useful for optimal control because they only work in simple systems and do not consider dynamics. Therefore, they are not applicable in problems like satellite orbit or landing a space shuttle.",
+        "source": "Source: 02465_Notes.pdf, Page 189"
+    }
+}
+2024-12-18 14:25:35,325 - INFO - Selected continuous contexts: [{'text': 'transcription methods choice made optimizing action values known shoot ing optimizing state action values fact known colloca shooting tion fundamental choice numerical algorithm optimizing discretized collocation problem later method collocation produces numerically stable algorithms therefore preferred variety contexts also easier implement since modern optimization software quadratic programs allows us specify cost functions constraints per variable basis eq rather requiring us figure matrices q q eq easy implement comments optimizing discrete problem disadvantage optimizing discrete control problem eq n large optimization may numerically costly point becoming unfeasible furthermore although solve discrete problem exactly actual environment diverge solution due discretization error closed loop controller cannot trusted certain number time steps might discourage us using method directly limitations addressed produce powerful control methods see algorithm discuss lmpc controller', 'metadata': DocumentMetadata(filename='02465_Notes.pdf', page_number=189, chunk_index=0), 'chunk_index': 0}, {'text': 'closed loop controller cannot trusted certain number time steps might discourage us using method directly limitations addressed produce powerful control methods see algorithm discuss lmpc controller section direct collocation section consider important class solution methods assume assume good approximation underlying dynamical model x f x u concerned planning optimal trajectory examples situations could bring satellite orbit landing space shuttle within class problems direct collocation methods simply direct direct colloca tion methods methods perhaps best method trajectory optimization benefit easily incorporating non linear constraints non typical cost functions easiest way think direct methods extension simple discrete optimization approach previous chapter applied directly dynamical model f rather discrete approximation problem formulation problem consider general optimal control problem discussed chapter recall tf refer start end time control functions x', 'metadata': DocumentMetadata(filename='02465_Notes.pdf', page_number=189, chunk_index=1), 'chunk_index': 1}]
+2024-12-18 14:25:35,325 - INFO - Chunks selected: [0, 1]
+2024-12-18 14:25:36,035 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:25:40,027 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:25:40,030 - INFO - GPT Response: {
+    "correct": {
+        "example": "The primary advantage of using direct collocation methods in trajectory optimization is their ability to easily incorporate nonlinear constraints and atypical cost functions. This makes them a powerful approach for solving optimal control problems like satellite orbit trajectories and space shuttle landings, as they provide a good approximation of the underlying dynamical model.",
+        "source": "Source: 02465_Notes.pdf, Page 189"
+    },
+    "partial": {
+        "example": "Direct collocation methods are beneficial in trajectory optimization because they can handle complex constraints. They simplify the problem formulation by applying discrete optimization techniques to the dynamical model.",
+        "source": "Source: 02465_Notes.pdf, Page 189"
+    },
+    "incorrect": {
+        "example": "The primary advantage of direct collocation methods is that they do not require any knowledge of the dynamical model and can solve any optimal control problem without constraints. This makes them the easiest way to optimize trajectories in any situation.",
+        "source": "Source: 02465_Notes.pdf, Page 189"
+    }
+}
+2024-12-18 14:25:40,075 - INFO - Selected continuous contexts: [{'text': 'transcription methods choice made optimizing action values known shoot ing optimizing state action values fact known colloca shooting tion fundamental choice numerical algorithm optimizing discretized collocation problem later method collocation produces numerically stable algorithms therefore preferred variety contexts also easier implement since modern optimization software quadratic programs allows us specify cost functions constraints per variable basis eq rather requiring us figure matrices q q eq easy implement comments optimizing discrete problem disadvantage optimizing discrete control problem eq n large optimization may numerically costly point becoming unfeasible furthermore although solve discrete problem exactly actual environment diverge solution due discretization error closed loop controller cannot trusted certain number time steps might discourage us using method directly limitations addressed produce powerful control methods see algorithm discuss lmpc controller', 'metadata': DocumentMetadata(filename='02465_Notes.pdf', page_number=189, chunk_index=0), 'chunk_index': 0}, {'text': 'closed loop controller cannot trusted certain number time steps might discourage us using method directly limitations addressed produce powerful control methods see algorithm discuss lmpc controller section direct collocation section consider important class solution methods assume assume good approximation underlying dynamical model x f x u concerned planning optimal trajectory examples situations could bring satellite orbit landing space shuttle within class problems direct collocation methods simply direct direct colloca tion methods methods perhaps best method trajectory optimization benefit easily incorporating non linear constraints non typical cost functions easiest way think direct methods extension simple discrete optimization approach previous chapter applied directly dynamical model f rather discrete approximation problem formulation problem consider general optimal control problem discussed chapter recall tf refer start end time control functions x', 'metadata': DocumentMetadata(filename='02465_Notes.pdf', page_number=189, chunk_index=1), 'chunk_index': 1}]
+2024-12-18 14:25:40,075 - INFO - Chunks selected: [0, 1]
+2024-12-18 14:25:40,623 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:25:45,169 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:25:45,180 - INFO - GPT Response: {
+    "correct": {
+        "example": "A key advantage of using direct collocation methods in trajectory optimization is their ability to easily incorporate non-linear constraints and atypical cost functions. This method treats the optimal control problem as a discrete optimization problem, allowing for a straightforward application of the underlying dynamical model, which is crucial in complex scenarios like satellite orbit planning and space shuttle landings.",
+        "source": "Source: 02465_Notes.pdf, Page 189"
+    },
+    "partial": {
+        "example": "Direct collocation methods are beneficial in trajectory optimization as they can handle constraints well. They involve approximating the problem using a discrete optimization approach, but they may not always efficiently incorporate the underlying dynamics of the system.",
+        "source": "Source: 02465_Notes.pdf, Page 189"
+    },
+    "incorrect": {
+        "example": "Direct collocation methods are not useful for trajectory optimization because they only work with linear systems and cannot incorporate complex constraints. They also rely heavily on the accuracy of the closed loop controllers, which are often unreliable.",
+        "source": "Source: 02465_Notes.pdf, Page 189"
+    }
+}
+2024-12-18 14:25:45,217 - INFO - Selected continuous contexts: [{'text': 'environment robot actions learning state dynamics internal state interpreter observation cost time really important sequential non data must optimize behavior dynamical systems using information becomes progressively available systems evolve future cost state system depend current actions state dtu compute lecture february reinforcement learning control alpha go self learning go supercomputer defeated world champion lee sedol notable mentions atari dota starcraft ii learners general approach reinforcement learning search trees dtu compute lecture february reinforcement learning control chatgpt dtu compute lecture february reinforcement learning control decision problem environment robot actions learning state dynamics internal state interpreter observation cost state configuration environment x action either discrete vector u cost reward number depends state x action u dtu compute lecture february examples example mars landing time continuous state actions x position velocity fuel mass', 'metadata': DocumentMetadata(filename='Lecture_1-6up-handout.pdf', page_number=3, chunk_index=0), 'chunk_index': 0}, {'text': 'x action either discrete vector u cost reward number depends state x action u dtu compute lecture february examples example mars landing time continuous state actions x position velocity fuel mass u thruster outputs dynamics smooth differential equation x f x u cost land right place use little fuel kill anyone constraints thrusters deliver limited force ship cannot go mars etc objective determine u minimize final cost really important constraints learning lecture car random py dtu compute lecture february mars examples inventory control order quantity item period k n meet stochastic demand xk stock beginning kth period uk stock ordered beginning kth period wk demand k th period dynamics xk xk uk wk cost per new unit c cost hold xk units r xk r xk cuk select actions u un minimize cost want proven optimal rule ordering dtu compute lecture february inventory', 'metadata': DocumentMetadata(filename='Lecture_1-6up-handout.pdf', page_number=3, chunk_index=1), 'chunk_index': 1}]
+2024-12-18 14:25:45,217 - INFO - Chunks selected: [0, 1]
+2024-12-18 14:25:45,923 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:25:50,909 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:25:50,916 - INFO - GPT Response: {
+    "correct": {
+        "example": "In the Mars landing control problem, the variable \( u \) represents the thruster outputs which are essential for controlling the spacecraft's dynamics, such as its position and velocity. The objective is to determine \( u \) in order to minimize the final cost, which includes landing accurately while using minimal fuel.",
+        "source": "Source: Lecture_3-handout.pdf, Page 18"
+    },
+    "partial": {
+        "example": "The variable \( u \) in the Mars landing problem relates to the controls for the spacecraft. It plays a role in managing the forces applied by the thrusters, but the specifics of how it impacts fuel consumption are not entirely clear.",
+        "source": "Source: Lecture_3-handout.pdf, Page 18"
+    },
+    "incorrect": {
+        "example": "I think the variable \( u \) represents the position of the spacecraft during landing. It might be related to the fuel mass, but I'm not sure how it connects to the dynamics of the landing process.",
+        "source": "Source: Lecture_3-handout.pdf, Page 18"
+    }
+}
+2024-12-18 14:25:50,916 - ERROR - JSON decode error: Invalid \escape: line 3 column 71 (char 89)
+2024-12-18 14:25:50,954 - INFO - Selected continuous contexts: [{'text': 'environment robot actions learning state dynamics internal state interpreter observation cost time really important sequential non data must optimize behavior dynamical systems using information becomes progressively available systems evolve future cost state system depend current actions state dtu compute lecture february reinforcement learning control alpha go self learning go supercomputer defeated world champion lee sedol notable mentions atari dota starcraft ii learners general approach reinforcement learning search trees dtu compute lecture february reinforcement learning control chatgpt dtu compute lecture february reinforcement learning control decision problem environment robot actions learning state dynamics internal state interpreter observation cost state configuration environment x action either discrete vector u cost reward number depends state x action u dtu compute lecture february examples example mars landing time continuous state actions x position velocity fuel mass', 'metadata': DocumentMetadata(filename='Lecture_1-6up-handout.pdf', page_number=3, chunk_index=0), 'chunk_index': 0}, {'text': 'x action either discrete vector u cost reward number depends state x action u dtu compute lecture february examples example mars landing time continuous state actions x position velocity fuel mass u thruster outputs dynamics smooth differential equation x f x u cost land right place use little fuel kill anyone constraints thrusters deliver limited force ship cannot go mars etc objective determine u minimize final cost really important constraints learning lecture car random py dtu compute lecture february mars examples inventory control order quantity item period k n meet stochastic demand xk stock beginning kth period uk stock ordered beginning kth period wk demand k th period dynamics xk xk uk wk cost per new unit c cost hold xk units r xk r xk cuk select actions u un minimize cost want proven optimal rule ordering dtu compute lecture february inventory', 'metadata': DocumentMetadata(filename='Lecture_1-6up-handout.pdf', page_number=3, chunk_index=1), 'chunk_index': 1}]
+2024-12-18 14:25:50,955 - INFO - Chunks selected: [0, 1]
+2024-12-18 14:25:51,630 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:26:06,687 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:26:06,698 - INFO - GPT Response: {
+    "correct": {
+        "example": "In the Mars landing control problem, the variable \( u \) represents the thruster outputs that control the spacecraft's dynamics. It is crucial for determining the actions needed to minimize the final cost, such as landing in the right place while using minimal fuel and adhering to constraints like thruster force limits.",
+        "source": "Source: Lecture_3-handout.pdf, Page 18"
+    },
+    "partial": {
+        "example": "The variable \( u \) is related to the thrusters in the Mars landing problem and is important for the dynamics of the spacecraft. It helps in making decisions to minimize costs, but the details about constraints and fuel usage are not fully clear.",
+        "source": "Source: Lecture_3-handout.pdf, Page 18"
+    },
+    "incorrect": {
+        "example": "The variable \( u \) in the Mars landing control problem is just the spacecraft's position. It doesn’t really affect fuel consumption or landing accuracy, as those are determined by other factors.",
+        "source": "Source: Lecture_3-handout.pdf, Page 18"
+    }
+}
+2024-12-18 14:26:06,698 - ERROR - JSON decode error: Invalid \escape: line 3 column 71 (char 89)
+2024-12-18 14:26:06,738 - INFO - Selected continuous contexts: [{'text': 'environment robot actions learning state dynamics internal state interpreter observation cost time really important sequential non data must optimize behavior dynamical systems using information becomes progressively available systems evolve future cost state system depend current actions state dtu compute lecture february reinforcement learning control alpha go self learning go supercomputer defeated world champion lee sedol notable mentions atari dota starcraft ii learners general approach reinforcement learning search trees dtu compute lecture february reinforcement learning control chatgpt dtu compute lecture february reinforcement learning control decision problem environment robot actions learning state dynamics internal state interpreter observation cost state configuration environment x action either discrete vector u cost reward number depends state x action u dtu compute lecture february examples example mars landing time continuous state actions x position velocity fuel mass', 'metadata': DocumentMetadata(filename='Lecture_1-6up-handout.pdf', page_number=3, chunk_index=0), 'chunk_index': 0}, {'text': 'x action either discrete vector u cost reward number depends state x action u dtu compute lecture february examples example mars landing time continuous state actions x position velocity fuel mass u thruster outputs dynamics smooth differential equation x f x u cost land right place use little fuel kill anyone constraints thrusters deliver limited force ship cannot go mars etc objective determine u minimize final cost really important constraints learning lecture car random py dtu compute lecture february mars examples inventory control order quantity item period k n meet stochastic demand xk stock beginning kth period uk stock ordered beginning kth period wk demand k th period dynamics xk xk uk wk cost per new unit c cost hold xk units r xk r xk cuk select actions u un minimize cost want proven optimal rule ordering dtu compute lecture february inventory', 'metadata': DocumentMetadata(filename='Lecture_1-6up-handout.pdf', page_number=3, chunk_index=1), 'chunk_index': 1}]
+2024-12-18 14:26:06,738 - INFO - Chunks selected: [0, 1]
+2024-12-18 14:26:07,544 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:26:12,155 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:26:12,157 - INFO - GPT Response: {
+    "correct": {
+        "example": "The control actions \( u \) in Mars landing directly influence the state \( x \), which includes position, velocity, temperature, and fuel mass. By optimizing the thruster outputs \( u \) within the constraints of limited force delivery, the objective is to minimize the final cost while ensuring a safe landing. This relationship is crucial for achieving the landing in the desired location using minimal fuel.",
+        "source": "Source: Lecture_3-handout.pdf, Page 18"
+    },
+    "partial": {
+        "example": "The control actions \( u \) affect the state \( x \) during Mars landing by adjusting the thruster outputs. This is important for managing the ship's velocity and position. However, I am unsure about how the constraints on thruster force impact the overall strategy.",
+        "source": "Source: Lecture_3-handout.pdf, Page 18"
+    },
+    "incorrect": {
+        "example": "The control actions \( u \) do not really matter for the state \( x \) because the spacecraft can just drop down to the surface without any adjustments. The thrusters are mostly for show and do not influence the landing outcome significantly.",
+        "source": "Source: Lecture_3-handout.pdf, Page 18"
+    }
+}
+2024-12-18 14:26:12,158 - ERROR - JSON decode error: Invalid \escape: line 3 column 41 (char 59)
+2024-12-18 14:26:12,196 - INFO - Selected continuous contexts: [{'text': 'environment robot actions learning state dynamics internal state interpreter observation cost time really important sequential non data must optimize behavior dynamical systems using information becomes progressively available systems evolve future cost state system depend current actions state dtu compute lecture february reinforcement learning control alpha go self learning go supercomputer defeated world champion lee sedol notable mentions atari dota starcraft ii learners general approach reinforcement learning search trees dtu compute lecture february reinforcement learning control chatgpt dtu compute lecture february reinforcement learning control decision problem environment robot actions learning state dynamics internal state interpreter observation cost state configuration environment x action either discrete vector u cost reward number depends state x action u dtu compute lecture february examples example mars landing time continuous state actions x position velocity fuel mass', 'metadata': DocumentMetadata(filename='Lecture_1-6up-handout.pdf', page_number=3, chunk_index=0), 'chunk_index': 0}, {'text': 'x action either discrete vector u cost reward number depends state x action u dtu compute lecture february examples example mars landing time continuous state actions x position velocity fuel mass u thruster outputs dynamics smooth differential equation x f x u cost land right place use little fuel kill anyone constraints thrusters deliver limited force ship cannot go mars etc objective determine u minimize final cost really important constraints learning lecture car random py dtu compute lecture february mars examples inventory control order quantity item period k n meet stochastic demand xk stock beginning kth period uk stock ordered beginning kth period wk demand k th period dynamics xk xk uk wk cost per new unit c cost hold xk units r xk r xk cuk select actions u un minimize cost want proven optimal rule ordering dtu compute lecture february inventory', 'metadata': DocumentMetadata(filename='Lecture_1-6up-handout.pdf', page_number=3, chunk_index=1), 'chunk_index': 1}]
+2024-12-18 14:26:12,197 - INFO - Chunks selected: [0, 1]
+2024-12-18 14:26:13,028 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:26:16,705 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:26:16,711 - INFO - GPT Response: {
+    "correct": {
+        "example": "The relationship between thruster outputs \( u \) and fuel mass during Mars landing is crucial as thrusters provide limited force, directly affecting the ship's velocity and position. Effective control of \( u \) minimizes fuel consumption while ensuring the spacecraft lands in the correct location, as highlighted in the dynamics described in the lecture notes.",
+        "source": "Source: Lecture_3-handout.pdf, Page 18"
+    },
+    "partial": {
+        "example": "Thruster outputs \( u \) are linked to the amount of fuel mass because the thrust generated impacts how the spacecraft descends. If too much fuel is used, it can affect the landing position but doesn't fully explain the constraints of limited force from the thrusters.",
+        "source": "Source: Lecture_3-handout.pdf, Page 18"
+    },
+    "incorrect": {
+        "example": "Thruster outputs \( u \) have no effect on fuel mass since they just control the speed of the spacecraft. The landing position is determined solely by the altitude of Mars, not by fuel or thrust.",
+        "source": "Source: Lecture_3-handout.pdf, Page 18"
+    }
+}
+2024-12-18 14:26:16,711 - ERROR - JSON decode error: Invalid \escape: line 3 column 63 (char 81)
+2024-12-18 14:26:16,751 - INFO - Selected continuous contexts: [{'text': 'environment robot actions learning state dynamics internal state interpreter observation cost time really important sequential non data must optimize behavior dynamical systems using information becomes progressively available systems evolve future cost state system depend current actions state dtu compute lecture february reinforcement learning control alpha go self learning go supercomputer defeated world champion lee sedol notable mentions atari dota starcraft ii learners general approach reinforcement learning search trees dtu compute lecture february reinforcement learning control chatgpt dtu compute lecture february reinforcement learning control decision problem environment robot actions learning state dynamics internal state interpreter observation cost state configuration environment x action either discrete vector u cost reward number depends state x action u dtu compute lecture february examples example mars landing time continuous state actions x position velocity fuel mass', 'metadata': DocumentMetadata(filename='Lecture_1-6up-handout.pdf', page_number=3, chunk_index=0), 'chunk_index': 0}, {'text': 'x action either discrete vector u cost reward number depends state x action u dtu compute lecture february examples example mars landing time continuous state actions x position velocity fuel mass u thruster outputs dynamics smooth differential equation x f x u cost land right place use little fuel kill anyone constraints thrusters deliver limited force ship cannot go mars etc objective determine u minimize final cost really important constraints learning lecture car random py dtu compute lecture february mars examples inventory control order quantity item period k n meet stochastic demand xk stock beginning kth period uk stock ordered beginning kth period wk demand k th period dynamics xk xk uk wk cost per new unit c cost hold xk units r xk r xk cuk select actions u un minimize cost want proven optimal rule ordering dtu compute lecture february inventory', 'metadata': DocumentMetadata(filename='Lecture_1-6up-handout.pdf', page_number=3, chunk_index=1), 'chunk_index': 1}]
+2024-12-18 14:26:16,751 - INFO - Chunks selected: [0, 1]
+2024-12-18 14:26:17,440 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:26:24,159 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 14:26:24,171 - INFO - GPT Response: {
+    "correct": {
+        "example": "The thruster outputs \( u \) directly influence the dynamics \( x = f(x, u) \) by determining how the spacecraft's position, velocity, temperature, and fuel mass change over time during the Mars landing. This relationship is crucial for formulating the optimal control problem, where the objective is to minimize the final cost while adhering to constraints such as limited thruster force and fuel consumption.",
+        "source": "Source: Lecture_3-handout.pdf, Page 18"
+    },
+    "partial": {
+        "example": "The thruster outputs \( u \) affect the spacecraft's dynamics by changing its position and velocity. Understanding this relationship is important for the control problem, but I’m not sure how the constraints on the thrusters play a role in the overall objective.",
+        "source": "Source: Lecture_3-handout.pdf, Page 18"
+    },
+    "incorrect": {
+        "example": "The dynamics \( x = f(x, u) \) only depend on the position of the spacecraft and not on the thruster outputs \( u \). Therefore, changing \( u \) has no effect on how the spacecraft lands on Mars.",
+        "source": "Source: Lecture_3-handout.pdf, Page 18"
+    }
+}
+2024-12-18 14:26:24,171 - ERROR - JSON decode error: Invalid \escape: line 3 column 42 (char 60)
