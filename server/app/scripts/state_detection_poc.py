@@ -83,6 +83,7 @@ Current context will be provided in each request."""
 def analyze_response(
     student_response: str, current_state: ExamState, context: dict = None
 ) -> StateResponse:
+    """Analyze student response and determine next state"""
     messages = [
         {"role": "system", "content": system_prompt},
         {
@@ -108,7 +109,7 @@ If transitioning to TOPIC_SELECTED state, you must identify the topic.
 
     result = json.loads(response.choices[0].message.function_call.arguments)
 
-    # 如果在 TOPIC_SELECTED 状态且学生准备开始，转到 QUESTIONING
+    # If in TOPIC_SELECTED state and student is ready, transition to QUESTIONING
     if current_state == ExamState.TOPIC_SELECTED and any(
         keyword in student_response.lower()
         for keyword in ["start", "begin", "question", "ready", "let's go"]
@@ -122,7 +123,7 @@ def main():
     state_machine = ExamStateMachine()
 
     while True:
-        # 始终显示当前状态
+        # Always display current state
         print(f"\nCurrent State: {state_machine.get_current_state()}")
         print(f"Context: {state_machine.get_context()}")
 
@@ -130,7 +131,7 @@ def main():
         if student_response.lower() == "exit":
             break
 
-        # 分析响应
+        # Analyze response
         result = analyze_response(
             student_response,
             state_machine.get_current_state(),
@@ -138,15 +139,19 @@ def main():
         )
 
         try:
-            # 尝试转换状态
+            # Attempt state transition
             state_machine.transition(
                 result.next_state,
-                metadata={"confidence": result.confidence, "reason": result.reason},
+                metadata={
+                    "confidence": result.confidence,
+                    "reason": result.reason,
+                    "topic": getattr(result, "topic", None),
+                },
             )
 
         except ValueError as e:
             print(f"Invalid transition: {e}")
-            continue  # 继续下一次循环，但不更新状态
+            continue  # Continue loop but don't update state
 
 
 if __name__ == "__main__":

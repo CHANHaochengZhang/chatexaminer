@@ -12,7 +12,7 @@ class ExamState(str, Enum):
     EVALUATING = "EVALUATING"
     COMPLETED = "COMPLETED"
     PREPARATION = "PREPARATION"
-    PAUSED = "PAUSED"  # 新增状态
+    PAUSED = "PAUSED"
 
 
 class StateTransition(BaseModel):
@@ -41,7 +41,7 @@ class ExamStateMachine:
             "subtopic": None,
         }
 
-        # 定义允许的状态转换和条件
+        # Define allowed state transitions and conditions
         self.allowed_transitions = {
             ExamState.INIT: [
                 (ExamState.PREPARATION, "student_not_ready"),
@@ -56,40 +56,40 @@ class ExamStateMachine:
                 (ExamState.EXPLAINING, "student_confused/need_clarification"),
                 (ExamState.EVALUATING, "questions_completed"),
                 (ExamState.QUESTIONING, "good_response/select_next_question"),
-                (ExamState.PAUSED, "student_needs_break"),  # 新增转换
+                (ExamState.PAUSED, "student_needs_break"),
             ],
             ExamState.EXPLAINING: [(ExamState.QUESTIONING, "provide_explanation()")],
             ExamState.EVALUATING: [
                 (ExamState.COMPLETED, "generate_final_evaluation()")
             ],
             ExamState.PAUSED: [
-                (ExamState.QUESTIONING, "resume_exam"),  # 可以返回继续考试
+                (ExamState.QUESTIONING, "resume_exam"),
             ],
         }
 
     def can_transition_to(self, new_state: ExamState) -> bool:
-        """检查是否允许转换到新状态"""
+        """Check if transition to new state is allowed"""
         return any(
             new_state == state
             for state, _ in self.allowed_transitions[self.current_state]
         )
 
     def get_valid_transitions(self) -> List[str]:
-        """获取当前状态下所有有效的转换"""
+        """Get all valid transitions for the current state"""
         return [
             f"{state.value} ({condition})"
             for state, condition in self.allowed_transitions[self.current_state]
         ]
 
     def transition(self, new_state: ExamState, metadata: Optional[Dict] = None) -> bool:
-        """执行状态转换"""
+        """Execute state transition"""
         if not self.can_transition_to(new_state):
             raise ValueError(
                 f"Invalid transition from {self.current_state} to {new_state}\n"
                 f"Valid transitions: {self.get_valid_transitions()}"
             )
 
-        # 记录转换
+        # Record transition
         transition = StateTransition(
             from_state=self.current_state,
             to_state=new_state,
@@ -97,29 +97,29 @@ class ExamStateMachine:
             metadata=metadata,
         )
 
-        # 更新状态
+        # Update state
         self.current_state = new_state
 
-        # 更新上下文
+        # Update context
         if metadata:
             self._update_context(metadata)
 
         return True
 
     def _get_transition_condition(self, new_state: ExamState) -> str:
-        """获取转换条件"""
+        """Get transition condition"""
         for state, condition in self.allowed_transitions[self.current_state]:
             if state == new_state:
                 return condition
         return "unknown_condition"
 
     def _update_context(self, metadata: Dict[str, Any]):
-        """更新上下文信息"""
+        """Update context information"""
         self.context.update(metadata)
 
-        # 特殊处理
+        # Special handling
         if self.current_state == ExamState.TOPIC_SELECTED:
-            # 确保 topic 被设置
+            # Ensure topic is set
             if "topic" not in metadata or metadata["topic"] is None:
                 raise ValueError(
                     "Topic must be specified when transitioning to TOPIC_SELECTED state"
@@ -136,9 +136,9 @@ class ExamStateMachine:
             self.context["hints_requested"] += 1
 
     def get_current_state(self) -> ExamState:
-        """获取当前状态"""
+        """Get current state"""
         return self.current_state
 
     def get_context(self) -> Dict[str, Any]:
-        """获取当前上下文"""
+        """Get current context"""
         return self.context
