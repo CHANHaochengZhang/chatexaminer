@@ -1,6 +1,6 @@
 # ChatExaminer
 
-An intelligent examination system based on RAG (Retrieval-Augmented Generation) architecture that simulates interactive oral examinations through dynamic question generation and real-time evaluation.
+An intelligent examination system based on RAG (Retrieval-Augmented Generation) architecture that simulates interactive oral examinations through dynamic question generation and real-time grading/evaluation.
 
 ## Project Overview
 
