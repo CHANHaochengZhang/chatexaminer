@@ -22,7 +22,6 @@ from docarray import BaseDoc, DocList
 from docarray.typing import NdArray
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from nltk.corpus import stopwords
-from PyPDF2 import PdfReader
 from sentence_transformers import SentenceTransformer
 from vectordb import InMemoryExactNNVectorDB
 

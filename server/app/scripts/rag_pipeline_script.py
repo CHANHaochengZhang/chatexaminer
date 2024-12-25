@@ -6,6 +6,11 @@ import os
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+import sys
+
+# 添加项目根目录到 Python 路径
+SERVER_DIR = Path(__file__).parent.parent.parent  # 根据项目结构调整
+sys.path.append(str(SERVER_DIR))
 
 from app.models.question import ExamQuestion
 from docarray import DocList

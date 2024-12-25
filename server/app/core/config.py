@@ -3,7 +3,6 @@ from pathlib import Path
 from typing import List
 
 from dotenv import load_dotenv
-from openai import OpenAI
 from pydantic import BaseModel
 
 
@@ -36,7 +35,10 @@ api_key = os.getenv("OPENAI_API_KEY")
 if not api_key:
     raise ValueError("OPENAI_API_KEY not found in environment variables")
 
-client = OpenAI(api_key=api_key)
+# 使用 openai 包的默认初始化方式
+import openai
+openai.api_key = api_key
+
 settings = Settings()
 
 # 确保数据目录存在
