@@ -1,7 +1,9 @@
 from enum import Enum
 from typing import Any, Dict, List, Optional
+from pathlib import Path
 
 from pydantic import BaseModel
+from app.models.exam import ExamSession
 
 
 class ExamState(str, Enum):
@@ -39,6 +41,7 @@ class ExamStateMachine:
             "response_quality": [],
             "topic": None,
             "subtopic": None,
+            "exam_session": None
         }
 
         # Define allowed state transitions and conditions
@@ -142,3 +145,28 @@ class ExamStateMachine:
     def get_context(self) -> Dict[str, Any]:
         """Get current context"""
         return self.context
+
+    def start_exam(self, topic: str, questions_file: Path):
+        """开始新的考试会话"""
+        if self.current_state != ExamState.TOPIC_SELECTED:
+            raise ValueError("Must be in TOPIC_SELECTED state to start exam")
+            
+        # 创建考试会话
+        self.context["exam_session"] = ExamSession.create_session(
+            topic=topic,
+            questions_file=questions_file
+        )
+        
+        # 转换到 QUESTIONING 状态
+        self.transition(ExamState.QUESTIONING)
+        
+    def get_current_question(self) -> Optional[Dict]:
+        """获取当前问题"""
+        if self.current_state != ExamState.QUESTIONING:
+            return None
+            
+        session = self.context.get("exam_session")
+        if not session:
+            return None
+            
+        return session.get_next_question()

@@ -83,13 +83,32 @@ Key indicators for EXPLAINING state:
 - Student understands: "I understand now", "That makes sense", "Okay, I get it"
 - Student ready to answer: "Let me try to answer", "I'll answer now"
 
-Current context will be provided in each request."""
+Current context will be provided in each request.
+
+For QUESTIONING state:
+- Move to EVALUATING if:
+  * Student explicitly requests to end the exam
+  * Student shows signs of exhaustion
+  * Student has repeated the same answer multiple times
+  * Student expresses desire to stop
+- Stay in QUESTIONING if the answer is relevant to the question
+- Move to EXPLAINING if student shows confusion or asks for clarification
+"""
 
 
 def analyze_response(
     student_response: str, current_state: ExamState, context: dict = None
 ) -> StateResponse:
     """Analyze student response and determine next state"""
+    # Create a new context dictionary, only containing serializable data
+    serializable_context = {
+        "questions_answered": context.get("questions_answered", 0),
+        "hints_requested": context.get("hints_requested", 0),
+        "current_difficulty": context.get("current_difficulty", 3),
+        "topic": context.get("topic"),
+        "subtopic": context.get("subtopic"),
+    }
+    
     messages = [
         {"role": "system", "content": system_prompt},
         {
@@ -97,7 +116,7 @@ def analyze_response(
             "content": f"""
 Current state: {current_state}
 Student response: "{student_response}"
-Context: {json.dumps(context) if context else 'No additional context'}
+Context: {json.dumps(serializable_context)}
 
 Determine the next state based on this response.
 If in EXPLAINING state, carefully check if student needs more explanation or is ready to continue.
