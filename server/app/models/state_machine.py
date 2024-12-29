@@ -170,3 +170,13 @@ class ExamStateMachine:
             return None
             
         return session.get_next_question()
+
+    def increase_difficulty(self):
+        """增加当前问题难度"""
+        if self.context.get("current_difficulty"):
+            self.context["current_difficulty"] = min(5, self.context["current_difficulty"] + 1)
+
+    def decrease_difficulty(self):
+        """降低当前问题难度"""
+        if self.context.get("current_difficulty"):
+            self.context["current_difficulty"] = max(1, self.context["current_difficulty"] - 1)

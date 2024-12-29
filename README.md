@@ -756,3 +756,43 @@ The system requires proper configuration of:
 
 ### License
 This project is built upon various open-source technologies and research works. Please refer to individual licenses of the referenced works for usage terms.
+
+## Evaluation System
+
+### Real-time Response Evaluation
+- **Per-Question Metrics**:
+  - Answer accuracy (0-100)
+  - Expression clarity (0-100)
+  - Understanding level (0-100)
+  - Hint usage (-10 points per hint)
+
+- **Evaluation Process**:
+  1. Immediate evaluation after each answer
+  2. Feedback generation before next question
+  3. Question difficulty adjustment based on performance
+  4. Hint impact tracking
+
+### Overall Assessment
+- **Final Score Components**:
+  1. Individual question scores (60%)
+     - Average of per-question metrics
+     - Weighted by question difficulty
+  2. Topic coverage (20%)
+     - Breadth of knowledge demonstrated
+     - Depth of understanding in key areas
+  3. Examination behavior (20%)
+     - Hint usage frequency
+     - Response consistency
+     - Time management
+
+### Evaluation Flow
+1. Student submits answer
+2. System performs immediate evaluation
+3. Results affect:
+   - Next question selection
+   - Difficulty adjustment
+   - Cumulative score calculation
+4. Final report generation includes:
+   - Detailed per-question analysis
+   - Overall performance metrics
+   - Learning recommendations

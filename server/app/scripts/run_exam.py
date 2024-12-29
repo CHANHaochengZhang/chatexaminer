@@ -1,137 +1,78 @@
+import asyncio
+import os
 import sys
 from pathlib import Path
 
-# Add server directory to Python path
-SERVER_DIR = Path(__file__).parent.parent.parent
-sys.path.append(str(SERVER_DIR))
+# 获取当前脚本的绝对路径
+current_file = Path(__file__).resolve()
+# 获取 server 目录的路径
+server_path = current_file.parent.parent.parent
+# 将 server 目录添加到 Python 路径
+sys.path.insert(0, str(server_path))
 
-from app.services.exam_service import ExamService
+from dotenv import load_dotenv
 from app.models.state_machine import ExamState
-from app.scripts.state_detection_poc import analyze_response
+from app.services.exam_service import ExamService
 
-def run_exam():
+async def main():
+    print("Current working directory:", os.getcwd())
+    env_path = Path(".env")
+    print("Looking for .env at:", env_path.absolute())
+    load_dotenv(env_path)
+
     exam_service = ExamService()
-    state_machine = exam_service.state_machine
     
-    print("Welcome to the Interactive Oral Examination System!")
+    print("Welcome to the Interactive Oral Examination System!\n")
     
     while True:
-        current_state = state_machine.get_current_state()
-        print(f"\nCurrent State: {current_state}")
+        state = exam_service.state_machine.get_current_state()
+        print(f"\nCurrent State: {state}")
         
-        if current_state == ExamState.INIT:
+        if state == ExamState.INIT:
             print("\nPlease enter the exam topic:")
             print("Available topics: Direct Methods for Optimal Control")
-            student_response = input("Input: ").strip()
+            topic = input("Input: ")
+            exam_service.state_machine.context['topic'] = topic
+            exam_service.state_machine.transition(ExamState.TOPIC_SELECTED)
             
-            if student_response.lower() == 'exit':
-                break
+        elif state == ExamState.TOPIC_SELECTED:
+            print(f"\nSelected topic: {exam_service.state_machine.context['topic']}")
+            ready = input("Are you ready to start? Please describe your preparation: ")
+            if ready.lower() not in ['no', 'n']:
+                response = await exam_service.start_exam(exam_service.state_machine.context['topic'])
                 
-            # Use analyze_response to determine state
-            state_response = analyze_response(
-                student_response, 
-                current_state,
-                state_machine.get_context()
-            )
-            
-            if state_response.next_state == ExamState.TOPIC_SELECTED:
-                state_machine.transition(
-                    state_response.next_state,
-                    metadata={
-                        "topic": student_response,
-                        "confidence": state_response.confidence,
-                        "reason": state_response.reason
-                    }
-                )
-            
-        elif current_state == ExamState.TOPIC_SELECTED:
-            print(f"\nSelected topic: {state_machine.context['topic']}")
-            student_response = input("Are you ready to start? Please describe your preparation: ").strip()
-            
-            state_response = analyze_response(
-                student_response,
-                current_state,
-                state_machine.get_context()
-            )
-            
-            if state_response.next_state == ExamState.QUESTIONING:
-                response = exam_service.start_exam(state_machine.context['topic'])
-            elif state_response.next_state == ExamState.PREPARATION:
-                state_machine.transition(state_response.next_state)
-                
-        elif current_state == ExamState.QUESTIONING:
-            response = exam_service.get_next_interaction()
-            if response["type"] == "question":
-                print("\nQuestion:", response["content"])
-                print(f"Difficulty Level: {response['difficulty']}/5")
+        elif state == ExamState.QUESTIONING:
+            question = exam_service.state_machine.get_current_question()
+            if question:
+                print(f"\nQuestion: {question['question']}")
+                print(f"Difficulty Level: {question['difficulty']}/5")
                 print("(If you want to end the exam, please explain why)")
                 
-                student_response = input("\nYour answer: ").strip()
+                answer = input("\nYour answer: ")
+                response = await exam_service.process_answer(answer)
                 
-                if student_response.lower() == 'exit':
-                    break
-                    
-                state_response = analyze_response(
-                    student_response,
-                    current_state,
-                    state_machine.get_context()
-                )
-                
-                # Let OpenAI determine if we should end the exam
-                if state_response.next_state == ExamState.EVALUATING:
-                    print(f"\nState transition reason: {state_response.reason}")
-                    state_machine.transition(
-                        state_response.next_state,
-                        metadata={
-                            "confidence": state_response.confidence,
-                            "reason": state_response.reason
-                        }
-                    )
-                elif state_response.next_state == ExamState.EXPLAINING:
-                    state_machine.transition(state_response.next_state)
-                else:
-                    response = exam_service.process_answer(student_response)
-                    
-        elif current_state == ExamState.EXPLAINING:
+        elif state == ExamState.EXPLAINING:
             print("\nExplanation needed...")
-            student_response = input("Do you understand? Please describe: ").strip()
-            
-            state_response = analyze_response(
-                student_response,
-                current_state,
-                state_machine.get_context()
-            )
-            
-            if state_response.next_state == ExamState.QUESTIONING:
-                state_machine.transition(state_response.next_state)
-            
-        elif current_state == ExamState.EVALUATING:
-            print("\nGenerating evaluation report...")
-            # TODO: Add evaluation report generation logic
-            print("Evaluation Points:")
-            print("1. Number of questions answered")
-            print("2. Answer accuracy")
-            print("3. Level of understanding")
-            print("4. Number of hints requested")
-            
-            input("\nPress Enter to continue...")
-            state_machine.transition(ExamState.COMPLETED)
-            
-        elif current_state == ExamState.COMPLETED:
-            print("\nExam completed!")
+            understood = input("Do you understand? Please describe: ")
+            if understood.lower() in ['yes', 'y', 'i understand']:
+                exam_service.state_machine.transition(ExamState.QUESTIONING)
+                
+        elif state == ExamState.EVALUATING:
+            print("\nGenerating final evaluation...")
+            final_eval = exam_service._generate_final_evaluation()
+            print("\nExam Results:")
+            print(f"Total Score: {final_eval['total_score']:.2f}")
+            print(f"Topic Coverage: {final_eval['topic_coverage']}")
+            print(f"Behavior Score: {final_eval['behavior_score']:.2f}")
+            print("\nDetailed Question Evaluations:")
+            for qid, eval_data in final_eval['question_evaluations'].items():
+                print(f"\nQuestion {qid}:")
+                print(f"Scores: {eval_data['score']}")
+                print(f"Feedback: {eval_data['feedback']}")
             break
             
-        elif current_state == ExamState.PREPARATION:
-            print("\nPlease review the relevant content first.")
-            student_response = input("Describe your preparation status: ").strip()
-            
-            state_response = analyze_response(
-                student_response,
-                current_state,
-                state_machine.get_context()
-            )
-            
-            state_machine.transition(state_response.next_state)
+        elif state == ExamState.COMPLETED:
+            break
 
 if __name__ == "__main__":
-    run_exam() 
+    asyncio.run(main()) 
