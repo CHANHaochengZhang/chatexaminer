@@ -197,8 +197,9 @@ chatexaminer/
 │ │ │ ├── exam.py # Exam session models
 │ │ │ ├── state_machine.py # State machine models
 │ │ │ ├── document.py # Document and metadata models
-│ │ │ └── question.py # Question structure models
-│ │ ├── scripts/ # Processing scripts
+│ │ │ ├── question.py # Question structure models
+│ │ │ └── evaluation.py # Evaluation models and metrics
+│ │ ├── scripts/
 │ │ │ ├── pdf_load.py # PDF processing and vectorization
 │ │ │ ├── rag_pipeline_script.py # RAG pipeline implementation
 │ │ │ ├── state_detection_poc.py # State detection implementation
@@ -206,13 +207,14 @@ chatexaminer/
 │ │ └── services/
 │ │ ├── assistant.py # OpenAI function calling service
 │ │ ├── exam_service.py # Exam business logic
-│ │ └── rag_service.py # RAG integration service
+│ │ ├── rag_service.py # RAG integration service
+│ │ └── evaluation_service.py # Answer evaluation service
 │ └── requirements.txt
 ├── docs/
 │ ├── StateMachine.md # State machine documentation
 │ └── API.md # API documentation
 ├── Makefile # Development automation
-└── .env # Environment configuration                   
+└── .env # Environment configuration                 
 ```
 
 ### Proof of Concept Implementation
