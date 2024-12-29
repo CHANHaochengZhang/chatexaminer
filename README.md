@@ -1,15 +1,35 @@
 # ChatExaminer
 
-An intelligent examination system based on RAG (Retrieval-Augmented Generation) architecture that simulates interactive oral examinations through dynamic question generation and real-time grading/evaluation.
+An intelligent examination system designed for DTU course 02465 (Introduction to Reinforcement Learning and Control), implementing AI-powered oral examinations through dynamic question generation and real-time evaluation.
 
 ## Project Overview
 
 ChatExaminer is a proof-of-concept AI-powered oral examination system that aims to:
-- Generate dynamic questions based on course materials
+- Generate course-specific questions from teaching materials
 - Conduct interactive examinations similar to live oral exams
 - Provide real-time evaluation of student responses
 - Adapt questioning based on student performance
-- Assist human examiners with performance assessment
+- Support human examiners with automated assessment
+
+### Research Focus
+1. Interactive Dynamics Simulation
+   - Design AI system to simulate oral exam dynamics
+   - Implement adaptive questioning based on student responses
+   - Create natural dialogue flow for examination
+
+2. Evaluation Alignment
+   - Ensure questions align with course syllabus
+   - Validate against teacher-defined criteria
+   - Provide meaningful feedback for assessment
+
+### Target Course
+- **Course**: 02465 Introduction to Reinforcement Learning and Control
+- **Topics**:
+  - Dynamical Programming
+  - Control Theory
+  - Reinforcement Learning
+  - Q-learning and SARSA
+  - Deep-Q Learning
 
 ## Key Features
 
