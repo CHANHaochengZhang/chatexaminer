@@ -154,45 +154,45 @@ OPENAI_API_KEY=<your-openai-api-key>
 ```
 chatexaminer/
 ├── knowledge/
-│   └── pdf/                     # PDF knowledge base files for course materials
+│ └── pdf/ # PDF knowledge base files for course materials
 ├── data/
-│   ├── exam_questions.json      # Generated and cached exam questions
-│   ├── conversation_trees/      # Generated dialogue trees
-│   ├── vectorDB_workspace/      # Vector database storage
-│   └── logs/                    # Application logs
-│       ├── rag_pipeline.log     # RAG operations logging
-│       └── state_machine.log    # State transitions logging
+│ ├── exam_questions.json # Generated and cached exam questions
+│ ├── conversation_trees/ # Generated dialogue trees
+│ ├── vectorDB_workspace/ # Vector database storage
+│ └── logs/ # Application logs
+│ ├── rag_pipeline.log # RAG operations logging
+│ └── state_machine.log # State transitions logging
 ├── server/
-│   ├── app/
-│   │   ├── api/
-│   │   │   ├── v1/
-│   │   │   │   ├── endpoints/  # API endpoints
-│   │   │   │   │   ├── exam.py      # Exam control endpoints
-│   │   │   │   │   └── health.py    # System health checks
-│   │   │   │   └── api.py     # API router configuration
-│   │   ├── core/
-│   │   │   ├── config.py      # Application settings
-│   │   │   └── security.py    # Authentication & authorization
-│   │   ├── models/
-│   │   │   ├── exam.py        # Exam session models
-│   │   │   ├── state.py       # State machine models
-│   │   │   ├── document.py    # Document and metadata models
-│   │   │   └── question.py    # Question structure models
-│   │   ├── scripts/           # Processing scripts
-│   │   │   ├── pdf_load.py    # PDF processing and vectorization
-│   │   │   ├── rag_pipeline.py # RAG pipeline implementation
-│   │   │   └── conversation_tree_generator.py  # Question tree generation
-│   │   └── services/
-│   │       ├── assistant.py    # OpenAI function calling service
-│   │       ├── state_machine.py # Examination state management
-│   │       ├── exam_service.py # Exam business logic
-│   │       └── rag_service.py  # RAG integration service
-│   └── requirements.txt
+│ ├── app/
+│ │ ├── api/
+│ │ │ ├── v1/
+│ │ │ │ ├── endpoints/ # API endpoints
+│ │ │ │ │ ├── exam.py # Exam control endpoints
+│ │ │ │ │ └── health.py # System health checks
+│ │ │ │ └── api.py # API router configuration
+│ │ ├── core/
+│ │ │ ├── config.py # Application settings
+│ │ │ └── security.py # Authentication & authorization
+│ │ ├── models/
+│ │ │ ├── exam.py # Exam session models
+│ │ │ ├── state_machine.py # State machine models
+│ │ │ ├── document.py # Document and metadata models
+│ │ │ └── question.py # Question structure models
+│ │ ├── scripts/ # Processing scripts
+│ │ │ ├── pdf_load.py # PDF processing and vectorization
+│ │ │ ├── rag_pipeline_script.py # RAG pipeline implementation
+│ │ │ ├── state_detection_poc.py # State detection implementation
+│ │ │ └── run_exam.py # Interactive exam runner
+│ │ └── services/
+│ │ ├── assistant.py # OpenAI function calling service
+│ │ ├── exam_service.py # Exam business logic
+│ │ └── rag_service.py # RAG integration service
+│ └── requirements.txt
 ├── docs/
-│   ├── StateMachine.md        # State machine documentation
-│   └── API.md                 # API documentation
-├── Makefile                   # Development automation
-└── .env                      # Environment configuration
+│ ├── StateMachine.md # State machine documentation
+│ └── API.md # API documentation
+├── Makefile # Development automation
+└── .env # Environment configuration                   
 ```
 
 ### Proof of Concept Implementation
