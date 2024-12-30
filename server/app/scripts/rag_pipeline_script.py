@@ -8,8 +8,8 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 import sys
 
-# 添加项目根目录到 Python 路径
-SERVER_DIR = Path(__file__).parent.parent.parent  # 根据项目结构调整
+# Add the project root directory to Python path
+SERVER_DIR = Path(__file__).parent.parent.parent  # Adjust based on project structure
 sys.path.append(str(SERVER_DIR))
 
 from app.models.question import ExamQuestion

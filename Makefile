@@ -4,7 +4,7 @@ PYTHON = $(VENV)/bin/python3
 PIP = $(VENV)/bin/pip
 PORT = 8000
 HOST = 0.0.0.0
-SHELL := /bin/bash  # 确保使用 bash
+SHELL := /bin/bash  # Ensure using bash
 
 # Colors for terminal output
 BLUE = \033[0;34m

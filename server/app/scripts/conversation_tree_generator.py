@@ -62,7 +62,7 @@ class ConversationTreeGenerator:
     def _generate_base_question(
         self, topic: str, difficulty: int, context_text: str = None
     ) -> ExamQuestion:
-        """使用RAG Pipeline生成基础问题"""
+        """Generate base question using RAG Pipeline"""
         question = self.rag.generate_question(
             topic=topic,
             difficulty=difficulty,
@@ -74,7 +74,7 @@ class ConversationTreeGenerator:
         return question
 
     def _generate_answer_examples(self, question: ExamQuestion) -> Dict[str, List[str]]:
-        """为问题生成示例答案范围"""
+        """Generate a range of example answers for the question"""
         example_answers = {
             "excellent": "An excellent answer that demonstrates deep understanding...",
             "good": "A good answer that covers the main points...",
@@ -90,21 +90,21 @@ class ConversationTreeGenerator:
         return evaluations
 
     def _adjust_difficulty(self, current_difficulty: int, response_type: str) -> int:
-        """根据学生回答类型调整问题难度"""
+        """Adjust question difficulty based on student response type"""
         adjustments = {
-            "correct": 1,  # 正确答案：增加难度
-            "partial": 0,  # 部分正确：保持难度
-            "incorrect": -1,  # 错误答案：降低难度
+            "correct": 1,  # Correct answer: increase difficulty
+            "partial": 0,  # Partially correct: maintain difficulty
+            "incorrect": -1,  # Incorrect answer: decrease difficulty
         }
 
-        # 确保难度在1-5的范围内
+        # Ensure difficulty is within the range of 1-5
         new_difficulty = current_difficulty + adjustments[response_type]
         return max(1, min(5, new_difficulty))
 
     def generate_tree(
         self, topic: str, base_difficulty: int, depth: int = 3, context_text: str = None
     ) -> ConversationNode:
-        """生成对话树"""
+        """Generate conversation tree"""
         logging.info(f"Generating conversation tree for topic: {topic}")
 
         root_question = self._generate_base_question(
