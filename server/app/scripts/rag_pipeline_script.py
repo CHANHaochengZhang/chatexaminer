@@ -458,7 +458,7 @@ if __name__ == "__main__":
     rag = RAGPipeline()
 
     questions = rag.generate_questions_for_topic(
-        topic="Direct Methods for Optimal Control", num_subtopics=1
+        topic="Direct Methods for Optimal Control", num_subtopics=5
     )
 
     for q in questions:

@@ -16,12 +16,10 @@ from typing import Dict, List, Optional
 
 import fitz  # PyMuPDF
 import nltk
-from app.core.config import settings
 from app.models.document import DocumentMetadata, KnowledgeDoc
 from docarray import BaseDoc, DocList
 from docarray.typing import NdArray
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from nltk.corpus import stopwords
 from sentence_transformers import SentenceTransformer
 from vectordb import InMemoryExactNNVectorDB
 
@@ -35,23 +33,11 @@ except LookupError:
     nltk.download("stopwords")
 
 
-def get_stopwords() -> set:
-    """Get English stopwords"""
-    return set(stopwords.words("english"))
-
-
-def clean_text(text: str, stop_words: set) -> str:
-    """Clean text and remove stopwords"""
-    # Basic cleaning
-    text = text.lower()
+def clean_text(text: str) -> str:
+    """Clean text"""
+    # Only normalize whitespace, keep original content
     text = re.sub(r"\s+", " ", text)  # Normalize whitespace
-    text = re.sub(r"[^a-zA-Z\s]", " ", text)  # Keep only English letters
-
-    # Remove stopwords
-    words = text.split()
-    cleaned_words = [word for word in words if word not in stop_words]
-
-    return " ".join(cleaned_words)
+    return text.strip()
 
 
 def extract_and_chunk_pdfs(
@@ -66,24 +52,14 @@ def extract_and_chunk_pdfs(
     Returns:
         List of tuples containing metadata and text chunks
     """
-    stop_words = get_stopwords()
     documents = []
 
     # Initialize text splitter with optimal parameters
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=1000,  # Target size for each chunk
-        chunk_overlap=200,  # Overlap between chunks to maintain context
+        chunk_size=1000,
+        chunk_overlap=200,
         length_function=len,
-        separators=[
-            "\n\n",
-            "\n",
-            ".",
-            "!",
-            "?",
-            ";",
-            " ",
-            "",
-        ],  # Priority-based separators
+        separators=["\n\n", "\n", ".", "!", "?", ";", " ", ""],
     )
 
     pdf_directory.mkdir(parents=True, exist_ok=True)
@@ -101,7 +77,7 @@ def extract_and_chunk_pdfs(
                     text = page.get_text()
 
                     # Clean and preprocess text
-                    cleaned_text = clean_text(text, stop_words)
+                    cleaned_text = clean_text(text)
                     if not cleaned_text.strip():
                         continue
 
@@ -185,8 +161,7 @@ print(f"Number of entities in database: {len(doc_list)}")
 # Modify the search function
 def semantic_search(query_text: str, db, model, top_k=3):
     """Perform semantic search with metadata in results"""
-    stop_words = get_stopwords()
-    processed_query = clean_text(query_text, stop_words)
+    processed_query = clean_text(query_text)
 
     query_embedding = model.encode(processed_query)
     query_doc = KnowledgeDoc(
