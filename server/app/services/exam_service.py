@@ -38,9 +38,7 @@ class ExamService:
             valid_topics = {q["topic"] for q in questions.values()}
 
         if topic not in valid_topics:
-            raise ValueError(
-                f"Invalid topic. Available topics: {', '.join(valid_topics)}"
-            )
+            raise ValueError(f"Invalid topic. Available topics: {', '.join(valid_topics)}")
 
         # 初始化考试会话
         self.exam_start_time = time.time()
@@ -190,14 +188,10 @@ class ExamService:
             return 1.0
 
         session = self.state_machine.context["exam_session"]
-        evaluations = [
-            eval["metrics"]["understanding"] for eval in session.evaluations.values()
-        ]
+        evaluations = [eval["metrics"]["understanding"] for eval in session.evaluations.values()]
 
         # 计算相邻评分的差异
-        differences = [
-            abs(evaluations[i] - evaluations[i - 1]) for i in range(1, len(evaluations))
-        ]
+        differences = [abs(evaluations[i] - evaluations[i - 1]) for i in range(1, len(evaluations))]
 
         # 返回一致性分数 (1 - 平均差异/100)
         avg_diff = sum(differences) / len(differences)

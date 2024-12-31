@@ -56,9 +56,7 @@ class ExaminerRAG:
     ) -> Dict:
         """Evaluate student's answer"""
         # 1. Retrieve relevant knowledge
-        relevant_docs = self._retrieve_knowledge_for_evaluation(
-            question, student_answer
-        )
+        relevant_docs = self._retrieve_knowledge_for_evaluation(question, student_answer)
 
         # 2. Evaluate answer
         evaluation = self._evaluate_with_context(
@@ -69,9 +67,7 @@ class ExaminerRAG:
 
     def _retrieve_knowledge(self, exam_context: ExamContext) -> List[str]:
         """Retrieve relevant knowledge"""
-        query_embedding = self.model.encode(
-            f"{exam_context.current_topic} {exam_context.subject}"
-        )
+        query_embedding = self.model.encode(f"{exam_context.current_topic} {exam_context.subject}")
         results = self.db.search(
             query_embedding,
             limit=5,
@@ -125,14 +121,10 @@ class ExaminerRAG:
 
         return self._parse_evaluation(response)
 
-    def _create_question_prompt(
-        self, relevant_docs: List[str], exam_context: ExamContext
-    ) -> str:
+    def _create_question_prompt(self, relevant_docs: List[str], exam_context: ExamContext) -> str:
         """Create prompt for question generation"""
         previous_questions = (
-            exam_context.previous_questions[-3:]
-            if exam_context.previous_questions
-            else "None"
+            exam_context.previous_questions[-3:] if exam_context.previous_questions else "None"
         )
 
         prompt = (

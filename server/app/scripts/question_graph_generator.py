@@ -32,9 +32,7 @@ class QuestionGraphGenerator:
             for difficulty in range(1, 6):  # 1-5难度
                 try:
                     # 使用现有�� generate_question 方法
-                    question = self.rag.generate_question(
-                        topic=topic, difficulty=difficulty
-                    )
+                    question = self.rag.generate_question(topic=topic, difficulty=difficulty)
                     questions_for_topic.append(question)
                     logging.info(f"Generated question with difficulty {difficulty}")
                 except Exception as e:
@@ -50,8 +48,7 @@ class QuestionGraphGenerator:
 
         # 转换为可序列化的格式
         serializable_graph = {
-            topic: [asdict(q) for q in questions]
-            for topic, questions in question_graph.items()
+            topic: [asdict(q) for q in questions] for topic, questions in question_graph.items()
         }
 
         with open(output_file, "w", encoding="utf-8") as f:
@@ -73,16 +70,12 @@ def main():
     # 生成并保存问题
     try:
         generator.save_questions(output_file)
-        logging.info(
-            f"Successfully generated question graph and saved to {output_file}"
-        )
+        logging.info(f"Successfully generated question graph and saved to {output_file}")
     except Exception as e:
         logging.error(f"Error generating question graph: {e}")
 
 
 if __name__ == "__main__":
     # 配置日志
-    logging.basicConfig(
-        level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-    )
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
     main()

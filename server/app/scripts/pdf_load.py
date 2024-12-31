@@ -200,7 +200,9 @@ def semantic_search(query_text: str, db, model, top_k=3):
 
 
 # Update your existing query code
-query_text = """Consider PID control applied to steer a car along a straight track. The control signal"""
+query_text = (
+    """Consider PID control applied to steer a car along a straight track. The control signal"""
+)
 results = semantic_search(query_text, db, model)
 
 # Print search results with metadata

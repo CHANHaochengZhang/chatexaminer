@@ -62,9 +62,7 @@ class ExamStateMachine:
                 (ExamState.PAUSED, "student_needs_break"),
             ],
             ExamState.EXPLAINING: [(ExamState.QUESTIONING, "provide_explanation()")],
-            ExamState.EVALUATING: [
-                (ExamState.COMPLETED, "generate_final_evaluation()")
-            ],
+            ExamState.EVALUATING: [(ExamState.COMPLETED, "generate_final_evaluation()")],
             ExamState.PAUSED: [
                 (ExamState.QUESTIONING, "resume_exam"),
             ],
@@ -72,10 +70,7 @@ class ExamStateMachine:
 
     def can_transition_to(self, new_state: ExamState) -> bool:
         """Check if transition to new state is allowed"""
-        return any(
-            new_state == state
-            for state, _ in self.allowed_transitions[self.current_state]
-        )
+        return any(new_state == state for state, _ in self.allowed_transitions[self.current_state])
 
     def get_valid_transitions(self) -> List[str]:
         """Get all valid transitions for the current state"""
@@ -173,13 +168,9 @@ class ExamStateMachine:
     def increase_difficulty(self):
         """增加当前问题难度"""
         if self.context.get("current_difficulty"):
-            self.context["current_difficulty"] = min(
-                5, self.context["current_difficulty"] + 1
-            )
+            self.context["current_difficulty"] = min(5, self.context["current_difficulty"] + 1)
 
     def decrease_difficulty(self):
         """降低当前问题难度"""
         if self.context.get("current_difficulty"):
-            self.context["current_difficulty"] = max(
-                1, self.context["current_difficulty"] - 1
-            )
+            self.context["current_difficulty"] = max(1, self.context["current_difficulty"] - 1)

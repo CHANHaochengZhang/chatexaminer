@@ -31,9 +31,7 @@ class AnswerFeedbackRequest(BaseModel):
 async def evaluate_answer(request: AnswerRequest):
     """Evaluate a student's answer"""
     try:
-        return await rag_service.evaluate_answer(
-            request.question_id, request.student_answer
-        )
+        return await rag_service.evaluate_answer(request.question_id, request.student_answer)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

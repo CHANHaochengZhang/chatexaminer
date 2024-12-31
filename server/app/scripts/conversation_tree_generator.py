@@ -126,9 +126,7 @@ class ConversationTreeGenerator:
 
         if depth > 0:
             for response_type in self.response_types:
-                next_difficulty = self._adjust_difficulty(
-                    base_difficulty, response_type
-                )
+                next_difficulty = self._adjust_difficulty(base_difficulty, response_type)
 
                 subtopic = self._generate_subtopic(topic, response_type)
 

@@ -16,9 +16,7 @@ from app.scripts.rag_pipeline import RAGPipeline
 
 class RAGService:
     def __init__(self):
-        self.rag_pipeline = RAGPipeline(
-            questions_file=settings.DATA_DIR / "exam_questions.json"
-        )
+        self.rag_pipeline = RAGPipeline(questions_file=settings.DATA_DIR / "exam_questions.json")
         self.tree_generator = ConversationTreeGenerator()
 
     async def generate_question(self, topic: str, difficulty: int):
@@ -27,9 +25,7 @@ class RAGService:
     async def evaluate_answer(self, question_id: str, answer: str):
         return self.rag_pipeline.answer_question(question_id, answer)
 
-    async def generate_conversation_tree(
-        self, topic: str, base_difficulty: int, depth: int = 3
-    ):
+    async def generate_conversation_tree(self, topic: str, base_difficulty: int, depth: int = 3):
         return self.tree_generator.generate_tree(topic, base_difficulty, depth)
 
 

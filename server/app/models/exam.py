@@ -37,9 +37,7 @@ class ExamSession(BaseModel):
             all_questions = json.load(f)
 
         # Filter questions related to the topic
-        topic_questions = [
-            q for q in all_questions.values() if topic.lower() in q["topic"].lower()
-        ]
+        topic_questions = [q for q in all_questions.values() if topic.lower() in q["topic"].lower()]
 
         # Sort by difficulty
         topic_questions.sort(key=lambda x: x["difficulty"])

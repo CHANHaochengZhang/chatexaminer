@@ -71,15 +71,11 @@ Format your response as JSON:
         )
 
         # Update exam evaluation
-        self.current_evaluation.question_evaluations[question["question_id"]] = (
-            evaluation
-        )
+        self.current_evaluation.question_evaluations[question["question_id"]] = evaluation
 
         return evaluation
 
-    def update_topic_coverage(
-        self, topic: str, score: float, covered_points: List[str] = None
-    ):
+    def update_topic_coverage(self, topic: str, score: float, covered_points: List[str] = None):
         """Update topic coverage scores"""
         self.current_evaluation.topic_coverage[topic] = score
 

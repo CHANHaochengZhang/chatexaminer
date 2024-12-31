@@ -37,9 +37,7 @@ class ExamEvaluation(BaseModel):
         for eval in self.question_evaluations.values():
             metrics = eval.metrics
             # Average of metrics
-            question_score = (
-                metrics.accuracy + metrics.clarity + metrics.understanding
-            ) / 3
+            question_score = (metrics.accuracy + metrics.clarity + metrics.understanding) / 3
             # Apply hint penalty
             question_score -= metrics.hints_used * 10
             # Weight by difficulty

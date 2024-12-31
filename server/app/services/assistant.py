@@ -19,9 +19,7 @@ class AssistantService:
             }
         }
 
-    async def process_response(
-        self, response: str, context: Dict[str, Any]
-    ) -> StudentResponse:
+    async def process_response(self, response: str, context: Dict[str, Any]) -> StudentResponse:
         messages = [
             {"role": "system", "content": get_system_prompt()},
             {"role": "user", "content": f"Student response: {response}"},

@@ -146,8 +146,7 @@ class RAGPipeline:
         )
 
         broad_contexts = [
-            {"text": match.text, "metadata": match.metadata}
-            for match in results[0].matches
+            {"text": match.text, "metadata": match.metadata} for match in results[0].matches
         ]
 
         # Log broad contexts
@@ -246,12 +245,8 @@ class RAGPipeline:
 
         # If not enough filtered contexts, pad with different ones
         if len(broad_contexts) < num_subtopics:
-            remaining_contexts = [
-                c for c in broad_contexts if c not in filtered_contexts
-            ]
-            broad_contexts.extend(
-                remaining_contexts[: num_subtopics - len(broad_contexts)]
-            )
+            remaining_contexts = [c for c in broad_contexts if c not in filtered_contexts]
+            broad_contexts.extend(remaining_contexts[: num_subtopics - len(broad_contexts)])
 
         print(f"Filtered contexts: {broad_contexts}")
 
