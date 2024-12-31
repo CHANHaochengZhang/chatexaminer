@@ -37,6 +37,7 @@ if not api_key:
 
 # 使用 openai 包的默认初始化方式
 import openai
+
 openai.api_key = api_key
 
 settings = Settings()

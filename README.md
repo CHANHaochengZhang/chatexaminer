@@ -214,7 +214,7 @@ chatexaminer/
 │ ├── StateMachine.md # State machine documentation
 │ └── API.md # API documentation
 ├── Makefile # Development automation
-└── .env # Environment configuration                 
+└── .env # Environment configuration
 ```
 
 ### Proof of Concept Implementation

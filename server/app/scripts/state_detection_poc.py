@@ -108,7 +108,7 @@ def analyze_response(
         "topic": context.get("topic"),
         "subtopic": context.get("subtopic"),
     }
-    
+
     messages = [
         {"role": "system", "content": system_prompt},
         {

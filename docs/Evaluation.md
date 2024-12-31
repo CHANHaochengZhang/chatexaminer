@@ -138,7 +138,7 @@ classDiagram
         +get_next_interaction()
         -_adjust_difficulty()
     }
-    
+
     class EvaluationService {
         +current_evaluation: ExamEvaluation
         +evaluate_response()
@@ -146,21 +146,21 @@ classDiagram
         +update_behavior_score()
         +get_final_evaluation()
     }
-    
+
     class ExamStateMachine {
         +current_state: ExamState
         +context: Dict
         +transition(state: ExamState)
         +get_current_question()
     }
-    
+
     class EvaluationMetrics {
         +accuracy: float
         +clarity: float
         +understanding: float
         +hints_used: int
     }
-    
+
     class QuestionEvaluation {
         +question_id: str
         +metrics: EvaluationMetrics
@@ -168,7 +168,7 @@ classDiagram
         +difficulty: int
         +time_taken: float
     }
-    
+
     class ExamEvaluation {
         +total_score: float
         +question_evaluations: Dict
@@ -192,7 +192,7 @@ sequenceDiagram
     participant E as ExamService
     participant S as StateMachine
     participant V as EvaluationService
-    
+
     U->>R: Start Exam
     R->>E: Create ExamService
     R->>U: Request Topic
@@ -202,7 +202,7 @@ sequenceDiagram
     S-->>E: QUESTIONING State
     E-->>R: First Question
     R->>U: Display Question
-    
+
     loop Question-Answer
         U->>R: Submit Answer
         R->>E: process_answer(answer)
@@ -212,7 +212,7 @@ sequenceDiagram
         E->>R: Next Question/Complete
         R->>U: Display Result
     end
-    
+
     U->>R: End Exam
     R->>E: Generate Final Evaluation
     E->>V: get_final_evaluation()

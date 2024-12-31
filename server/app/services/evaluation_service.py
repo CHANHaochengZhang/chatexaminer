@@ -1,21 +1,19 @@
-from typing import Dict, List
-import openai
-from app.models.evaluation import EvaluationMetrics, QuestionEvaluation, ExamEvaluation
 import json
+from typing import Dict, List
+
+import openai
+from app.models.evaluation import EvaluationMetrics, ExamEvaluation, QuestionEvaluation
+
 
 class EvaluationService:
     def __init__(self):
         self.current_evaluation = ExamEvaluation()
-    
+
     async def evaluate_response(
-        self, 
-        question: Dict, 
-        student_response: str,
-        hints_used: int,
-        time_taken: float
+        self, question: Dict, student_response: str, hints_used: int, time_taken: float
     ) -> QuestionEvaluation:
         """Evaluate a single response"""
-        
+
         # Prepare prompt for GPT evaluation
         prompt = f"""Evaluate this student's answer based on the following criteria:
 
@@ -42,23 +40,26 @@ Format your response as JSON:
         response = openai.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
-                {"role": "system", "content": "You are an expert evaluator for oral examinations."},
-                {"role": "user", "content": prompt}
+                {
+                    "role": "system",
+                    "content": "You are an expert evaluator for oral examinations.",
+                },
+                {"role": "user", "content": prompt},
             ],
-            response_format={ "type": "json_object" }
+            response_format={"type": "json_object"},
         )
-        
+
         # Parse response
         eval_result = json.loads(response.choices[0].message.content)
-        
+
         # Create evaluation metrics
         metrics = EvaluationMetrics(
             accuracy=eval_result["accuracy"],
             clarity=eval_result["clarity"],
             understanding=eval_result["understanding"],
-            hints_used=hints_used
+            hints_used=hints_used,
         )
-        
+
         # Create question evaluation
         evaluation = QuestionEvaluation(
             question_id=question["question_id"],
@@ -66,18 +67,22 @@ Format your response as JSON:
             feedback=eval_result["feedback"],
             difficulty=question["difficulty"],
             time_taken=time_taken,
-            raw_response=student_response
+            raw_response=student_response,
         )
-        
+
         # Update exam evaluation
-        self.current_evaluation.question_evaluations[question["question_id"]] = evaluation
-        
+        self.current_evaluation.question_evaluations[question["question_id"]] = (
+            evaluation
+        )
+
         return evaluation
-    
-    def update_topic_coverage(self, topic: str, score: float, covered_points: List[str] = None):
+
+    def update_topic_coverage(
+        self, topic: str, score: float, covered_points: List[str] = None
+    ):
         """Update topic coverage scores"""
         self.current_evaluation.topic_coverage[topic] = score
-    
+
     def update_behavior_score(self, metrics: Dict[str, float]):
         """Update behavior score based on examination metrics"""
         # Calculate behavior score based on:
@@ -85,16 +90,16 @@ Format your response as JSON:
         # - Hint usage frequency
         # - Response consistency
         behavior_score = 100.0
-        
+
         if metrics.get("avg_hints_per_question", 0) > 2:
             behavior_score -= 20
-            
+
         if metrics.get("avg_time_per_question", 0) > 300:  # 5 minutes
             behavior_score -= 20
-            
+
         self.current_evaluation.behavior_score = behavior_score
-    
+
     def get_final_evaluation(self) -> ExamEvaluation:
         """Generate final evaluation report"""
         self.current_evaluation.calculate_total_score()
-        return self.current_evaluation 
+        return self.current_evaluation
