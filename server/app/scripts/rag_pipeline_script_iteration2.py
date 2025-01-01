@@ -272,27 +272,16 @@ class RAGPipeline:
         self, topic: str, subtopic: str, difficulty: int, context: Dict[str, Any]
     ) -> ExamQuestion:
         """Generate a single question"""
-        # Get existing questions for the same subtopic and different difficulty
-        existing_questions = [
-            q
-            for q in self.questions.values()
-            if q.subtopic == subtopic and q.difficulty != difficulty
-        ]
-
-        # Build prompt for existing questions
-        existing_questions_prompt = ""
-        if existing_questions:
-            existing_questions_prompt = "\nExisting questions for this subtopic:\n"
-            for q in existing_questions:
-                existing_questions_prompt += f"- Difficulty {q.difficulty}/5: {q.question}\n"
+        # Use the provided context
+        selected_context = context
 
         # Add filename and page number information
-        source_info = (
-            f"Source: {context['metadata'].filename}, Page {context['metadata'].page_number}"
-        )
+        source_info = f"Source: {selected_context['metadata'].filename}, Page {selected_context['metadata'].page_number}"
 
         # Retrieve focused contexts
-        focused_contexts = self.focused_search(context)
+        focused_contexts = self.focused_search(selected_context)
+
+        # Combine context texts
         context_text = "\n".join(c["text"] for c in focused_contexts)
 
         # Enhanced prompt for specific question generation
@@ -300,29 +289,26 @@ class RAGPipeline:
 
 Topic: {topic}
 Difficulty: {difficulty}/5
-Selected Content: {context['text'][:200]}...
+Selected Content: {selected_context['text'][:200]}...
 
-{existing_questions_prompt}
 Requirements:
 1. Focus on a single, specific concept, formula, or relationship related to the topic
 2. Question must be answerable using ONLY the provided context
 3. Maximum length: 15 words
-4. Question difficulty should be distinct from existing questions:
-   - Difficulty 1: Basic recall and simple understanding
-   - Difficulty 2: Application of concepts
-   - Difficulty 3: Analysis and relationships
-   - Difficulty 4: Evaluation and comparison
-   - Difficulty 5: Synthesis and deep understanding
-5. Instead of asking "What is X?", consider:
-   - Difficulty 1-2: Components, parameters, basic relationships
-   - Difficulty 3: Mathematical meanings, specific conditions
-   - Difficulty 4: Compare and contrast, advantages/disadvantages
-   - Difficulty 5: Complex relationships, theoretical implications
+4. Avoid broad questions like "describe" or "explain in detail"
+5. Instead of asking "What is X?", ask about:
+   - Specific components or parameters
+   - Mathematical meanings of symbols
+   - Units of measurement
+   - Specific relationships between concepts
+   - Concrete applications or examples
+   - Step-by-step procedures
+   - Specific conditions or constraints
 
 Context for reference:
 {context_text}
 
-Generate a focused question that tests understanding at the appropriate difficulty level."""
+Generate a focused question that tests understanding of a specific aspect from the selected content."""
 
         # Generate question using GPT-4
         response = client.chat.completions.create(
@@ -344,7 +330,7 @@ Generate a focused question that tests understanding at the appropriate difficul
         answer_prompt = f"""Question: {response.choices[0].message.content.strip()}
 
 Context:
-{context["text"]}
+{selected_context["text"]}
 
 {source_info}
 
