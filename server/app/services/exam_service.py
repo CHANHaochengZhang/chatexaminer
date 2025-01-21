@@ -4,6 +4,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
 
+import openai
 from app.core.config import settings
 from app.models.evaluation import EvaluationMetrics
 from app.models.exam import ExamSession
@@ -26,6 +27,34 @@ class ExamService:
             "response_consistency": 1.0,
             "topic_progress": {},
         }
+        # Add function calling definition for state detection
+        self.state_detection_functions = [
+            {
+                "name": "determine_state",
+                "description": "Determine the next state based on student's response",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "next_state": {
+                            "type": "string",
+                            "enum": [state.value for state in ExamState],
+                            "description": "The next state to transition to",
+                        },
+                        "confidence": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 5,
+                            "description": "Confidence level in state determination",
+                        },
+                        "reason": {
+                            "type": "string",
+                            "description": "Reason for choosing this state",
+                        },
+                    },
+                    "required": ["next_state", "confidence", "reason"],
+                },
+            }
+        ]
 
     async def start_exam(self, topic: str) -> Dict:
         """Start the exam"""
@@ -99,53 +128,137 @@ class ExamService:
 
         return {"type": "state_change", "state": state.value}
 
+    async def detect_state(self, response: str, current_state: ExamState) -> Dict:
+        """Detect next state based on student's response using AI"""
+        # Create a serializable version of session metrics
+        serializable_metrics = {
+            "questions_answered": self.session_metrics["questions_answered"],
+            "hints_requested": self.session_metrics["hints_requested"],
+            "response_consistency": self.session_metrics["response_consistency"],
+        }
+
+        system_prompt = """You are an AI exam state analyzer. Determine the next state based on the student's response.
+
+State Machine Rules:
+1. INIT -> TOPIC_SELECTED: When student greets or shows readiness
+2. TOPIC_SELECTED -> QUESTIONING: When student indicates readiness to start exam
+3. QUESTIONING -> EXPLAINING: When student shows confusion
+4. QUESTIONING -> CHAT: When student gives meaningless/random answers
+5. EXPLAINING -> QUESTIONING: Only after student confirms understanding
+6. EXPLAINING -> CHAT: When student is not engaging seriously
+7. QUESTIONING -> QUESTIONING: After normal response
+8. QUESTIONING -> EVALUATING: When completed
+
+Key indicators for CHAT state:
+- Meaningless responses (e.g., "hehe", "???", random characters)
+- Off-topic responses
+- Non-serious engagement
+- Random keyboard input
+- Repeated short/meaningless answers
+
+For QUESTIONING state:
+- Move to CHAT if:
+  * Student gives meaningless answers (e.g., "hehe", "???", random letters)
+  * Student is not engaging with the question
+  * Response is completely off-topic
+  * Response shows no attempt to answer academically
+- Stay in QUESTIONING if the answer is relevant to the question
+- Move to EXPLAINING if student shows confusion"""
+
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {
+                "role": "user",
+                "content": f"""Current state: {current_state}
+Student response: "{response}"
+Context: {json.dumps(serializable_metrics)}
+
+Determine the next state based on this response.""",
+            },
+        ]
+
+        response = openai.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=messages,
+            functions=self.state_detection_functions,
+            function_call={"name": "determine_state"},
+        )
+
+        result = json.loads(response.choices[0].message.function_call.arguments)
+        return result
+
     async def process_answer(self, answer: str) -> Dict:
         """Process student's answer and return next interaction"""
-        # Check if exam should end
-        if answer.lower() in ["exit", "quit", "end", "stop", "i want to end the exam"]:
-            self.state_machine.transition(ExamState.EVALUATING)
+        # First detect the next state using AI
+        current_state = self.state_machine.get_current_state()
+        state_result = await self.detect_state(answer, current_state)
+        next_state = ExamState(state_result["next_state"])
+
+        # Record previous state before transition
+        if next_state == ExamState.CHAT:
+            self.state_machine.context["previous_state"] = current_state
+
+        # Special handling for TOPIC_SELECTED state
+        if current_state == ExamState.TOPIC_SELECTED:
+            if next_state == ExamState.QUESTIONING:
+                # Only start exam if transitioning to QUESTIONING
+                self.exam_start_time = time.time()
+                return {"type": "state_change", "state": next_state.value}
+            else:
+                # If not ready (e.g., "maybe", "not sure"), transition to CHAT
+                self.state_machine.transition(ExamState.CHAT)
+                return {
+                    "type": "state_change",
+                    "state": ExamState.CHAT.value,
+                    "content": "Let's chat until you feel ready to start the exam.",
+                }
+
+        # Transition to the detected state
+        self.state_machine.transition(next_state)
+
+        # If transitioning to EVALUATING, generate final evaluation
+        if next_state == ExamState.EVALUATING:
+            if self.exam_start_time is None:
+                self.exam_start_time = time.time()  # Set start time if not set
             return {
                 "type": "complete",
                 "content": "Exam ended, generating evaluation report...",
                 "evaluation": self._generate_final_evaluation(),
             }
 
-        if not self.state_machine.context.get("exam_session"):
-            raise ValueError("No active exam session")
+        # If in QUESTIONING state, process the answer
+        if current_state == ExamState.QUESTIONING and self.state_machine.context.get(
+            "exam_session"
+        ):
+            session = self.state_machine.context["exam_session"]
+            current_question = session.questions[session.current_question_index - 1]
 
-        session = self.state_machine.context["exam_session"]
-        current_question = session.questions[session.current_question_index - 1]
+            # Update session metrics
+            self.session_metrics["questions_answered"] += 1
 
-        # Update session metrics
-        self.session_metrics["questions_answered"] += 1
+            # Calculate time taken for this answer
+            time_taken = time.time() - self.question_start_time
 
-        # Calculate time taken for this answer
-        time_taken = time.time() - self.question_start_time
+            # Evaluate answer
+            evaluation = await self.evaluation_service.evaluate_response(
+                question=current_question,
+                student_response=answer,
+                hints_used=self.session_metrics["hints_requested"],
+                time_taken=time_taken,
+            )
 
-        # Evaluate answer
-        evaluation = await self.evaluation_service.evaluate_response(
-            question=current_question,
-            student_response=answer,
-            hints_used=self.session_metrics["hints_requested"],
-            time_taken=time_taken,
-        )
+            # Record answer and evaluation
+            session.record_answer(current_question["question_id"], answer)
+            session.record_evaluation(current_question["question_id"], evaluation.dict())
 
-        # Record answer and evaluation
-        session.record_answer(current_question["question_id"], answer)
-        session.record_evaluation(current_question["question_id"], evaluation.dict())
-
-        # Update topic coverage
-        self._update_topic_progress(
-            current_question["topic"],
-            evaluation.metrics.understanding,
-            [],  # Using empty list instead of key_points_covered
-        )
-
-        # Update behavior metrics
-        self._update_behavior_metrics(time_taken)
-
-        # Check if difficulty adjustment is needed
-        self._adjust_difficulty(evaluation.metrics)
+            # Update topic coverage and behavior metrics
+            self._update_topic_progress(
+                current_question["topic"],
+                evaluation.metrics.understanding,
+                [],
+            )
+            self._update_behavior_metrics(time_taken)
+            self._adjust_difficulty(evaluation.metrics)
 
         return self.get_next_interaction()
 

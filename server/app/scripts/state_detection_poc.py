@@ -48,15 +48,18 @@ State Machine Rules:
 1. INIT -> TOPIC_SELECTED: When student greets or shows readiness
 2. TOPIC_SELECTED -> QUESTIONING: When student indicates readiness to start exam
 3. QUESTIONING -> EXPLAINING: When student shows confusion
-4. EXPLAINING -> QUESTIONING: Only after student confirms understanding
-5. EXPLAINING -> EXPLAINING: When student needs more clarification
-6. QUESTIONING -> QUESTIONING: After normal response
-7. QUESTIONING -> EVALUATING: When completed
+4. QUESTIONING -> CHAT: When student gives meaningless/random answers
+5. EXPLAINING -> QUESTIONING: Only after student confirms understanding
+6. EXPLAINING -> CHAT: When student is not engaging seriously
+7. QUESTIONING -> QUESTIONING: After normal response
+8. QUESTIONING -> EVALUATING: When completed
 
-Key indicators for TOPIC_SELECTED -> QUESTIONING:
-- Student asks for questions
-- Student indicates readiness to begin
-- Student confirms topic selection
+Key indicators for CHAT state:
+- Meaningless responses (e.g., "xxxx", "???", random characters)
+- Off-topic responses
+- Non-serious engagement
+- Random keyboard input
+- Repeated short/meaningless answers
 
 Context tracking:
 - Number of questions answered
@@ -70,6 +73,7 @@ Key indicators:
 2. Normal response indicators: Direct answers, explanations, reasoning
 3. Off-topic indicators: Break requests, unrelated questions
 4. Completion indicators: Final question answered, evaluation complete
+5. Chat indicators: Random input, meaningless responses, non-academic conversation
 
 Confidence levels:
 1: Very uncertain - Response is unclear or ambiguous
@@ -78,21 +82,14 @@ Confidence levels:
 4: Quite confident - Response gives clear indication
 5: Very confident - Response gives explicit indication
 
-Key indicators for EXPLAINING state:
-- Student still confused: "I still don't understand", "Could you explain more"
-- Student understands: "I understand now", "That makes sense", "Okay, I get it"
-- Student ready to answer: "Let me try to answer", "I'll answer now"
-
-Current context will be provided in each request.
-
 For QUESTIONING state:
-- Move to EVALUATING if:
-  * Student explicitly requests to end the exam
-  * Student shows signs of exhaustion
-  * Student has repeated the same answer multiple times
-  * Student expresses desire to stop
+- Move to CHAT if:
+  * Student gives meaningless answers (e.g., "hehe", "???", random letters)
+  * Student is not engaging with the question
+  * Response is completely off-topic
+  * Response shows no attempt to answer academically
 - Stay in QUESTIONING if the answer is relevant to the question
-- Move to EXPLAINING if student shows confusion or asks for clarification
+- Move to EXPLAINING if student shows confusion
 """
 
 

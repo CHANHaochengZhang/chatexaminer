@@ -35,15 +35,17 @@ async def main():
                 print("Available topics: Direct Methods for Optimal Control")
                 topic = input("Input: ")
                 exam_service.state_machine.context["topic"] = topic
-                exam_service.state_machine.transition(ExamState.TOPIC_SELECTED)
+                response = await exam_service.process_answer(topic)
 
             elif state == ExamState.TOPIC_SELECTED:
                 print(f"\nSelected topic: {exam_service.state_machine.context['topic']}")
                 ready = input("Are you ready to start? Please describe your preparation: ")
-                if ready.lower() not in ["no", "n"]:
-                    response = await exam_service.start_exam(
-                        exam_service.state_machine.context["topic"]
-                    )
+                response = await exam_service.process_answer(ready)
+                if response.get("type") == "state_change":
+                    if response.get("state") == ExamState.QUESTIONING.value:
+                        await exam_service.start_exam(exam_service.state_machine.context["topic"])
+                    elif response.get("state") == ExamState.CHAT.value:
+                        print("\n" + response.get("content", ""))
 
             elif state == ExamState.QUESTIONING:
                 question = exam_service.state_machine.get_current_question()
@@ -58,8 +60,7 @@ async def main():
             elif state == ExamState.EXPLAINING:
                 print("\nExplanation needed...")
                 understood = input("Do you understand? Please describe: ")
-                if understood.lower() in ["yes", "y", "i understand"]:
-                    exam_service.state_machine.transition(ExamState.QUESTIONING)
+                response = await exam_service.process_answer(understood)
 
             elif state == ExamState.EVALUATING:
                 print("\nGenerating final evaluation...")
@@ -80,37 +81,28 @@ async def main():
 
             elif state == ExamState.CHAT:
                 print("\nSeems like we're having a casual conversation.")
-                response = input("You can continue chatting or type 'return' to go back: ")
+                print("You can continue chatting or type 'return' to go back to the exam.")
+                response = input("Chat: ")
+                response = await exam_service.process_answer(response)
 
-                if response.lower() == "return":
-                    # 尝试返回到上一个有效状态
-                    previous_state = exam_service.state_machine.context.get(
-                        "previous_state", ExamState.INIT
-                    )
-                    exam_service.state_machine.transition(previous_state)
-                else:
-                    # 继续聊天，使用 state_detection 分析应该转到哪个状态
-                    from app.scripts.state_detection_poc import analyze_response
-
-                    result = await analyze_response(
-                        response,
-                        exam_service.state_machine.get_current_state(),
-                        exam_service.state_machine.get_context(),
-                    )
-                    if result.next_state != ExamState.CHAT:
-                        exam_service.state_machine.transition(result.next_state)
-
-            else:
-                # 处理未知状态，转到 CHAT 状态
-                print("\nNot sure how to handle this interaction.")
-                exam_service.state_machine.context["previous_state"] = state
-                exam_service.state_machine.transition(ExamState.CHAT)
+            # Handle response types
+            if isinstance(response, dict):
+                if response.get("type") == "complete":
+                    print("\nExam completed!")
+                    if "evaluation" in response:
+                        final_eval = response["evaluation"]
+                        print("\nExam Results:")
+                        print(f"Total Score: {final_eval['total_score']:.2f}")
+                        print(f"Topic Coverage: {final_eval['topic_coverage']}")
+                        print(f"Behavior Score: {final_eval['behavior_score']:.2f}")
+                    break
 
         except Exception as e:
             print(f"\nError: {str(e)}")
-            # 发生错误时也转到 CHAT 状态
-            exam_service.state_machine.context["previous_state"] = state
-            exam_service.state_machine.transition(ExamState.CHAT)
+            # Let AI decide what to do with the error
+            error_response = await exam_service.process_answer(f"Error occurred: {str(e)}")
+            if isinstance(error_response, dict) and error_response.get("type") == "complete":
+                break
 
 
 if __name__ == "__main__":
