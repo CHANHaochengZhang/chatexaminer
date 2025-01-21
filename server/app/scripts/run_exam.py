@@ -29,53 +29,88 @@ async def main():
         state = exam_service.state_machine.get_current_state()
         print(f"\nCurrent State: {state}")
 
-        if state == ExamState.INIT:
-            print("\nPlease enter the exam topic:")
-            print("Available topics: Direct Methods for Optimal Control")
-            topic = input("Input: ")
-            exam_service.state_machine.context["topic"] = topic
-            exam_service.state_machine.transition(ExamState.TOPIC_SELECTED)
+        try:
+            if state == ExamState.INIT:
+                print("\nPlease enter the exam topic:")
+                print("Available topics: Direct Methods for Optimal Control")
+                topic = input("Input: ")
+                exam_service.state_machine.context["topic"] = topic
+                exam_service.state_machine.transition(ExamState.TOPIC_SELECTED)
 
-        elif state == ExamState.TOPIC_SELECTED:
-            print(f"\nSelected topic: {exam_service.state_machine.context['topic']}")
-            ready = input("Are you ready to start? Please describe your preparation: ")
-            if ready.lower() not in ["no", "n"]:
-                response = await exam_service.start_exam(
-                    exam_service.state_machine.context["topic"]
-                )
+            elif state == ExamState.TOPIC_SELECTED:
+                print(f"\nSelected topic: {exam_service.state_machine.context['topic']}")
+                ready = input("Are you ready to start? Please describe your preparation: ")
+                if ready.lower() not in ["no", "n"]:
+                    response = await exam_service.start_exam(
+                        exam_service.state_machine.context["topic"]
+                    )
 
-        elif state == ExamState.QUESTIONING:
-            question = exam_service.state_machine.get_current_question()
-            if question:
-                print(f"\nQuestion: {question['question']}")
-                print(f"Difficulty Level: {question['difficulty']}/5")
-                print("(If you want to end the exam, please explain why)")
+            elif state == ExamState.QUESTIONING:
+                question = exam_service.state_machine.get_current_question()
+                if question:
+                    print(f"\nQuestion: {question['question']}")
+                    print(f"Difficulty Level: {question['difficulty']}/5")
+                    print("(If you want to end the exam, please explain why)")
 
-                answer = input("\nYour answer: ")
-                response = await exam_service.process_answer(answer)
+                    answer = input("\nYour answer: ")
+                    response = await exam_service.process_answer(answer)
 
-        elif state == ExamState.EXPLAINING:
-            print("\nExplanation needed...")
-            understood = input("Do you understand? Please describe: ")
-            if understood.lower() in ["yes", "y", "i understand"]:
-                exam_service.state_machine.transition(ExamState.QUESTIONING)
+            elif state == ExamState.EXPLAINING:
+                print("\nExplanation needed...")
+                understood = input("Do you understand? Please describe: ")
+                if understood.lower() in ["yes", "y", "i understand"]:
+                    exam_service.state_machine.transition(ExamState.QUESTIONING)
 
-        elif state == ExamState.EVALUATING:
-            print("\nGenerating final evaluation...")
-            final_eval = exam_service._generate_final_evaluation()
-            print("\nExam Results:")
-            print(f"Total Score: {final_eval['total_score']:.2f}")
-            print(f"Topic Coverage: {final_eval['topic_coverage']}")
-            print(f"Behavior Score: {final_eval['behavior_score']:.2f}")
-            print("\nDetailed Question Evaluations:")
-            for qid, eval_data in final_eval["question_evaluations"].items():
-                print(f"\nQuestion {qid}:")
-                print(f"Scores: {eval_data['score']}")
-                print(f"Feedback: {eval_data['feedback']}")
-            break
+            elif state == ExamState.EVALUATING:
+                print("\nGenerating final evaluation...")
+                final_eval = exam_service._generate_final_evaluation()
+                print("\nExam Results:")
+                print(f"Total Score: {final_eval['total_score']:.2f}")
+                print(f"Topic Coverage: {final_eval['topic_coverage']}")
+                print(f"Behavior Score: {final_eval['behavior_score']:.2f}")
+                print("\nDetailed Question Evaluations:")
+                for qid, eval_data in final_eval["question_evaluations"].items():
+                    print(f"\nQuestion {qid}:")
+                    print(f"Scores: {eval_data['score']}")
+                    print(f"Feedback: {eval_data['feedback']}")
+                break
 
-        elif state == ExamState.COMPLETED:
-            break
+            elif state == ExamState.COMPLETED:
+                break
+
+            elif state == ExamState.CHAT:
+                print("\nSeems like we're having a casual conversation.")
+                response = input("You can continue chatting or type 'return' to go back: ")
+
+                if response.lower() == "return":
+                    # 尝试返回到上一个有效状态
+                    previous_state = exam_service.state_machine.context.get(
+                        "previous_state", ExamState.INIT
+                    )
+                    exam_service.state_machine.transition(previous_state)
+                else:
+                    # 继续聊天，使用 state_detection 分析应该转到哪个状态
+                    from app.scripts.state_detection_poc import analyze_response
+
+                    result = await analyze_response(
+                        response,
+                        exam_service.state_machine.get_current_state(),
+                        exam_service.state_machine.get_context(),
+                    )
+                    if result.next_state != ExamState.CHAT:
+                        exam_service.state_machine.transition(result.next_state)
+
+            else:
+                # 处理未知状态，转到 CHAT 状态
+                print("\nNot sure how to handle this interaction.")
+                exam_service.state_machine.context["previous_state"] = state
+                exam_service.state_machine.transition(ExamState.CHAT)
+
+        except Exception as e:
+            print(f"\nError: {str(e)}")
+            # 发生错误时也转到 CHAT 状态
+            exam_service.state_machine.context["previous_state"] = state
+            exam_service.state_machine.transition(ExamState.CHAT)
 
 
 if __name__ == "__main__":

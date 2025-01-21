@@ -15,6 +15,7 @@ class ExamState(str, Enum):
     COMPLETED = "COMPLETED"
     PREPARATION = "PREPARATION"
     PAUSED = "PAUSED"
+    CHAT = "CHAT"
 
 
 class StateTransition(BaseModel):
@@ -49,22 +50,42 @@ class ExamStateMachine:
             ExamState.INIT: [
                 (ExamState.PREPARATION, "student_not_ready"),
                 (ExamState.TOPIC_SELECTED, "student_ready"),
+                (ExamState.CHAT, "casual_conversation"),
             ],
             ExamState.PREPARATION: [
                 (ExamState.INIT, "need_more_preparation"),
                 (ExamState.TOPIC_SELECTED, "student_ready"),
             ],
-            ExamState.TOPIC_SELECTED: [(ExamState.QUESTIONING, "start_exam()")],
+            ExamState.TOPIC_SELECTED: [
+                (ExamState.QUESTIONING, "start_exam()"),
+                (ExamState.CHAT, "casual_conversation"),
+            ],
             ExamState.QUESTIONING: [
                 (ExamState.EXPLAINING, "student_confused/need_clarification"),
                 (ExamState.EVALUATING, "questions_completed"),
                 (ExamState.QUESTIONING, "good_response/select_next_question"),
                 (ExamState.PAUSED, "student_needs_break"),
+                (ExamState.CHAT, "casual_conversation"),
             ],
-            ExamState.EXPLAINING: [(ExamState.QUESTIONING, "provide_explanation()")],
-            ExamState.EVALUATING: [(ExamState.COMPLETED, "generate_final_evaluation()")],
+            ExamState.EXPLAINING: [
+                (ExamState.QUESTIONING, "provide_explanation()"),
+                (ExamState.CHAT, "casual_conversation"),
+            ],
+            ExamState.EVALUATING: [
+                (ExamState.COMPLETED, "generate_final_evaluation()"),
+                (ExamState.CHAT, "casual_conversation"),
+            ],
             ExamState.PAUSED: [
                 (ExamState.QUESTIONING, "resume_exam"),
+                (ExamState.CHAT, "casual_conversation"),
+            ],
+            ExamState.CHAT: [
+                (ExamState.INIT, "return_to_init"),
+                (ExamState.TOPIC_SELECTED, "return_to_topic"),
+                (ExamState.QUESTIONING, "return_to_question"),
+                (ExamState.EXPLAINING, "return_to_explanation"),
+                (ExamState.EVALUATING, "return_to_evaluation"),
+                (ExamState.PAUSED, "return_to_pause"),
             ],
         }
 

@@ -9,62 +9,47 @@ The AI Examiner implements an intelligent dialogue system for conducting oral ex
 stateDiagram-v2
     [*] --> INIT
 
-    INIT --> INIT: simple_greeting
-    INIT --> TOPIC_SELECTED: topic_mentioned
-    note right of INIT
-        States:
-        - Simple greeting
-        - Casual conversation
-        - Topic selection
-        Initial difficulty = 3
-    end note
+    INIT --> TOPIC_SELECTED: student_ready
+    INIT --> PREPARATION: student_not_ready
+    INIT --> CHAT: casual_conversation
+
+    PREPARATION --> INIT: need_more_preparation
+    PREPARATION --> TOPIC_SELECTED: student_ready
 
     TOPIC_SELECTED --> QUESTIONING: start_exam()
-    note right of TOPIC_SELECTED
-        Loads pre-generated questions
-        for selected topic
-    end note
+    TOPIC_SELECTED --> CHAT: casual_conversation
 
+    QUESTIONING --> QUESTIONING: good_response
     QUESTIONING --> EXPLAINING: student_confused
-    EXPLAINING --> EXPLAINING: needs_more_explanation
-    EXPLAINING --> QUESTIONING: confirms_understanding
-    note right of EXPLAINING
-        States:
-        - Student still confused
-        - Student needs clarification
-        - Student confirms understanding
-        - Student ready to answer
-        Tracks hint requests
-    end note
-
-    QUESTIONING --> QUESTIONING: evaluate_response()/\nselect_next_question()
-    note right of QUESTIONING
-        Response evaluation:
-        - Score (1-5)
-        - Understanding level
-        - Updates difficulty
-    end note
-
-    QUESTIONING --> PAUSED: student_needs_break
-    PAUSED --> QUESTIONING: resume_exam
-    note right of PAUSED
-        Handles:
-        - Break requests
-        - Technical issues
-        - Other interruptions
-    end note
-
     QUESTIONING --> EVALUATING: questions_completed
-    note right of EVALUATING
-        Accumulates:
-        - Question scores
-        - Hint requests
-        - Response patterns
-    end note
+    QUESTIONING --> PAUSED: student_needs_break
+    QUESTIONING --> CHAT: casual_conversation
 
-    EVALUATING --> COMPLETED: generate_final_evaluation()
+    EXPLAINING --> QUESTIONING: understanding_confirmed
+    EXPLAINING --> CHAT: casual_conversation
+
+    EVALUATING --> COMPLETED: report_generated
+    EVALUATING --> CHAT: casual_conversation
+
+    PAUSED --> QUESTIONING: resume_exam
+    PAUSED --> CHAT: casual_conversation
+
+    CHAT --> INIT: return_to_init
+    CHAT --> TOPIC_SELECTED: return_to_topic
+    CHAT --> QUESTIONING: return_to_question
+    CHAT --> EXPLAINING: return_to_explanation
+    CHAT --> EVALUATING: return_to_evaluation
+    CHAT --> PAUSED: return_to_pause
 
     COMPLETED --> [*]
+
+    note right of CHAT
+        Universal state for:
+        - Casual conversation
+        - Error handling
+        - Unknown interactions
+        Can return to any previous state
+    end note
 ```
 
 ## State Descriptions
@@ -135,3 +120,30 @@ Using OpenAI Function Calling:
 - Expression clarity (20%)
 - Technical terminology (10%)
 - Hint requests (affects score)
+
+## State Transitions
+
+| Current State | Next State | Condition | Description |
+|--------------|------------|-----------|-------------|
+| INIT | TOPIC_SELECTED | student_ready | Student indicates readiness |
+| INIT | PREPARATION | student_not_ready | Student needs preparation |
+| INIT | CHAT | casual_conversation | General conversation |
+| TOPIC_SELECTED | QUESTIONING | start_exam() | Begin examination |
+| TOPIC_SELECTED | CHAT | casual_conversation | General conversation |
+| QUESTIONING | EXPLAINING | student_confused | Student needs clarification |
+| QUESTIONING | EVALUATING | questions_completed | All questions answered |
+| QUESTIONING | QUESTIONING | good_response | Continue with next question |
+| QUESTIONING | PAUSED | student_needs_break | Student requests break |
+| QUESTIONING | CHAT | casual_conversation | General conversation |
+| EXPLAINING | QUESTIONING | understanding_confirmed | Student understands |
+| EXPLAINING | CHAT | casual_conversation | General conversation |
+| EVALUATING | COMPLETED | report_generated | Final evaluation done |
+| EVALUATING | CHAT | casual_conversation | General conversation |
+| PAUSED | QUESTIONING | resume_exam | Resume examination |
+| PAUSED | CHAT | casual_conversation | General conversation |
+| CHAT | INIT | return_to_init | Return to initial state |
+| CHAT | TOPIC_SELECTED | return_to_topic | Return to topic selection |
+| CHAT | QUESTIONING | return_to_question | Return to questioning |
+| CHAT | EXPLAINING | return_to_explanation | Return to explanation |
+| CHAT | EVALUATING | return_to_evaluation | Return to evaluation |
+| CHAT | PAUSED | return_to_pause | Return to paused state |
