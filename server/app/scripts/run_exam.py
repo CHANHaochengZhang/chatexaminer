@@ -30,76 +30,60 @@ async def main():
         print(f"\nCurrent State: {state}")
 
         try:
+            # Display state-specific prompts
             if state == ExamState.INIT:
                 print("\nPlease enter the exam topic:")
                 print("Available topics: Direct Methods for Optimal Control")
-                topic = input("Input: ")
-                exam_service.state_machine.context["topic"] = topic
-                response = await exam_service.process_answer(topic)
-
+                response = input("Input: ")
             elif state == ExamState.TOPIC_SELECTED:
                 print(f"\nSelected topic: {exam_service.state_machine.context['topic']}")
-                ready = input("Are you ready to start? Please describe your preparation: ")
-                response = await exam_service.process_answer(ready)
-                if response.get("type") == "state_change":
-                    if response.get("state") == ExamState.QUESTIONING.value:
-                        await exam_service.start_exam(exam_service.state_machine.context["topic"])
-                    elif response.get("state") == ExamState.CHAT.value:
-                        print("\n" + response.get("content", ""))
-
+                response = input("Are you ready to start? Please describe your preparation: ")
             elif state == ExamState.QUESTIONING:
                 question = exam_service.state_machine.get_current_question()
                 if question:
                     print(f"\nQuestion: {question['question']}")
                     print(f"Difficulty Level: {question['difficulty']}/5")
                     print("(If you want to end the exam, please explain why)")
-
-                    answer = input("\nYour answer: ")
-                    response = await exam_service.process_answer(answer)
-
+                    response = input("\nYour answer: ")
+                else:
+                    response = "No more questions"
             elif state == ExamState.EXPLAINING:
                 print("\nExplanation needed...")
-                understood = input("Do you understand? Please describe: ")
-                response = await exam_service.process_answer(understood)
-
-            elif state == ExamState.EVALUATING:
-                print("\nGenerating final evaluation...")
-                final_eval = exam_service._generate_final_evaluation()
-                print("\nExam Results:")
-                print(f"Total Score: {final_eval['total_score']:.2f}")
-                print(f"Topic Coverage: {final_eval['topic_coverage']}")
-                print(f"Behavior Score: {final_eval['behavior_score']:.2f}")
-                print("\nDetailed Question Evaluations:")
-                for qid, eval_data in final_eval["question_evaluations"].items():
-                    print(f"\nQuestion {qid}:")
-                    print(f"Scores: {eval_data['score']}")
-                    print(f"Feedback: {eval_data['feedback']}")
-                break
-
-            elif state == ExamState.COMPLETED:
-                break
-
+                response = input("Do you understand? Please describe: ")
             elif state == ExamState.CHAT:
                 print("\nSeems like we're having a casual conversation.")
                 print("You can continue chatting or type 'return' to go back to the exam.")
                 response = input("Chat: ")
-                response = await exam_service.process_answer(response)
+            else:
+                response = ""
 
-            # Handle response types
-            if isinstance(response, dict):
-                if response.get("type") == "complete":
+            # Process response using function calling
+            result = await exam_service.process_answer(response)
+
+            # Handle response
+            if isinstance(result, dict):
+                if result.get("type") == "error":
+                    print(f"\nError: {result['message']}")
+                elif result.get("type") == "complete":
                     print("\nExam completed!")
-                    if "evaluation" in response:
-                        final_eval = response["evaluation"]
+                    if "evaluation" in result:
+                        final_eval = result["evaluation"]
                         print("\nExam Results:")
                         print(f"Total Score: {final_eval['total_score']:.2f}")
                         print(f"Topic Coverage: {final_eval['topic_coverage']}")
                         print(f"Behavior Score: {final_eval['behavior_score']:.2f}")
+                        print("\nDetailed Question Evaluations:")
+                        for qid, eval_data in final_eval["question_evaluations"].items():
+                            print(f"\nQuestion {qid}:")
+                            print(f"Scores: {eval_data['score']}")
+                            print(f"Feedback: {eval_data['feedback']}")
                     break
+                elif result.get("type") == "state_change":
+                    if result.get("content"):
+                        print("\n" + result["content"])
 
         except Exception as e:
             print(f"\nError: {str(e)}")
-            # Let AI decide what to do with the error
             error_response = await exam_service.process_answer(f"Error occurred: {str(e)}")
             if isinstance(error_response, dict) and error_response.get("type") == "complete":
                 break

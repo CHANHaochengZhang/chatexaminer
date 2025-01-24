@@ -27,34 +27,94 @@ class ExamService:
             "response_consistency": 1.0,
             "topic_progress": {},
         }
-        # Add function calling definition for state detection
-        self.state_detection_functions = [
-            {
-                "name": "determine_state",
-                "description": "Determine the next state based on student's response",
+        # Define function calling for each state
+        self.state_functions = {
+            ExamState.INIT: {
+                "name": "handle_init_state",
+                "description": "Handle initial state interaction",
                 "parameters": {
                     "type": "object",
                     "properties": {
+                        "is_greeting": {"type": "boolean"},
+                        "topic_mentioned": {"type": "boolean"},
+                        "topic": {"type": "string", "description": "Topic mentioned by student"},
                         "next_state": {
                             "type": "string",
                             "enum": [state.value for state in ExamState],
-                            "description": "The next state to transition to",
-                        },
-                        "confidence": {
-                            "type": "integer",
-                            "minimum": 1,
-                            "maximum": 5,
-                            "description": "Confidence level in state determination",
-                        },
-                        "reason": {
-                            "type": "string",
-                            "description": "Reason for choosing this state",
                         },
                     },
-                    "required": ["next_state", "confidence", "reason"],
+                    "required": ["next_state"],
                 },
-            }
-        ]
+            },
+            ExamState.TOPIC_SELECTED: {
+                "name": "handle_topic_selected",
+                "description": "Handle topic selected state interaction",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "is_ready": {"type": "boolean"},
+                        "needs_preparation": {"type": "boolean"},
+                        "next_state": {
+                            "type": "string",
+                            "enum": [state.value for state in ExamState],
+                        },
+                    },
+                    "required": ["next_state", "is_ready"],
+                },
+            },
+            ExamState.QUESTIONING: {
+                "name": "handle_questioning",
+                "description": "Handle questioning state interaction",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "answer_quality": {"type": "integer", "minimum": 1, "maximum": 5},
+                        "needs_explanation": {"type": "boolean"},
+                        "wants_to_end": {"type": "boolean"},
+                        "next_state": {
+                            "type": "string",
+                            "enum": [state.value for state in ExamState],
+                        },
+                    },
+                    "required": ["next_state", "answer_quality"],
+                },
+            },
+            ExamState.EXPLAINING: {
+                "name": "handle_explaining",
+                "description": "Handle explaining state interaction",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "understood": {"type": "boolean"},
+                        "needs_more_explanation": {"type": "boolean"},
+                        "next_state": {
+                            "type": "string",
+                            "enum": [state.value for state in ExamState],
+                        },
+                    },
+                    "required": ["next_state", "understood"],
+                },
+            },
+            ExamState.CHAT: {
+                "name": "handle_chat",
+                "description": "Handle chat state interaction",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "wants_to_return": {"type": "boolean"},
+                        "return_state": {
+                            "type": "string",
+                            "enum": [state.value for state in ExamState],
+                        },
+                        "next_state": {
+                            "type": "string",
+                            "enum": [state.value for state in ExamState],
+                        },
+                    },
+                    "required": ["next_state"],
+                },
+            },
+        }
 
     async def start_exam(self, topic: str) -> Dict:
         """Start the exam"""
@@ -150,7 +210,7 @@ State Machine Rules:
 8. QUESTIONING -> EVALUATING: When completed
 
 Key indicators for CHAT state:
-- Meaningless responses (e.g., "hehe", "???", random characters)
+- Meaningless responses (e.g."???", random characters)
 - Off-topic responses
 - Non-serious engagement
 - Random keyboard input
@@ -189,76 +249,98 @@ Determine the next state based on this response.""",
 
     async def process_answer(self, answer: str) -> Dict:
         """Process student's answer and return next interaction"""
-        # First detect the next state using AI
         current_state = self.state_machine.get_current_state()
-        state_result = await self.detect_state(answer, current_state)
-        next_state = ExamState(state_result["next_state"])
+
+        # Create a serializable version of session metrics
+        serializable_metrics = {
+            "questions_answered": self.session_metrics["questions_answered"],
+            "hints_requested": self.session_metrics["hints_requested"],
+            "response_consistency": self.session_metrics["response_consistency"],
+        }
+
+        # Get the function definition for current state
+        function_def = self.state_functions.get(current_state)
+        if not function_def:
+            return {"type": "error", "message": f"No handler for state {current_state}"}
+
+        system_prompt = f"""You are an AI exam state analyzer. Analyze the student's response in the current state.
+
+Current State: {current_state}
+Student Response: {answer}
+Context: {json.dumps(serializable_metrics)}
+
+Determine the appropriate action based on the response."""
+
+        # Call GPT with the state-specific function
+        response = openai.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": answer},
+            ],
+            functions=[function_def],
+            function_call={"name": function_def["name"]},
+        )
+
+        result = json.loads(response.choices[0].message.function_call.arguments)
+        next_state = ExamState(result["next_state"])
 
         # Record previous state before transition
         if next_state == ExamState.CHAT:
             self.state_machine.context["previous_state"] = current_state
 
-        # Special handling for TOPIC_SELECTED state
-        if current_state == ExamState.TOPIC_SELECTED:
-            if next_state == ExamState.QUESTIONING:
-                # Only start exam if transitioning to QUESTIONING
-                self.exam_start_time = time.time()
-                return {"type": "state_change", "state": next_state.value}
-            else:
-                # If not ready (e.g., "maybe", "not sure"), transition to CHAT
-                self.state_machine.transition(ExamState.CHAT)
-                return {
-                    "type": "state_change",
-                    "state": ExamState.CHAT.value,
-                    "content": "Let's chat until you feel ready to start the exam.",
-                }
+        # Handle state-specific logic
+        if current_state == ExamState.INIT and next_state == ExamState.TOPIC_SELECTED:
+            if result.get("topic"):
+                self.state_machine.context["topic"] = result["topic"]
 
-        # Transition to the detected state
+        elif current_state == ExamState.TOPIC_SELECTED and next_state == ExamState.QUESTIONING:
+            if result.get("is_ready"):
+                await self.start_exam(self.state_machine.context["topic"])
+
+        elif current_state == ExamState.QUESTIONING:
+            if next_state == ExamState.EVALUATING or result.get("wants_to_end"):
+                return {
+                    "type": "complete",
+                    "content": "Exam ended, generating evaluation report...",
+                    "evaluation": self._generate_final_evaluation(),
+                }
+            elif self.state_machine.context.get("exam_session"):
+                session = self.state_machine.context["exam_session"]
+                current_question = session.questions[session.current_question_index - 1]
+
+                # Update metrics and evaluate answer
+                self.session_metrics["questions_answered"] += 1
+                time_taken = time.time() - self.question_start_time
+
+                evaluation = await self.evaluation_service.evaluate_response(
+                    question=current_question,
+                    student_response=answer,
+                    hints_used=self.session_metrics["hints_requested"],
+                    time_taken=time_taken,
+                )
+
+                session.record_answer(current_question["question_id"], answer)
+                session.record_evaluation(current_question["question_id"], evaluation.dict())
+
+                self._update_topic_progress(
+                    current_question["topic"],
+                    evaluation.metrics.understanding,
+                    [],
+                )
+                self._update_behavior_metrics(time_taken)
+                self._adjust_difficulty(evaluation.metrics)
+
+        # Transition to the next state
         self.state_machine.transition(next_state)
 
-        # If transitioning to EVALUATING, generate final evaluation
-        if next_state == ExamState.EVALUATING:
-            if self.exam_start_time is None:
-                self.exam_start_time = time.time()  # Set start time if not set
+        # Return appropriate response
+        if next_state == ExamState.CHAT:
             return {
-                "type": "complete",
-                "content": "Exam ended, generating evaluation report...",
-                "evaluation": self._generate_final_evaluation(),
+                "type": "state_change",
+                "state": next_state.value,
+                "content": "Let's chat until you feel ready to continue.",
             }
-
-        # If in QUESTIONING state, process the answer
-        if current_state == ExamState.QUESTIONING and self.state_machine.context.get(
-            "exam_session"
-        ):
-            session = self.state_machine.context["exam_session"]
-            current_question = session.questions[session.current_question_index - 1]
-
-            # Update session metrics
-            self.session_metrics["questions_answered"] += 1
-
-            # Calculate time taken for this answer
-            time_taken = time.time() - self.question_start_time
-
-            # Evaluate answer
-            evaluation = await self.evaluation_service.evaluate_response(
-                question=current_question,
-                student_response=answer,
-                hints_used=self.session_metrics["hints_requested"],
-                time_taken=time_taken,
-            )
-
-            # Record answer and evaluation
-            session.record_answer(current_question["question_id"], answer)
-            session.record_evaluation(current_question["question_id"], evaluation.dict())
-
-            # Update topic coverage and behavior metrics
-            self._update_topic_progress(
-                current_question["topic"],
-                evaluation.metrics.understanding,
-                [],
-            )
-            self._update_behavior_metrics(time_taken)
-            self._adjust_difficulty(evaluation.metrics)
 
         return self.get_next_interaction()
 
