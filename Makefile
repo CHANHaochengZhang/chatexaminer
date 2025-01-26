@@ -66,7 +66,9 @@ clean:
 run-backend:
 	@echo "$(BLUE)Starting FastAPI server...$(NC)"
 	. $(VENV)/bin/activate && \
-	uvicorn server.app.main:app --reload --host $(HOST) --port $(PORT)
+	cd server && \
+	export PYTHONPATH=$${PYTHONPATH}:$$(pwd) && \
+	python app/main.py
 
 # Update dependencies
 update-deps:
@@ -88,7 +90,17 @@ lint:
 	. $(VENV)/bin/activate && \
 	python -m flake8
 
-.PHONY: system-deps setup-venv install-deps setup-nltk setup clean run-backend update-deps test lint
+# Run frontend development server
+run-frontend:
+	@echo "$(BLUE)Starting Vue.js frontend server...$(NC)"
+	cd frontend && npm run dev
+
+# Run both backend and frontend
+run-all:
+	@echo "$(BLUE)Starting both backend and frontend servers...$(NC)"
+	make run-backend & make run-frontend
+
+.PHONY: system-deps setup-venv install-deps setup-nltk setup clean run-backend run-frontend run-all update-deps test lint
 
 # Help command
 help:
@@ -97,6 +109,8 @@ help:
 	@echo "$(GREEN)make setup$(NC)        - Complete setup (system deps + venv + Python deps + NLTK)"
 	@echo "$(GREEN)make clean$(NC)        - Remove virtual environment and cached files"
 	@echo "$(GREEN)make run-backend$(NC)  - Start the FastAPI server"
+	@echo "$(GREEN)make run-frontend$(NC) - Start the Vue.js frontend server"
+	@echo "$(GREEN)make run-all$(NC)      - Start both backend and frontend servers"
 	@echo "$(GREEN)make update-deps$(NC)  - Update dependencies to latest versions"
 	@echo "$(GREEN)make test$(NC)         - Run tests"
 	@echo "$(GREEN)make lint$(NC)         - Run linter"
