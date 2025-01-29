@@ -1,6 +1,6 @@
 <template>
   <div class="exam-chat">
-    <!-- 消息列表 -->
+    <!-- Message List -->
     <div class="message-list" ref="messageList">
       <div
         v-for="(message, index) in messages"
@@ -14,13 +14,13 @@
       </div>
     </div>
 
-    <!-- 输入区域 -->
+    <!-- Input Area -->
     <div class="input-area">
       <el-input
         v-model="inputMessage"
         type="textarea"
         :rows="3"
-        placeholder="请输入你的回答..."
+        placeholder="Enter your answer..."
         :disabled="loading"
         @keydown.enter.exact.prevent="handleSend"
       />
@@ -30,7 +30,7 @@
           :loading="loading"
           @click="handleSend"
         >
-          发送
+          Send
         </el-button>
       </div>
     </div>

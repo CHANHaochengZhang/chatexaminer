@@ -276,12 +276,63 @@ Determine the next state based on this response.""",
         print(f"状态检测结果: {result}")
         return result
 
+    async def request_hint(self) -> Dict:
+        """Request a hint for the current question"""
+        print("\n=== Processing hint request ===")
+        self.session_metrics["hints_requested"] += 1
+        current_question = self.state_machine.get_current_question()
+
+        if not current_question:
+            return {"error": "No active question"}
+
+        # 创建提示生成的prompt
+        prompt = f"""Based on the following question metadata, generate a helpful hint that guides the student towards the answer without directly giving it away.
+
+Question: {current_question['question']}
+Topic: {current_question['topic']}
+Subtopic: {current_question['subtopic']}
+Difficulty: {current_question['difficulty']} (on a scale of 1-5)
+Context: {current_question.get('context', [])}
+
+Requirements for the hint:
+1. Be specific to the question's topic and difficulty level
+2. Guide thinking without revealing the answer
+3. Reference relevant concepts from the context
+4. For higher difficulty questions (4-5), focus on methodology
+5. For lower difficulty questions (1-3), focus on key concepts
+6. Keep the hint concise and clear
+
+Generate a hint:"""
+
+        # 调用OpenAI API生成hint
+        response = openai.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are an expert exam tutor, skilled at providing helpful hints that guide students to discover answers themselves.",
+                },
+                {"role": "user", "content": prompt},
+            ],
+        )
+
+        hint = response.choices[0].message.content.strip()
+        print(
+            f"Generated hint for question {current_question['question_id']}, Hints used: {self.session_metrics['hints_requested']}"
+        )
+
+        return {
+            "hint": hint,
+            "question_id": current_question["question_id"],
+            "hints_used": self.session_metrics["hints_requested"],
+        }
+
     async def process_answer(self, answer: str) -> Dict:
         """Process student's answer and return next interaction"""
         current_state = self.state_machine.get_current_state()
-        print(f"\n=== 处理答案 ===")
-        print(f"当前状态: {current_state}")
-        print(f"收到答案: {answer}")
+        print(f"\n=== Processing answer ===")
+        print(f"Current state: {current_state}")
+        print(f"Received answer: {answer}")
 
         # Create a serializable version of session metrics
         serializable_metrics = {
@@ -293,7 +344,7 @@ Determine the next state based on this response.""",
         # Get the function definition for current state
         function_def = self.state_functions.get(current_state)
         if not function_def:
-            print(f"错误: 没有找到状态 {current_state} 的处理函数")
+            print(f"Error: No handler found for state {current_state}")
             return {"type": "error", "message": f"No handler for state {current_state}"}
 
         system_prompt = f"""You are an AI exam state analyzer. Analyze the student's response in the current state.
@@ -323,14 +374,42 @@ Determine the appropriate action based on the response."""
         )
 
         result = json.loads(response.choices[0].message.function_call.arguments)
-        print(f"GPT响应结果: {result}")
+        print(f"GPT response result: {result}")
 
-        # Update questions_answered when in QUESTIONING state and receiving a valid answer
+        # Update questions_answered and evaluation when in QUESTIONING state
         if current_state == ExamState.QUESTIONING and result.get("answer_quality", 0) > 0:
             print(
-                f"更新答题数: {self.session_metrics['questions_answered']} -> {self.session_metrics['questions_answered'] + 1}"
+                f"Updating questions answered: {self.session_metrics['questions_answered']} -> {self.session_metrics['questions_answered'] + 1}"
             )
             self.session_metrics["questions_answered"] += 1
+
+            # Get current question
+            current_question = self.state_machine.get_current_question()
+            if current_question:
+                # Calculate time taken
+                time_taken = (
+                    time.time() - self.question_start_time if self.question_start_time else 0
+                )
+
+                # Create evaluation metrics
+                metrics = EvaluationMetrics(
+                    accuracy=result["answer_quality"] * 20,  # Convert 1-5 score to percentage
+                    clarity=result["answer_quality"] * 20,
+                    understanding=result["answer_quality"] * 20,
+                    hints_used=self.session_metrics["hints_requested"],  # Include actual hints used
+                )
+
+                # Update evaluation service
+                print(
+                    f"Adding question evaluation - ID: {current_question['question_id']}, Score: {metrics}, Hints used: {self.session_metrics['hints_requested']}"
+                )
+                self.evaluation_service.add_question_evaluation(
+                    current_question["question_id"],
+                    metrics,
+                    time_taken,
+                    current_question["difficulty"],
+                    "Answer evaluated based on quality score",
+                )
 
         if current_state == ExamState.CHAT:
             if result.get("wants_to_return"):
@@ -412,14 +491,6 @@ Determine the appropriate action based on the response."""
             self.state_machine.increase_difficulty()
         elif avg_performance < 60:
             self.state_machine.decrease_difficulty()
-
-    def request_hint(self) -> str:
-        """Request a hint"""
-        self.session_metrics["hints_requested"] += 1
-        current_question = self.state_machine.get_current_question()
-
-        # More intelligent hint generation logic could be implemented here
-        return f"Consider the question context: {' '.join(current_question['context'][:1])}"
 
     def _generate_final_evaluation(self) -> Dict:
         """Generate final evaluation report"""

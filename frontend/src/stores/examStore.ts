@@ -85,11 +85,11 @@ export const useExamStore = defineStore('exam', {
       if (!this.sessionId) return
 
       try {
-        this.hintsUsed++
-        // TODO: 实现请求提示的 API
+        const response = await examAPI.requestHint()
+        this.hintsUsed = response.hintsUsed
         this.messages.push({
           type: 'hint',
-          content: '这是一个提示信息...',
+          content: response.hint,
           timestamp: new Date().toISOString()
         })
       } catch (error) {

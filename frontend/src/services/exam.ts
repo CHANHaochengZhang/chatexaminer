@@ -3,15 +3,43 @@ import type { Message, ExamState, EvaluationReport, ProgressReport } from '@/typ
 
 const BASE_URL = 'http://localhost:8000/api/exam'
 
-class ExamService {
+export interface ExamAPI {
+  startExam: (topic: string) => Promise<{
+    state: ExamState;
+    message: string;
+    sessionId: string;
+  }>;
+  submitAnswer: (answer: string) => Promise<{
+    state: ExamState;
+    message: string;
+    progress: any;
+  }>;
+  getExamState: () => Promise<{
+    state: ExamState;
+    data: any;
+  }>;
+  getProgressEvaluation: () => Promise<ProgressReport>;
+  requestHint: () => Promise<{
+    hint: string;
+    hintsUsed: number;
+  }>;
+  getEvaluation: () => Promise<EvaluationReport>;
+  connectWebSocket: (onMessage: (data: any) => void) => WebSocket;
+  clearSession: () => void;
+}
+
+class ExamService implements ExamAPI {
   private sessionId: string | null = null
 
   async startExam(topic: string) {
     const response = await axios.post(`${BASE_URL}/start`, { topic })
     this.sessionId = response.data.data.session_id
+    if (!this.sessionId) {
+      throw new Error('Failed to get session ID from server')
+    }
     return {
       state: response.data.state as ExamState,
-      message: response.data.message,
+      message: response.data.message as string,
       sessionId: this.sessionId
     }
   }
@@ -23,7 +51,7 @@ class ExamService {
     const response = await axios.post(`${BASE_URL}/${this.sessionId}/answer`, { answer })
     return {
       state: response.data.state as ExamState,
-      message: response.data.message,
+      message: response.data.message as string,
       progress: response.data.data.progress
     }
   }
@@ -72,6 +100,17 @@ class ExamService {
   clearSession() {
     this.sessionId = null
   }
+
+  async requestHint() {
+    if (!this.sessionId) {
+      throw new Error('No active exam session')
+    }
+    const response = await axios.get(`${BASE_URL}/${this.sessionId}/hint`)
+    return {
+      hint: response.data.data.hint,
+      hintsUsed: response.data.data.hints_used
+    }
+  }
 }
 
-export const examService = new ExamService()
+export const examAPI: ExamAPI = new ExamService()

@@ -10,168 +10,179 @@ BASE_URL = "http://localhost:8000/api/exam"
 
 async def test_exam_flow():
     try:
-        # 1. 启动考试
-        print("\n1. 启动考试...")
+        # 1. Start exam
+        print("\n1. Starting exam...")
         start_response = requests.post(
             f"{BASE_URL}/start", json={"topic": "Direct Methods for Optimal Control"}
         )
         start_data = start_response.json()
-        print("响应:", json.dumps(start_data, indent=2, ensure_ascii=False))
+        print("Response:", json.dumps(start_data, indent=2, ensure_ascii=False))
 
         if start_response.status_code != 200:
-            print("启动考试失败!")
+            print("Failed to start exam!")
             return
 
         session_id = start_data["data"]["session_id"]
 
-        # 2. 获取状态
-        print("\n2. 获取考试状态...")
+        # 2. Get state
+        print("\n2. Getting exam state...")
         state_response = requests.get(f"{BASE_URL}/{session_id}/state")
-        print("响应:", json.dumps(state_response.json(), indent=2, ensure_ascii=False))
+        print("Response:", json.dumps(state_response.json(), indent=2, ensure_ascii=False))
 
-        # 3. 提交答案
-        print("\n3. 提交答案...")
+        # 3. Submit answer
+        print("\n3. Submitting answer...")
         answer_response = requests.post(
-            f"{BASE_URL}/{session_id}/answer", json={"answer": "这是一个测试答案"}
+            f"{BASE_URL}/{session_id}/answer", json={"answer": "This is a test answer"}
         )
-        print("响应:", json.dumps(answer_response.json(), indent=2, ensure_ascii=False))
+        print("Response:", json.dumps(answer_response.json(), indent=2, ensure_ascii=False))
 
-        # 4. WebSocket 测试
-        print("\n4. WebSocket 测试...")
+        # 4. WebSocket test
+        print("\n4. Testing WebSocket...")
         async with websockets.connect(f"ws://localhost:8000/api/exam/{session_id}/ws") as ws:
-            # 发送消息
-            message = {"answer": "通过 WebSocket 发送的答案"}
-            print("发送:", json.dumps(message, indent=2, ensure_ascii=False))
+            # Send message
+            message = {"answer": "Answer sent via WebSocket"}
+            print("Sending:", json.dumps(message, indent=2, ensure_ascii=False))
             await ws.send(json.dumps(message))
 
-            # 接收响应
+            # Receive response
             response = await ws.recv()
-            print("接收:", json.dumps(json.loads(response), indent=2, ensure_ascii=False))
+            print("Received:", json.dumps(json.loads(response), indent=2, ensure_ascii=False))
 
-            # 正常关闭连接
+            # Close connection normally
             await ws.close()
 
     except Exception as e:
-        print(f"\n错误: {str(e)}")
+        print(f"\nError: {str(e)}")
 
 
 async def test_exam_evaluation():
     try:
-        print("\n=== 测试评估报告功能 ===")
+        print("\n=== Testing Evaluation Report Function ===")
 
-        # 1. 启动考试会话
-        print("\n1. 启动考试会话...")
+        # 1. Start exam session
+        print("\n1. Starting exam session...")
         start_response = requests.post(
             f"{BASE_URL}/start", json={"topic": "Direct Methods for Optimal Control"}
         )
         start_data = start_response.json()
         session_id = start_data["data"]["session_id"]
-        print(f"会话ID: {session_id}")
+        print(f"Session ID: {session_id}")
 
-        # 2. 提交几个答案以生成评估数据
-        print("\n2. 提交测试答案...")
+        # 2. Submit multiple answers to generate evaluation data
+        print("\n2. Submitting test answers...")
         test_answers = [
             "The direct methods in optimal control transform the continuous problem into a discrete optimization problem.",
-            "Collocation methods are commonly used, where the continuous functions are approximated at specific points.",
+            "I'm not sure about this one. Can I get a hint?",  # Request hint for second question
             "The resulting nonlinear programming problem can be solved using sequential quadratic programming.",
         ]
 
         for i, answer in enumerate(test_answers, 1):
-            print(f"\n提交答案 {i}...")
+            print(f"\nSubmitting answer {i}...")
+
+            # If this is the second answer, request a hint first
+            if i == 2:
+                print("Requesting hint...")
+                hint_response = requests.get(f"{BASE_URL}/{session_id}/hint")
+                print(f"Hint response: {hint_response.json()}")
+                time.sleep(1)  # Wait for hint to be processed
+
             answer_response = requests.post(
                 f"{BASE_URL}/{session_id}/answer", json={"answer": answer}
             )
             response_data = answer_response.json()
-            print(f"答案 {i} 响应状态: {answer_response.status_code}")
-            # print(f"答案 {i} 响应数据: {json.dumps(response_data, indent=2, ensure_ascii=False)}")
+            print(f"Answer {i} response status: {answer_response.status_code}")
 
-            # 检查当前状态
+            # Check current state
             state_response = requests.get(f"{BASE_URL}/{session_id}/state")
             state_data = state_response.json()
-            print(f"当前考试状态: {state_data['state']}")
+            print(f"Current exam state: {state_data['state']}")
 
-            # 等待一下确保答案被处理
+            # Wait to ensure answer is processed
             time.sleep(1)
 
-        # 3. 获取进度评估
-        print("\n3. 获取进度评估...")
+        # 3. Get progress evaluation
+        print("\n3. Getting progress evaluation...")
         progress_response = requests.get(f"{BASE_URL}/{session_id}/progress")
         progress_data = progress_response.json()
-        print("进度评估:", json.dumps(progress_data, indent=2, ensure_ascii=False))
+        print("Progress evaluation:", json.dumps(progress_data, indent=2, ensure_ascii=False))
 
-        # 先转到评估状态
-        print("\n转换到评估状态...")
+        # Transition to evaluation state
+        print("\nTransitioning to evaluation state...")
         eval_transition_answer = "I believe I have answered all the questions thoroughly. Could we proceed to the evaluation?"
         eval_response = requests.post(
             f"{BASE_URL}/{session_id}/answer", json={"answer": eval_transition_answer}
         )
-        print("转换响应:", json.dumps(eval_response.json(), indent=2, ensure_ascii=False))
+        print(
+            "Transition response:", json.dumps(eval_response.json(), indent=2, ensure_ascii=False)
+        )
 
-        # 检查状态是否已转换到评估
+        # Check if state has changed to evaluation
         state_response = requests.get(f"{BASE_URL}/{session_id}/state")
         current_state = state_response.json()["state"]
-        print(f"当前状态: {current_state}")
+        print(f"Current state: {current_state}")
 
         if current_state != "EVALUATING":
-            print("等待状态转换到评估...")
+            print("Waiting for state transition to evaluation...")
             time.sleep(2)
-            # 再次尝试转换
+            # Try transition again
             eval_response = requests.post(
                 f"{BASE_URL}/{session_id}/answer",
                 json={"answer": "Yes, I'm ready for the evaluation."},
             )
 
-        # 确保考试完成
-        print("\n提交结束确认...")
+        # Ensure exam completion
+        print("\nSubmitting completion confirmation...")
         final_answer = (
             "Yes, I understand. I'm ready to complete the exam and receive my evaluation."
         )
         final_response = requests.post(
             f"{BASE_URL}/{session_id}/answer", json={"answer": final_answer}
         )
-        print("结束响应:", json.dumps(final_response.json(), indent=2, ensure_ascii=False))
+        print(
+            "Completion response:", json.dumps(final_response.json(), indent=2, ensure_ascii=False)
+        )
 
-        # 等待状态更新
+        # Wait for state update
         time.sleep(2)
 
-        # 4. 获取最终评估报告
-        print("\n4. 获取最终评估报告...")
+        # 4. Get final evaluation report
+        print("\n4. Getting final evaluation report...")
         eval_response = requests.get(f"{BASE_URL}/{session_id}/evaluation")
         eval_data = eval_response.json()
 
         if eval_data["data"]:
-            print("\n=== 评估报告详情 ===")
-            print(f"总分: {eval_data['data'].get('total_score', 0):.2f}")
-            print("\n知识点覆盖:")
+            print("\n=== Evaluation Report Details ===")
+            print(f"Total Score: {eval_data['data'].get('total_score', 0):.2f}")
+            print("\nTopic Coverage:")
             for topic, coverage in eval_data["data"].get("topic_coverage", {}).items():
                 print(f"- {topic}: {coverage:.2f}%")
 
-            print("\n问题评估:")
+            print("\nQuestion Evaluations:")
             for qid, eval_info in eval_data["data"].get("question_evaluations", {}).items():
-                print(f"\n问题 {qid}:")
-                print(f"分数: {eval_info.get('score', {})}")
-                print(f"反馈: {eval_info.get('feedback', '')}")
-                print(f"用时: {eval_info.get('time_taken', 0):.2f}秒")
+                print(f"\nQuestion {qid}:")
+                print(f"Score: {eval_info.get('score', {})}")
+                print(f"Feedback: {eval_info.get('feedback', '')}")
+                print(f"Time taken: {eval_info.get('time_taken', 0):.2f} seconds")
 
-            print("\n行为指标:")
+            print("\nBehavioral Metrics:")
             behavior = eval_data["data"].get("session_metrics", {})
-            print(f"总用时: {behavior.get('total_time', 0):.2f}秒")
-            print(f"答题数: {behavior.get('questions_answered', 0)}")
-            print(f"使用提示数: {behavior.get('hints_used', 0)}")
-            print(f"答案一致性: {behavior.get('response_consistency', 0):.2f}")
+            print(f"Total time: {behavior.get('total_time', 0):.2f} seconds")
+            print(f"Questions answered: {behavior.get('questions_answered', 0)}")
+            print(f"Hints used: {behavior.get('hints_used', 0)}")
+            print(f"Response consistency: {behavior.get('response_consistency', 0):.2f}")
         else:
-            print("未获取到评估报告数据")
-            print("原始响应:", json.dumps(eval_data, indent=2, ensure_ascii=False))
+            print("No evaluation report data received")
+            print("Raw response:", json.dumps(eval_data, indent=2, ensure_ascii=False))
 
     except Exception as e:
-        print(f"\n错误: {str(e)}")
+        print(f"\nError: {str(e)}")
 
 
 async def main():
-    # 运行原有的测试
+    # Run original test
     # await test_exam_flow()
 
-    # 运行评估报告测试
+    # Run evaluation report test
     await test_exam_evaluation()
 
 

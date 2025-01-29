@@ -356,3 +356,260 @@ asyncio.run(connect_exam())
 2. WebSocket 连接在考试会话不存在时会自动关闭
 3. 评估结果只有在考试完成状态才能获取
 4. 建议使用 WebSocket 进行实时交互，以获得更好的体验
+
+## Hint 相关接口
+
+### 获取提示
+
+获取当前考试问题的提示信息。
+
+**请求**
+
+```http
+GET /api/exam/{session_id}/hint
+```
+
+**路径参数**
+
+| 参数 | 类型 | 描述 |
+|------|------|------|
+| session_id | string | 考试会话ID |
+
+**响应**
+
+```json
+{
+  "state": "string",     // 当前考试状态
+  "message": "string",   // 响应消息
+  "data": {
+    "hint": "string",    // 生成的提示内容
+    "hints_used": number // 已使用的提示次数
+  }
+}
+```
+
+**状态码**
+
+| 状态码 | 描述 |
+|--------|------|
+| 200 | 成功获取提示 |
+| 404 | 考试会话不存在 |
+| 400 | 请求参数错误 |
+| 403 | 无权限访问该考试会话 |
+
+**示例**
+
+请求:
+```http
+GET /api/exam/abc123/hint
+```
+
+成功响应:
+```json
+{
+  "state": "IN_PROGRESS",
+  "message": "提示已生成",
+  "data": {
+    "hint": "考虑使用微分方程来解决这个问题,首先写出物体的运动方程...",
+    "hints_used": 2
+  }
+}
+```
+
+错误响应:
+```json
+{
+  "state": "ERROR",
+  "message": "考试会话不存在",
+  "data": null
+}
+```
+
+### 使用限制
+
+1. 每个问题最多可以请求3次提示
+2. 使用提示会影响最终得分,每使用一次提示扣除该题分数的10%
+3. 提示生成会考虑:
+   - 问题难度
+   - 主题/子主题
+   - 上下文信息
+   - 学生当前表现
+
+### 错误码说明
+
+| 错误码 | 描述 | 解决方案 |
+|--------|------|----------|
+| HINT_LIMIT_EXCEEDED | 超出提示使用次数限制 | 等待下一道题目 |
+| SESSION_NOT_FOUND | 考试会话不存在 | 检查session_id是否正确 |
+| QUESTION_NOT_ACTIVE | 当前没有活动的问题 | 确保考试正在进行中 |
+| UNAUTHORIZED | 无访问权限 | 检查用户认证状态 |
+
+### WebSocket 事件
+
+提示相关的实时事件通知:
+
+```typescript
+interface HintEvent {
+  type: 'HINT_REQUESTED' | 'HINT_GENERATED' | 'HINT_ERROR';
+  data: {
+    questionId: string;
+    hint?: string;
+    error?: string;
+    timestamp: string;
+  }
+}
+```
+
+### 客户端集成
+
+TypeScript 示例:
+
+```typescript
+interface HintResponse {
+  hint: string;
+  hintsUsed: number;
+}
+
+class ExamAPI {
+  async requestHint(): Promise<HintResponse> {
+    if (!this.sessionId) {
+      throw new Error('No active exam session');
+    }
+    const response = await axios.get(
+      `${BASE_URL}/${this.sessionId}/hint`
+    );
+    return {
+      hint: response.data.data.hint,
+      hintsUsed: response.data.data.hints_used
+    };
+  }
+}
+```
+
+### 安全性考虑
+
+1. 访问控制
+   - 验证用户是否有权访问该考试会话
+   - 检查提示请求频率限制
+   - 防止提示内容泄露
+
+2. 数据保护
+   - 所有API请求需要通过HTTPS
+   - 提示内容在传输和存储时进行加密
+   - 定期清理历史提示数据
+
+### 性能优化
+
+1. 缓存策略
+   - 对相似问题的提示进行缓存
+   - 使用Redis存储会话状态
+   - CDN加速静态资源
+
+2. 限流措施
+   - 基于用户的请求频率限制
+   - 服务器负载自适应调节
+   - 队列处理大量并发请求
+
+### 监控指标
+
+1. 业务指标
+   - 提示使用率
+   - 提示效果评分
+   - 用户满意度
+
+2. 技术指标
+   - API响应时间
+   - 错误率统计
+   - 系统资源使用率
+
+# API 实现文档
+
+## 系统架构图
+
+```mermaid
+graph TD
+    A[前端应用] -->|HTTP请求| B[API网关]
+    B -->|路由转发| C[考试服务]
+    C -->|会话管理| D[状态机]
+    C -->|提示生成| E[OpenAI服务]
+    C -->|数据存储| F[(Redis)]
+    C -->|持久化| G[(PostgreSQL)]
+
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style B fill:#bbf,stroke:#333,stroke-width:2px
+    style C fill:#bfb,stroke:#333,stroke-width:2px
+    style D fill:#fbb,stroke:#333,stroke-width:2px
+    style E fill:#bff,stroke:#333,stroke-width:2px
+```
+
+## 提示请求流程
+
+```mermaid
+sequenceDiagram
+    participant U as 用户
+    participant F as 前端
+    participant B as 后端
+    participant AI as OpenAI
+    participant DB as 数据库
+
+    U->>F: 点击获取提示
+    F->>B: GET /api/exam/{session_id}/hint
+    B->>DB: 检查会话状态
+    B->>DB: 获取当前问题
+    B->>AI: 生成提示请求
+    AI-->>B: 返回生成的提示
+    B->>DB: 更新提示使用统计
+    B-->>F: 返回提示内容
+    F-->>U: 显示提示
+```
+
+## 状态转换图
+
+```mermaid
+stateDiagram-v2
+    [*] --> 未开始
+    未开始 --> 进行中: 开始考试
+    进行中 --> 已暂停: 暂停
+    已暂停 --> 进行中: 继续
+    进行中 --> 已完成: 提交
+    已完成 --> [*]
+
+    state 进行中 {
+        [*] --> 答题中
+        答题中 --> 查看提示: 请求提示
+        查看提示 --> 答题中: 继续答题
+    }
+```
+
+## 组件交互图
+
+```mermaid
+graph LR
+    A[ExamStore] -->|状态管理| B[ExamAPI]
+    B -->|HTTP请求| C[FastAPI Router]
+    C -->|服务调用| D[ExamService]
+    D -->|状态维护| E[StateMachine]
+    D -->|提示生成| F[OpenAI]
+
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style B fill:#bbf,stroke:#333,stroke-width:2px
+    style C fill:#bfb,stroke:#333,stroke-width:2px
+    style D fill:#fbb,stroke:#333,stroke-width:2px
+```
+
+## 数据流图
+
+```mermaid
+graph TD
+    A[用户输入] -->|触发| B[前端Store]
+    B -->|API调用| C[后端服务]
+    C -->|查询| D[会话状态]
+    C -->|生成| E[提示内容]
+    E -->|存储| D
+    D -->|返回| C
+    C -->|响应| B
+    B -->|更新| F[UI显示]
+
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style F fill:#f9f,stroke:#333,stroke-width:2px
+```

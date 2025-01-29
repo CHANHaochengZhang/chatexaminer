@@ -3,15 +3,15 @@
     <el-card>
       <template #header>
         <div class="card-header">
-          <span>评估报告</span>
-          <el-tag type="success">总分：{{ evaluation?.totalScore || 0 }}</el-tag>
+          <span>Evaluation Report</span>
+          <el-tag type="success">Total Score: {{ evaluation?.totalScore || 0 }}</el-tag>
         </div>
       </template>
 
       <div class="report-content">
-        <!-- 主题覆盖 -->
+        <!-- Topic Coverage -->
         <div class="section">
-          <h3>主题覆盖</h3>
+          <h3>Topic Coverage</h3>
           <div class="tags">
             <el-tag
               v-for="topic in evaluation?.topicCoverage"
@@ -24,9 +24,9 @@
           </div>
         </div>
 
-        <!-- 优点 -->
+        <!-- Strengths -->
         <div class="section">
-          <h3>优点</h3>
+          <h3>Strengths</h3>
           <ul>
             <li v-for="(strength, index) in evaluation?.strengths" :key="index">
               {{ strength }}
@@ -34,9 +34,9 @@
           </ul>
         </div>
 
-        <!-- 不足 -->
+        <!-- Weaknesses -->
         <div class="section">
-          <h3>不足</h3>
+          <h3>Weaknesses</h3>
           <ul>
             <li v-for="(weakness, index) in evaluation?.weaknesses" :key="index">
               {{ weakness }}
@@ -44,9 +44,9 @@
           </ul>
         </div>
 
-        <!-- 建议 -->
+        <!-- Suggestions -->
         <div class="section">
-          <h3>建议</h3>
+          <h3>Suggestions</h3>
           <ul>
             <li v-for="(suggestion, index) in evaluation?.suggestions" :key="index">
               {{ suggestion }}

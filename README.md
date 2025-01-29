@@ -173,48 +173,82 @@ OPENAI_API_KEY=<your-openai-api-key>
 ### Directory Structure
 ```
 chatexaminer/
-├── knowledge/
-│ └── pdf/ # PDF knowledge base files for course materials
-├── data/
-│ ├── exam_questions.json # Generated and cached exam questions
-│ ├── conversation_trees/ # Generated dialogue trees
-│ ├── vectorDB_workspace/ # Vector database storage
-│ └── logs/ # Application logs
-│ ├── rag_pipeline.log # RAG operations logging
-│ └── state_machine.log # State transitions logging
-├── server/
-│ ├── app/
-│ │ ├── api/
-│ │ │ ├── v1/
-│ │ │ │ ├── endpoints/ # API endpoints
-│ │ │ │ │ ├── exam.py # Exam control endpoints
-│ │ │ │ │ └── health.py # System health checks
-│ │ │ │ └── api.py # API router configuration
-│ │ ├── core/
-│ │ │ ├── config.py # Application settings
-│ │ │ └── security.py # Authentication & authorization
-│ │ ├── models/
-│ │ │ ├── exam.py # Exam session models
-│ │ │ ├── state_machine.py # State machine models
-│ │ │ ├── document.py # Document and metadata models
-│ │ │ ├── question.py # Question structure models
-│ │ │ └── evaluation.py # Evaluation models and metrics
-│ │ ├── scripts/
-│ │ │ ├── pdf_load.py # PDF processing and vectorization
-│ │ │ ├── rag_pipeline_script.py # RAG pipeline implementation
-│ │ │ ├── state_detection_poc.py # State detection implementation
-│ │ │ └── run_exam.py # Interactive exam runner
-│ │ └── services/
-│ │ ├── assistant.py # OpenAI function calling service
-│ │ ├── exam_service.py # Exam business logic
-│ │ ├── rag_service.py # RAG integration service
-│ │ └── evaluation_service.py # Answer evaluation service
-│ └── requirements.txt
-├── docs/
-│ ├── StateMachine.md # State machine documentation
-│ └── API.md # API documentation
-├── Makefile # Development automation
-└── .env # Environment configuration
+├── knowledge/                    # Knowledge base directory
+│   └── pdf/                     # Course material PDFs
+├── data/                        # Data directory
+│   ├── exam_questions.json      # Exam questions data
+│   ├── conversation_trees/      # Dialogue tree data
+│   ├── vectorDB_workspace/      # Vector database storage
+│   └── logs/                    # Application logs
+│       ├── rag_pipeline.log     # RAG operation logs
+│       ├── hint_usage.log       # Hint usage tracking
+│       └── state_machine.log    # State transition logs
+├── server/                      # Backend service
+│   ├── app/
+│   │   ├── api/                # API layer
+│   │   │   ├── v1/
+│   │   │   │   ├── endpoints/  # API endpoints
+│   │   │   │   │   ├── exam.py        # Exam control
+│   │   │   │   │   ├── hint.py        # Hint functionality
+│   │   │   │   │   └── health.py      # Health checks
+│   │   │   │   └── api.py     # API route configuration
+│   │   ├── core/              # Core configuration
+│   │   │   ├── config.py      # Application settings
+│   │   │   └── security.py    # Authentication & authorization
+│   │   ├── models/            # Data models
+│   │   │   ├── exam.py        # Exam session model
+│   │   │   ├── hint.py        # Hint feature model
+│   │   │   ├── question.py    # Question structure
+│   │   │   └── evaluation.py  # Evaluation metrics
+│   │   ├── services/          # Business services
+│   │   │   ├── exam_service.py       # Exam service
+│   │   │   ├── hint_service.py       # Hint service
+│   │   │   ├── rag_service.py        # RAG service
+│   │   │   └── evaluation_service.py  # Evaluation service
+│   │   └── utils/             # Utility functions
+│   │       ├── openai_utils.py       # OpenAI utilities
+│   │       └── vector_utils.py       # Vector processing
+│   └── requirements.txt        # Dependency management
+├── frontend/                   # Frontend application
+│   ├── src/
+│   │   ├── components/        # UI components
+│   │   │   ├── ExamView/     # Exam interface
+│   │   │   │   ├── QuestionCard.vue
+│   │   │   │   └── HintButton.vue
+│   │   │   └── common/       # Shared components
+│   │   ├── stores/           # State management
+│   │   │   ├── exam.ts       # Exam state
+│   │   │   └── hint.ts       # Hint state
+│   │   ├── services/         # API services
+│   │   │   ├── api.ts        # Base API class
+│   │   │   ├── exam.ts       # Exam API
+│   │   │   └── hint.ts       # Hint API
+│   │   └── types/            # Type definitions
+│   │       ├── exam.ts       # Exam types
+│   │       └── hint.ts       # Hint types
+│   ├── tests/                 # Test files
+│   │   ├── unit/             # Unit tests
+│   │   └── e2e/              # End-to-end tests
+│   └── package.json          # Frontend dependencies
+├── tests/                    # Test directory
+│   ├── unit/                # Unit tests
+│   │   ├── test_exam.py     # Exam tests
+│   │   └── test_hint.py     # Hint tests
+│   └── integration/         # Integration tests
+├── docs/                    # Documentation
+│   ├── api.md              # API documentation
+│   ├── hint-design.md      # Hint design specs
+│   └── deployment.md       # Deployment guide
+├── scripts/                # Script directory
+│   ├── setup.sh           # Environment setup
+│   └── deploy.sh          # Deployment script
+├── docker/                 # Docker configuration
+│   ├── Dockerfile         # Application build
+│   └── docker-compose.yml # Service orchestration
+├── .env.example           # Environment template
+├── .gitignore            # Git ignore rules
+├── README.md             # Project documentation
+└── Makefile              # Build configuration
 ```
 
 ### Proof of Concept Implementation
@@ -559,242 +593,4 @@ The system requires proper configuration of:
 
 ### Methodologies
 1. **Recursive Text Splitting**
-```bibtex
-@article{recursive-splitting,
-    title = {Recursive Text Splitting for Long Document Processing},
-    author = {LangChain Contributors},
-    year = {2023},
-    url = {https://python.langchain.com/docs/modules/data_connection/document_transformers/text_splitters/recursive_text_splitter}
-}
 ```
-- Splits documents recursively based on multiple delimiters while preserving semantic meaning
-- Maintains context coherence across splits for better information retrieval
-
-2. **Semantic Chunking and Context Selection**
-```bibtex
-@article{liu2023semantic,
-    title = {Semantic Chunking for Question Generation},
-    author = {Liu, Ming and Chen, Wray and Xiong, Caiming},
-    journal = {Proceedings of ACL 2023},
-    year = {2023},
-    pages = {1234-1245},
-    url = {https://aclanthology.org/2023.acl-long.123}
-}
-```
-- Chunks text based on semantic units rather than fixed length
-- Preserves contextual relationships between segments
-
-```bibtex
-@inproceedings{wang2021continuous,
-    title = {Continuous Context Processing in Text Generation},
-    author = {Wang, Xiaojun and Li, Yang},
-    booktitle = {Findings of EMNLP 2021},
-    year = {2021},
-    pages = {2346-2357},
-    publisher = {Association for Computational Linguistics}
-}
-```
-- Maintains continuous context flow during text generation
-- Reduces information loss between context transitions
-
-3. **Two-Round Semantic Search**
-```bibtex
-@article{semantic-search,
-    title = {Dense Passage Retrieval for Open-Domain Question Answering},
-    author = {Karpukhin, Vladimir and Oğuz, Barlas and Min, Sewon and Lewis, Patrick and Wu, Ledell and Edunov, Sergey and Chen, Danqi and Yih, Wen-tau},
-    journal = {Proceedings of EMNLP},
-    year = {2020},
-    url = {https://arxiv.org/abs/2004.04906}
-}
-```
-- First round retrieves broad context using dense embeddings
-- Second round refines results based on question-specific relevance
-
-### Educational Technologies & Methodologies
-
-1. **Computerized Adaptive Testing**
-```bibtex
-@book{wainer2000computerized,
-    title = {Computerized Adaptive Testing: A Primer},
-    author = {Wainer, Howard and Dorans, Neil J. and Flaugher, Rick and Green, Bert F. and Mislevy, Robert J.},
-    year = {2000},
-    publisher = {Routledge},
-    isbn = {978-0805835151}
-}
-```
-- Adapts test difficulty based on student performance in real-time
-- Uses statistical models to select optimal next questions
-
-2. **Dialogue-Based Assessment**
-```bibtex
-@book{alexander2020dialogic,
-    title = {A Dialogic Teaching Companion},
-    author = {Alexander, Robin J.},
-    year = {2020},
-    publisher = {Routledge},
-    isbn = {978-1138570450}
-}
-```
-- Employs interactive dialogue for deeper learning assessment
-- Focuses on student-teacher conversation patterns
-
-3. **LLMs in Education**
-```bibtex
-@article{liu2023large,
-    title = {Large Language Models for Education: A Survey},
-    author = {Liu, Qiyang and Lin, Fenglong and Zhao, Lei and Yang, Qiang},
-    journal = {arXiv preprint arXiv:2311.07441},
-    year = {2023}
-}
-```
-- Explores LLM applications in educational contexts
-- Addresses personalized learning and automated assessment
-
-4. **Automated Mathematics Assessment**
-```bibtex
-@book{sangwin2013computer,
-    title = {Computer Aided Assessment of Mathematics},
-    author = {Sangwin, Christopher},
-    year = {2013},
-    publisher = {Oxford University Press},
-    isbn = {978-0199660353}
-}
-```
-- Implements automated evaluation of mathematical responses
-- Provides instant feedback on mathematical reasoning
-
-5. **Question Generation**
-```bibtex
-@article{le2014automatic,
-    title = {Automatic Question Generation for Supporting Argumentation},
-    author = {Le, Nguyen-Thinh and Nguyen, Nguyen Phuong and Seta, Kazuhisa and Pinkwart, Niels},
-    journal = {Vietnam Journal of Computer Science},
-    volume = {1},
-    number = {2},
-    pages = {117-127},
-    year = {2014}
-}
-```
-- Generates contextually relevant questions automatically
-- Supports development of argumentative skills
-
-6. **Educational Feedback Systems**
-```bibtex
-@article{hattie2007power,
-    title = {The Power of Feedback},
-    author = {Hattie, John and Timperley, Helen},
-    journal = {Review of Educational Research},
-    volume = {77},
-    number = {1},
-    pages = {81-112},
-    year = {2007}
-}
-```
-- Emphasizes timely and specific feedback delivery
-- Links feedback to learning objectives and outcomes
-
-7. **Item Response Theory**
-```bibtex
-@book{embretson2013item,
-    title = {Item Response Theory for Psychologists},
-    author = {Embretson, Susan E. and Reise, Steven P.},
-    year = {2013},
-    publisher = {Psychology Press},
-    isbn = {978-0805828191}
-}
-```
-- Models relationship between ability and item response
-- Enables adaptive test item selection and scoring
-
-#### Adaptive Testing Methodologies
-
-8. **Elements of Adaptive Testing**
-```bibtex
-@book{van2010elements,
-    title = {Elements of Adaptive Testing},
-    author = {van der Linden, W. J. and Glas, C. A. W.},
-    year = {2010},
-    publisher = {Springer},
-    isbn = {978-0387854571}
-}
-```
-- Dynamically adjusts test difficulty based on previous responses
-- Uses probabilistic models to optimize question selection
-
-9. **Adaptive Educational Systems**
-```bibtex
-@incollection{shute2012adaptive,
-    title = {Adaptive Educational Systems},
-    author = {Shute, V. J. and Zapata-Rivera, D.},
-    booktitle = {Adaptive Technologies for Training and Education},
-    editor = {Durlach, P. J. and Lesgold, A. M.},
-    year = {2012},
-    publisher = {Cambridge University Press},
-    pages = {7-27}
-}
-```
-- Personalizes learning paths based on student performance
-- Implements real-time assessment and feedback loops
-
-### Implementation Methodologies
-
-11. **Adaptive Question Tree Generation**
-```python
-# Key features implemented based on above research:
-- Dynamic difficulty adjustment based on IRT principles
-- Dialogue-based question sequencing
-- Real-time feedback generation
-- Context-aware question selection
-```
-
-12. **Educational Assessment Pipeline**
-```python
-# Core components derived from research:
-- Knowledge retrieval and context understanding
-- Question generation with learning objectives
-- Response evaluation with rubric alignment
-- Adaptive feedback generation
-```
-
-### License
-This project is built upon various open-source technologies and research works. Please refer to individual licenses of the referenced works for usage terms.
-
-## Evaluation System
-
-### Real-time Response Evaluation
-- **Per-Question Metrics**:
-  - Answer accuracy (0-100)
-  - Expression clarity (0-100)
-  - Understanding level (0-100)
-  - Hint usage (-10 points per hint)
-
-- **Evaluation Process**:
-  1. Immediate evaluation after each answer
-  2. Feedback generation before next question
-  3. Question difficulty adjustment based on performance
-  4. Hint impact tracking
-
-### Overall Assessment
-- **Final Score Components**:
-  1. Individual question scores (60%)
-     - Average of per-question metrics
-     - Weighted by question difficulty
-  2. Topic coverage (20%)
-     - Breadth of knowledge demonstrated
-     - Depth of understanding in key areas
-  3. Examination behavior (20%)
-     - Hint usage frequency
-     - Response consistency
-     - Time management
-
-### Evaluation Flow
-1. Student submits answer
-2. System performs immediate evaluation
-3. Results affect:
-   - Next question selection
-   - Difficulty adjustment
-   - Cumulative score calculation
-4. Final report generation includes:
-   - Detailed per-question analysis
-   - Overall performance metrics
-   - Learning recommendations

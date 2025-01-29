@@ -3,22 +3,22 @@
     <el-card>
       <template #header>
         <div class="card-header">
-          <span>考试状态</span>
+          <span> Status Panel </span>
           <el-tag :type="stateTagType">{{ stateText }}</el-tag>
         </div>
       </template>
 
       <div class="stats">
         <div class="stat-item">
-          <div class="label">已答题数</div>
+          <div class="label">Questions Answered</div>
           <div class="value">{{ questionsAnswered }}</div>
         </div>
         <div class="stat-item">
-          <div class="label">使用提示</div>
+          <div class="label">Hints Used</div>
           <div class="value">{{ hintsUsed }}</div>
         </div>
         <div class="stat-item">
-          <div class="label">当前难度</div>
+          <div class="label">Current Difficulty</div>
           <div class="value">
             <el-rate
               :model-value="currentDifficulty"
@@ -30,28 +30,28 @@
         </div>
       </div>
 
-      <!-- 进度评估部分 -->
+      <!-- Progress Section -->
       <template v-if="progress">
-        <el-divider>当前进度</el-divider>
+        <el-divider>Current Progress</el-divider>
 
-        <!-- 当前得分 -->
+        <!-- Current Score -->
         <div class="progress-section">
-          <div class="section-title">当前得分</div>
+          <div class="section-title">Current Score</div>
           <el-progress
             :percentage="progress.current_score"
-            :format="(val) => val.toFixed(1) + '分'"
+            :format="(val) => val.toFixed(1) + ' pts'"
             :status="getScoreStatus(progress.current_score)"
           />
         </div>
 
-        <!-- 主题覆盖 -->
+        <!-- Topic Coverage -->
         <div class="progress-section">
-          <div class="section-title">知识点覆盖</div>
+          <div class="section-title">Topic Coverage</div>
           <div class="topic-tags">
             <el-tooltip
               v-for="(data, topic) in progress.topic_progress"
               :key="topic"
-              :content="`得分: ${data.score.toFixed(1)}`"
+              :content="`Score: ${data.score.toFixed(1)}`"
             >
               <el-tag :type="getTopicTagType(data.coverage)" class="topic-tag">
                 {{ topic }}: {{ data.coverage.toFixed(0) }}%
@@ -60,23 +60,23 @@
           </div>
         </div>
 
-        <!-- 行为指标 -->
+        <!-- Performance Metrics -->
         <div class="progress-section">
-          <div class="section-title">答题表现</div>
+          <div class="section-title">Performance</div>
           <div class="behavior-metrics">
-            <el-tooltip content="平均每题用时（分钟）">
+            <el-tooltip content="Average time per question (minutes)">
               <div class="metric-item">
                 <el-icon><Timer /></el-icon>
-                {{ (progress.behavior_metrics.avg_time_per_question / 60).toFixed(1) }}分钟
+                {{ (progress.behavior_metrics.avg_time_per_question / 60).toFixed(1) }}min
               </div>
             </el-tooltip>
-            <el-tooltip content="提示使用率">
+            <el-tooltip content="Hint usage rate">
               <div class="metric-item">
                 <el-icon><QuestionFilled /></el-icon>
                 {{ (progress.behavior_metrics.hint_usage_rate * 100).toFixed(0) }}%
               </div>
             </el-tooltip>
-            <el-tooltip content="答案一致性">
+            <el-tooltip content="Response consistency">
               <div class="metric-item">
                 <el-icon><TrendCharts /></el-icon>
                 {{ (progress.behavior_metrics.response_consistency * 100).toFixed(0) }}%
@@ -85,9 +85,9 @@
           </div>
         </div>
 
-        <!-- 最近评估 -->
+        <!-- Recent Evaluations -->
         <div class="progress-section" v-if="progress.recent_evaluations.length">
-          <div class="section-title">最近表现</div>
+          <div class="section-title">Recent Performance</div>
           <div class="recent-evaluations">
             <el-collapse>
               <el-collapse-item
@@ -95,16 +95,16 @@
                 :key="evaluation.question_id"
               >
                 <template #title>
-                  问题 {{ evaluation.question_id }}
+                  Question {{ evaluation.question_id }}
                   <el-tag size="small" :type="getScoreTagType(getAverageScore(evaluation.score))">
-                    {{ getAverageScore(evaluation.score).toFixed(1) }}分
+                    {{ getAverageScore(evaluation.score).toFixed(1) }} pts
                   </el-tag>
                 </template>
                 <div class="evaluation-details">
                   <div class="score-details">
-                    <div>准确性: {{ evaluation.score.accuracy }}%</div>
-                    <div>清晰度: {{ evaluation.score.clarity }}%</div>
-                    <div>理解度: {{ evaluation.score.understanding }}%</div>
+                    <div>Accuracy: {{ evaluation.score.accuracy }}%</div>
+                    <div>Clarity: {{ evaluation.score.clarity }}%</div>
+                    <div>Understanding: {{ evaluation.score.understanding }}%</div>
                   </div>
                   <div class="feedback">{{ evaluation.feedback }}</div>
                 </div>

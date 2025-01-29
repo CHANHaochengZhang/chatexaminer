@@ -1,49 +1,55 @@
 <template>
   <div class="exam-page">
-    <!-- 初始状态：选择主题 -->
-    <div v-if="currentState === 'INIT'" class="topic-selection">
-      <el-card>
-        <template #header>
-          <div class="card-header">
-            <span>选择考试主题</span>
-          </div>
-        </template>
-        <el-form>
-          <el-form-item>
-            <el-input
-              v-model="topic"
-              placeholder="请输入考试主题"
-              clearable
-            />
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="startExam" :loading="loading">
-              开始考试
-            </el-button>
-          </el-form-item>
-        </el-form>
-      </el-card>
-    </div>
+    <!-- Initial Topic Selection -->
+    <template v-if="currentState === 'INIT'">
+      <div class="topic-selection">
+        <el-card>
+          <template #header>
+            <div class="card-header">
+              Start Your Exam
+            </div>
+          </template>
+          <el-form>
+            <el-form-item label="Enter Topic">
+              <el-input
+                v-model="topic"
+                placeholder="e.g., Direct Methods for Optimal Control"
+                :disabled="loading"
+              />
+            </el-form-item>
+            <el-form-item>
+              <el-button
+                type="primary"
+                @click="startExam"
+                :loading="loading"
+              >
+                Start Exam
+              </el-button>
+            </el-form-item>
+          </el-form>
+        </el-card>
+      </div>
+    </template>
 
-    <!-- 考试进行中 -->
+    <!-- Exam Interface -->
     <template v-else>
       <div class="exam-container">
-        <!-- 左侧：状态面板 -->
+        <!-- Left Panel -->
         <div class="side-panel">
           <StatePanel
-            :current-state="currentState"
+            :state="currentState"
             :questions-answered="questionsAnswered"
             :hints-used="hintsUsed"
             :current-difficulty="currentDifficulty"
           />
 
-          <!-- 评估报告 -->
+          <!-- Evaluation Report -->
           <div v-if="currentState === 'COMPLETED'" class="evaluation-section">
             <EvalReport :evaluation="evaluation" />
           </div>
         </div>
 
-        <!-- 右侧：聊天界面 -->
+        <!-- Right Panel: Chat Interface -->
         <div class="main-content">
           <ExamChat
             :messages="messages"
@@ -89,10 +95,10 @@ const setupWebSocket = () => {
   })
 }
 
-// 开始考试
+// Start exam
 const startExam = async () => {
   if (!topic.value.trim()) {
-    ElMessage.warning('请输入考试主题')
+    ElMessage.warning('Please enter an exam topic')
     return
   }
 
@@ -106,19 +112,18 @@ const startExam = async () => {
       timestamp: Date.now()
     })
 
-    // 如果成功开始考试，设置 WebSocket 连接
     if (response.sessionId) {
       setupWebSocket()
     }
   } catch (error: any) {
-    ElMessage.error(error.response?.data?.detail || '开始考试失败，请重试')
+    ElMessage.error(error.response?.data?.detail || 'Failed to start exam, please try again')
     console.error('Start exam error:', error)
   } finally {
     loading.value = false
   }
 }
 
-// 处理消息发送
+// Handle message sending
 const handleSend = async (message: string) => {
   if (!message.trim()) return
 
@@ -139,13 +144,12 @@ const handleSend = async (message: string) => {
       timestamp: Date.now()
     })
 
-    // 如果考试完成，获取评估报告
     if (response.state === 'COMPLETED') {
       const evalResult = await examService.getEvaluation()
       evaluation.value = evalResult
     }
   } catch (error) {
-    ElMessage.error('发送消息失败，请重试')
+    ElMessage.error('Failed to send message, please try again')
     console.error('Send message error:', error)
   } finally {
     loading.value = false
