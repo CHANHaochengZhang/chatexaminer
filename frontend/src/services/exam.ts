@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { Message, ExamState, EvaluationReport } from '@/types'
+import type { Message, ExamState, EvaluationReport, ProgressReport } from '@/types'
 
 const BASE_URL = 'http://localhost:8000/api/exam'
 
@@ -23,7 +23,8 @@ class ExamService {
     const response = await axios.post(`${BASE_URL}/${this.sessionId}/answer`, { answer })
     return {
       state: response.data.state as ExamState,
-      message: response.data.message
+      message: response.data.message,
+      progress: response.data.data.progress
     }
   }
 
@@ -36,6 +37,14 @@ class ExamService {
       state: response.data.state as ExamState,
       data: response.data.data
     }
+  }
+
+  async getProgressEvaluation(): Promise<ProgressReport> {
+    if (!this.sessionId) {
+      throw new Error('No active exam session')
+    }
+    const response = await axios.get(`${BASE_URL}/${this.sessionId}/progress`)
+    return response.data.data
   }
 
   async getEvaluation(): Promise<EvaluationReport> {

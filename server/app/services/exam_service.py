@@ -96,22 +96,30 @@ class ExamService:
                 },
             },
             ExamState.CHAT: {
-                "name": "handle_chat",
-                "description": "Handle chat state interaction",
+                "name": "handle_chat_state",
+                "description": "Handle chat state interaction and determine if user wants to return to previous state",
                 "parameters": {
                     "type": "object",
                     "properties": {
-                        "wants_to_return": {"type": "boolean"},
+                        "wants_to_return": {
+                            "type": "boolean",
+                            "description": "Whether user indicates readiness to return (e.g., by saying 'continue', 'ready', 'ok', 'understand')",
+                        },
+                        "needs_explanation": {
+                            "type": "boolean",
+                            "description": "Whether user needs more explanation",
+                        },
                         "return_state": {
                             "type": "string",
                             "enum": [state.value for state in ExamState],
+                            "description": "State to return to if wants_to_return is true",
                         },
-                        "next_state": {
+                        "chat_response": {
                             "type": "string",
-                            "enum": [state.value for state in ExamState],
+                            "description": "Response to give to the user in chat mode",
                         },
                     },
-                    "required": ["next_state"],
+                    "required": ["wants_to_return", "chat_response"],
                 },
             },
         }
@@ -269,6 +277,13 @@ Current State: {current_state}
 Student Response: {answer}
 Context: {json.dumps(serializable_metrics)}
 
+For CHAT state:
+1. Determine if student wants to return to regular exam (by saying continue, ready, ok, understand, etc.)
+2. If yes, check context for previous_state to return to
+3. If no previous_state exists, default to QUESTIONING
+4. If student needs help, provide supportive response and stay in CHAT
+
+For other states:
 Determine the appropriate action based on the response."""
 
         # Call GPT with the state-specific function
@@ -283,65 +298,24 @@ Determine the appropriate action based on the response."""
         )
 
         result = json.loads(response.choices[0].message.function_call.arguments)
-        next_state = ExamState(result["next_state"])
 
-        # Record previous state before transition
+        if current_state == ExamState.CHAT:
+            if result.get("wants_to_return"):
+                # Get return state from result or context
+                return_state = result.get("return_state")
+                if not return_state:
+                    return_state = self.state_machine.context.get(
+                        "previous_state", ExamState.QUESTIONING
+                    )
+                self.state_machine.transition(return_state)
+            return {"type": "chat", "content": result["chat_response"]}
+
+        # Handle other states as before
+        next_state = ExamState(result["next_state"])
         if next_state == ExamState.CHAT:
             self.state_machine.context["previous_state"] = current_state
 
-        # Handle state-specific logic
-        if current_state == ExamState.INIT and next_state == ExamState.TOPIC_SELECTED:
-            if result.get("topic"):
-                self.state_machine.context["topic"] = result["topic"]
-
-        elif current_state == ExamState.TOPIC_SELECTED and next_state == ExamState.QUESTIONING:
-            if result.get("is_ready"):
-                await self.start_exam(self.state_machine.context["topic"])
-
-        elif current_state == ExamState.QUESTIONING:
-            if next_state == ExamState.EVALUATING or result.get("wants_to_end"):
-                return {
-                    "type": "complete",
-                    "content": "Exam ended, generating evaluation report...",
-                    "evaluation": self._generate_final_evaluation(),
-                }
-            elif self.state_machine.context.get("exam_session"):
-                session = self.state_machine.context["exam_session"]
-                current_question = session.questions[session.current_question_index - 1]
-
-                # Update metrics and evaluate answer
-                self.session_metrics["questions_answered"] += 1
-                time_taken = time.time() - self.question_start_time
-
-                evaluation = await self.evaluation_service.evaluate_response(
-                    question=current_question,
-                    student_response=answer,
-                    hints_used=self.session_metrics["hints_requested"],
-                    time_taken=time_taken,
-                )
-
-                session.record_answer(current_question["question_id"], answer)
-                session.record_evaluation(current_question["question_id"], evaluation.dict())
-
-                self._update_topic_progress(
-                    current_question["topic"],
-                    evaluation.metrics.understanding,
-                    [],
-                )
-                self._update_behavior_metrics(time_taken)
-                self._adjust_difficulty(evaluation.metrics)
-
-        # Transition to the next state
         self.state_machine.transition(next_state)
-
-        # Return appropriate response
-        if next_state == ExamState.CHAT:
-            return {
-                "type": "state_change",
-                "state": next_state.value,
-                "content": "Let's chat until you feel ready to continue.",
-            }
-
         return self.get_next_interaction()
 
     def _update_topic_progress(
@@ -431,5 +405,75 @@ Determine the appropriate action based on the response."""
                 "questions_answered": self.session_metrics["questions_answered"],
                 "hints_used": self.session_metrics["hints_requested"],
                 "response_consistency": self.session_metrics["response_consistency"],
+            },
+        }
+
+    def get_progress_evaluation(self) -> Dict:
+        """获取当前进度评估"""
+        current_state = self.state_machine.get_current_state()
+
+        # 基础统计信息
+        stats = {
+            "questions_answered": self.session_metrics["questions_answered"],
+            "hints_requested": self.session_metrics["hints_requested"],
+            "current_difficulty": self.state_machine.context.get("current_difficulty", 3),
+            "current_state": current_state.value,
+        }
+
+        # 计算当前得分
+        current_score = 0
+        if self.evaluation_service.current_evaluation.question_evaluations:
+            scores = []
+            for eval in self.evaluation_service.current_evaluation.question_evaluations.values():
+                question_score = (
+                    eval.metrics.accuracy + eval.metrics.clarity + eval.metrics.understanding
+                ) / 3
+                question_score -= eval.metrics.hints_used * 10
+                question_score *= eval.difficulty / 5
+                scores.append(question_score)
+            current_score = sum(scores) / len(scores)
+
+        # 主题覆盖进度
+        topic_progress = {}
+        for topic, data in self.session_metrics["topic_progress"].items():
+            if data["total_points"] > 0:
+                coverage = len(data["covered_points"]) / data["total_points"] * 100
+                topic_progress[topic] = {
+                    "coverage": coverage,
+                    "score": sum(data["scores"]) / len(data["scores"]) if data["scores"] else 0,
+                }
+
+        # 最近的问题评估
+        recent_evaluations = []
+        for qid, eval in list(
+            self.evaluation_service.current_evaluation.question_evaluations.items()
+        )[-3:]:
+            recent_evaluations.append(
+                {
+                    "question_id": qid,
+                    "score": {
+                        "accuracy": eval.metrics.accuracy,
+                        "clarity": eval.metrics.clarity,
+                        "understanding": eval.metrics.understanding,
+                    },
+                    "feedback": eval.feedback,
+                    "time_taken": eval.time_taken,
+                }
+            )
+
+        return {
+            "stats": stats,
+            "current_score": current_score,
+            "topic_progress": topic_progress,
+            "recent_evaluations": recent_evaluations,
+            "behavior_metrics": {
+                "avg_time_per_question": sum(
+                    eval.time_taken
+                    for eval in self.evaluation_service.current_evaluation.question_evaluations.values()
+                )
+                / max(1, len(self.evaluation_service.current_evaluation.question_evaluations)),
+                "hint_usage_rate": self.session_metrics["hints_requested"]
+                / max(1, self.session_metrics["questions_answered"]),
+                "response_consistency": self._calculate_response_consistency(),
             },
         }

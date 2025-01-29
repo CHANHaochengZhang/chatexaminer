@@ -31,3 +31,34 @@ export interface EvaluationReport {
   weaknesses: string[]
   suggestions: string[]
 }
+
+export interface ProgressReport {
+  stats: {
+    questions_answered: number
+    hints_requested: number
+    current_difficulty: number
+    current_state: ExamState
+  }
+  current_score: number
+  topic_progress: {
+    [topic: string]: {
+      coverage: number
+      score: number
+    }
+  }
+  recent_evaluations: Array<{
+    question_id: string
+    score: {
+      accuracy: number
+      clarity: number
+      understanding: number
+    }
+    feedback: string
+    time_taken: number
+  }>
+  behavior_metrics: {
+    avg_time_per_question: number
+    hint_usage_rate: number
+    response_consistency: number
+  }
+}
