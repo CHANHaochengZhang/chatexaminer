@@ -57,6 +57,11 @@ const messageList = ref<HTMLElement | null>(null)
 const handleSend = () => {
   if (!inputMessage.value.trim() || props.loading) return
 
+  console.log('Sending message:', {
+    content: inputMessage.value,
+    timestamp: Date.now()
+  })
+
   emit('send', inputMessage.value)
   inputMessage.value = ''
 }
@@ -71,7 +76,8 @@ const formatTime = (timestamp?: number) => {
 // 监听消息列表变化，自动滚动到底部
 watch(
   () => props.messages,
-  async () => {
+  async (newMessages) => {
+    console.log('Messages list updated:', newMessages)
     await nextTick()
     if (messageList.value) {
       messageList.value.scrollTop = messageList.value.scrollHeight

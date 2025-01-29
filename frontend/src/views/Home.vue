@@ -3,15 +3,15 @@
     <el-card class="start-exam">
       <template #header>
         <div class="card-header">
-          <h1>开始考试</h1>
+          <h1>Start Exam</h1>
         </div>
       </template>
 
       <el-form :model="form" label-position="top">
-        <el-form-item label="选择考试主题">
+        <el-form-item label="Select Exam Topic">
           <el-select
             v-model="form.topic"
-            placeholder="请选择考试主题"
+            placeholder="Please select an exam topic"
             class="topic-select"
           >
             <el-option
@@ -29,7 +29,7 @@
             :disabled="!form.topic"
             @click="handleStart"
           >
-            开始考试
+            Start Exam
           </el-button>
         </el-form-item>
       </el-form>
@@ -38,22 +38,22 @@
     <el-card class="history" v-if="examHistory.length">
       <template #header>
         <div class="card-header">
-          <h2>历史记录</h2>
+          <h2>History Records</h2>
         </div>
       </template>
 
       <el-table :data="examHistory">
-        <el-table-column prop="date" label="日期" width="180" />
-        <el-table-column prop="topic" label="主题" />
-        <el-table-column prop="score" label="得分" width="100" />
-        <el-table-column label="操作" width="120">
+        <el-table-column prop="date" label="Date" width="180" />
+        <el-table-column prop="topic" label="Topic" />
+        <el-table-column prop="score" label="Score" width="100" />
+        <el-table-column label="Actions" width="120">
           <template #default="{ row }">
             <el-button
               link
               type="primary"
               @click="viewReport(row.sessionId)"
             >
-              查看报告
+              View Report
             </el-button>
           </template>
         </el-table-column>
@@ -81,8 +81,8 @@ const form = ref({
 
 const topics = [
   { label: 'Direct Methods for Optimal Control', value: 'optimal_control' },
-  { label: '强化学习基础', value: 'rl_basics' },
-  { label: '控制理论', value: 'control_theory' }
+  { label: 'Reinforcement Learning Basics', value: 'rl_basics' },
+  { label: 'Control Theory', value: 'control_theory' }
 ]
 
 const examHistory = ref<ExamHistory[]>([

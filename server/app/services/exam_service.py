@@ -122,6 +122,21 @@ class ExamService:
                     "required": ["wants_to_return", "chat_response"],
                 },
             },
+            ExamState.EVALUATING: {
+                "name": "handle_evaluating_state",
+                "description": "Handle evaluating state interaction",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "ready_for_evaluation": {"type": "boolean"},
+                        "next_state": {
+                            "type": "string",
+                            "enum": [state.value for state in ExamState],
+                        },
+                    },
+                    "required": ["next_state", "ready_for_evaluation"],
+                },
+            },
         }
 
     async def start_exam(self, topic: str) -> Dict:
@@ -198,12 +213,17 @@ class ExamService:
 
     async def detect_state(self, response: str, current_state: ExamState) -> Dict:
         """Detect next state based on student's response using AI"""
+        print(f"\n=== 检测状态 ===")
+        print(f"当前状态: {current_state}")
+        print(f"学生回答: {response}")
+
         # Create a serializable version of session metrics
         serializable_metrics = {
             "questions_answered": self.session_metrics["questions_answered"],
             "hints_requested": self.session_metrics["hints_requested"],
             "response_consistency": self.session_metrics["response_consistency"],
         }
+        print(f"会话指标: {serializable_metrics}")
 
         system_prompt = """You are an AI exam state analyzer. Determine the next state based on the student's response.
 
@@ -253,11 +273,15 @@ Determine the next state based on this response.""",
         )
 
         result = json.loads(response.choices[0].message.function_call.arguments)
+        print(f"状态检测结果: {result}")
         return result
 
     async def process_answer(self, answer: str) -> Dict:
         """Process student's answer and return next interaction"""
         current_state = self.state_machine.get_current_state()
+        print(f"\n=== 处理答案 ===")
+        print(f"当前状态: {current_state}")
+        print(f"收到答案: {answer}")
 
         # Create a serializable version of session metrics
         serializable_metrics = {
@@ -269,6 +293,7 @@ Determine the next state based on this response.""",
         # Get the function definition for current state
         function_def = self.state_functions.get(current_state)
         if not function_def:
+            print(f"错误: 没有找到状态 {current_state} 的处理函数")
             return {"type": "error", "message": f"No handler for state {current_state}"}
 
         system_prompt = f"""You are an AI exam state analyzer. Analyze the student's response in the current state.
@@ -298,20 +323,30 @@ Determine the appropriate action based on the response."""
         )
 
         result = json.loads(response.choices[0].message.function_call.arguments)
+        print(f"GPT响应结果: {result}")
+
+        # Update questions_answered when in QUESTIONING state and receiving a valid answer
+        if current_state == ExamState.QUESTIONING and result.get("answer_quality", 0) > 0:
+            print(
+                f"更新答题数: {self.session_metrics['questions_answered']} -> {self.session_metrics['questions_answered'] + 1}"
+            )
+            self.session_metrics["questions_answered"] += 1
 
         if current_state == ExamState.CHAT:
             if result.get("wants_to_return"):
-                # Get return state from result or context
                 return_state = result.get("return_state")
                 if not return_state:
                     return_state = self.state_machine.context.get(
                         "previous_state", ExamState.QUESTIONING
                     )
+                print(f"从CHAT状态返回到: {return_state}")
                 self.state_machine.transition(return_state)
             return {"type": "chat", "content": result["chat_response"]}
 
         # Handle other states as before
         next_state = ExamState(result["next_state"])
+        print(f"准备转换到状态: {next_state}")
+
         if next_state == ExamState.CHAT:
             self.state_machine.context["previous_state"] = current_state
 
@@ -363,6 +398,9 @@ Determine the appropriate action based on the response."""
         differences = [abs(evaluations[i] - evaluations[i - 1]) for i in range(1, len(evaluations))]
 
         # Return consistency score (1 - average difference/100)
+        if not differences:  # 如果没有差异数据，返回1.0
+            return 1.0
+
         avg_diff = sum(differences) / len(differences)
         return max(0, 1 - (avg_diff / 100))
 
@@ -385,10 +423,12 @@ Determine the appropriate action based on the response."""
 
     def _generate_final_evaluation(self) -> Dict:
         """Generate final evaluation report"""
+        print("\n=== 生成最终评估报告 ===")
         final_eval = self.evaluation_service.get_final_evaluation()
+        print(f"评估服务返回数据: {final_eval}")
 
         # Add additional evaluation information
-        return {
+        result = {
             "total_score": final_eval.total_score,
             "topic_coverage": final_eval.topic_coverage,
             "behavior_score": final_eval.behavior_score,
@@ -401,12 +441,14 @@ Determine the appropriate action based on the response."""
                 for qid, eval in final_eval.question_evaluations.items()
             },
             "session_metrics": {
-                "total_time": time.time() - self.exam_start_time,
+                "total_time": time.time() - self.exam_start_time if self.exam_start_time else 0,
                 "questions_answered": self.session_metrics["questions_answered"],
                 "hints_used": self.session_metrics["hints_requested"],
                 "response_consistency": self.session_metrics["response_consistency"],
             },
         }
+        print(f"生成的评估报告: {result}")
+        return result
 
     def get_progress_evaluation(self) -> Dict:
         """获取当前进度评估"""
