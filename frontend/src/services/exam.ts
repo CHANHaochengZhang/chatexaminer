@@ -1,7 +1,8 @@
 import axios from 'axios'
 import type { Message, ExamState, EvaluationReport, ProgressReport } from '@/types'
 
-const BASE_URL = 'http://localhost:8000/api/exam'
+const BASE_URL = '/api/exam'
+const WS_BASE_URL = 'ws://localhost:8000/api/exam'
 
 export interface ExamAPI {
   startExam: (topic: string) => Promise<{
@@ -28,19 +29,49 @@ export interface ExamAPI {
   clearSession: () => void;
 }
 
+interface ExamResponse<T> {
+  state: string;
+  message: string;
+  data: T;
+}
+
+interface StartExamResponse {
+  session_id: string;
+  result: any;
+  current_question: any;
+}
+
+interface SubmitAnswerResponse {
+  result: any;
+  progress: any;
+  current_question?: any;
+}
+
+interface StateResponse {
+  context: any;
+  current_question: any;
+}
+
+interface HintData {
+  hint: string;
+  hints_used: number;
+}
+
+interface HintResponse {
+  hint: string;
+  hintsUsed: number;
+}
+
 class ExamService implements ExamAPI {
   private sessionId: string | null = null
 
   async startExam(topic: string) {
-    const response = await axios.post(`${BASE_URL}/start`, { topic })
+    const response = await axios.post<ExamResponse<StartExamResponse>>(`${BASE_URL}/start`, { topic })
     this.sessionId = response.data.data.session_id
-    if (!this.sessionId) {
-      throw new Error('Failed to get session ID from server')
-    }
     return {
       state: response.data.state as ExamState,
-      message: response.data.message as string,
-      sessionId: this.sessionId
+      message: response.data.message,
+      sessionId: response.data.data.session_id
     }
   }
 
@@ -48,10 +79,10 @@ class ExamService implements ExamAPI {
     if (!this.sessionId) {
       throw new Error('No active exam session')
     }
-    const response = await axios.post(`${BASE_URL}/${this.sessionId}/answer`, { answer })
+    const response = await axios.post<ExamResponse<SubmitAnswerResponse>>(`${BASE_URL}/${this.sessionId}/answer`, { answer })
     return {
       state: response.data.state as ExamState,
-      message: response.data.message as string,
+      message: response.data.message,
       progress: response.data.data.progress
     }
   }
@@ -60,7 +91,7 @@ class ExamService implements ExamAPI {
     if (!this.sessionId) {
       throw new Error('No active exam session')
     }
-    const response = await axios.get(`${BASE_URL}/${this.sessionId}/state`)
+    const response = await axios.get<ExamResponse<StateResponse>>(`${BASE_URL}/${this.sessionId}/state`)
     return {
       state: response.data.state as ExamState,
       data: response.data.data
@@ -71,7 +102,7 @@ class ExamService implements ExamAPI {
     if (!this.sessionId) {
       throw new Error('No active exam session')
     }
-    const response = await axios.get(`${BASE_URL}/${this.sessionId}/progress`)
+    const response = await axios.get<ExamResponse<any>>(`${BASE_URL}/${this.sessionId}/progress`)
     return response.data.data
   }
 
@@ -79,19 +110,27 @@ class ExamService implements ExamAPI {
     if (!this.sessionId) {
       throw new Error('No active exam session')
     }
-    const response = await axios.get(`${BASE_URL}/${this.sessionId}/evaluation`)
+    const response = await axios.get<ExamResponse<any>>(`${BASE_URL}/${this.sessionId}/evaluation`)
     return response.data.data
   }
 
-  connectWebSocket(onMessage: (data: any) => void) {
+  connectWebSocket(onMessage: (data: any) => void): WebSocket {
     if (!this.sessionId) {
       throw new Error('No active exam session')
     }
-    const ws = new WebSocket(`ws://localhost:8000/api/exam/${this.sessionId}/ws`)
+    const ws = new WebSocket(`${WS_BASE_URL}/${this.sessionId}/ws`)
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data)
       onMessage(data)
+    }
+
+    ws.onerror = (error) => {
+      console.error('WebSocket error:', error)
+    }
+
+    ws.onclose = () => {
+      console.log('WebSocket connection closed')
     }
 
     return ws
@@ -101,16 +140,20 @@ class ExamService implements ExamAPI {
     this.sessionId = null
   }
 
-  async requestHint() {
+  async requestHint(): Promise<HintResponse> {
     if (!this.sessionId) {
       throw new Error('No active exam session')
     }
-    const response = await axios.get(`${BASE_URL}/${this.sessionId}/hint`)
+    const response = await axios.get<ExamResponse<HintData>>(`${BASE_URL}/${this.sessionId}/hint`)
     return {
       hint: response.data.data.hint,
       hintsUsed: response.data.data.hints_used
     }
   }
+
+  getSessionId(): string | null {
+    return this.sessionId
+  }
 }
 
-export const examAPI: ExamAPI = new ExamService()
+export const examService = new ExamService()

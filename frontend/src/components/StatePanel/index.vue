@@ -128,18 +128,18 @@ const props = defineProps<{
   questionsAnswered: number
   hintsUsed: number
   currentDifficulty: number
-  progress?: ProgressReport
+  progress?: ProgressReport | null
 }>()
 
 const stateText = computed(() => {
   const stateMap: Record<ExamState, string> = {
-    'INIT': '初始化',
-    'TOPIC_SELECTED': '已选题',
-    'QUESTIONING': '答题中',
-    'EXPLAINING': '解释中',
-    'EVALUATING': '评估中',
-    'COMPLETED': '已完成',
-    'CHAT': '闲聊中'
+    'INIT': 'Initializing',
+    'TOPIC_SELECTED': 'Topic Selected',
+    'QUESTIONING': 'Questioning',
+    'EXPLAINING': 'Explaining',
+    'EVALUATING': 'Evaluating',
+    'COMPLETED': 'Completed',
+    'CHAT': 'Chat'
   }
   return stateMap[props.currentState]
 })

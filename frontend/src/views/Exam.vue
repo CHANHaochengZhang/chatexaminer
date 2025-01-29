@@ -37,10 +37,11 @@
         <!-- Left Panel -->
         <div class="side-panel">
           <StatePanel
-            :state="currentState"
+            :current-state="currentState"
             :questions-answered="questionsAnswered"
             :hints-used="hintsUsed"
             :current-difficulty="currentDifficulty"
+            :progress="progress"
           />
 
           <!-- Evaluation Report -->
@@ -64,11 +65,11 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue'
-import { examService } from '@/services/exam'
-import type { Message, ExamState, EvaluationReport } from '@/types'
-import StatePanel from '@/components/StatePanel/index.vue'
-import ExamChat from '@/components/ExamChat/index.vue'
-import EvalReport from '@/components/EvalReport/index.vue'
+import { examService } from '../services/exam'
+import type { Message, ExamState, EvaluationReport, ProgressReport } from '../types'
+import StatePanel from '../components/StatePanel/index.vue'
+import ExamChat from '../components/ExamChat/index.vue'
+import EvalReport from '../components/EvalReport/index.vue'
 import { ElMessage } from 'element-plus'
 
 // 状态管理
@@ -80,6 +81,7 @@ const questionsAnswered = ref(0)
 const hintsUsed = ref(0)
 const currentDifficulty = ref(3)
 const evaluation = ref<EvaluationReport | null>(null)
+const progress = ref<ProgressReport | null>(null)
 
 // WebSocket 连接
 let ws: WebSocket | null = null
@@ -91,6 +93,7 @@ const setupWebSocket = () => {
       questionsAnswered.value = data.questions_answered || questionsAnswered.value
       hintsUsed.value = data.hints_used || hintsUsed.value
       currentDifficulty.value = data.current_difficulty || currentDifficulty.value
+      progress.value = data.progress || progress.value
     }
   })
 }
