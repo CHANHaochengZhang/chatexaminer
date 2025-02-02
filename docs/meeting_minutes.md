@@ -1,5 +1,66 @@
 # Meeting Minutes
 
+## January 30, 2025 - GUI Progress and Evaluation System Discussion
+
+### Attendees
+- Tue Herlau (Supervisor)
+- Haocheng Zhang (Student)
+
+### Progress Presented
+1. GUI Implementation
+   - Completed basic examination interface
+   - Implemented real-time evaluation display
+   - Created basic API endpoints
+   - Demonstrated working chat-based examination flow
+
+2. Current Features
+   - Live evaluation reporting
+   - Topic selection interface
+   - State-based conversation flow
+   - Basic evaluation metrics
+
+### Discussion Points
+
+1. Evaluation System Improvements
+   - Proposed coarse-grained scoring system (0-2 points)
+   - Need clear examples for each score level
+   - Focus on ranking preservation rather than exact scores
+   - Include reference answers in evaluation prompt
+
+2. Student Simulation Development
+   - Create AI-powered student simulators:
+     - High-performing student template
+     - Poor-performing student template
+   - Implement probability-based mixing (e.g., 80/20 split)
+   - Use for system validation and testing
+
+3. Technical Improvements
+   - Refine function calling implementation
+   - Improve state management approach
+   - Better prompt engineering for evaluation
+   - Focus on structured output generation
+
+4. Project Focus
+   - Prioritize student evaluation system
+   - Postpone teacher evaluation component
+   - Focus on creating reproducible experiments
+   - Prepare for results section of report
+
+### Action Items
+1. Implement student simulator system
+2. Refine evaluation metrics to coarse-grained scale
+3. Improve state management system
+4. Prepare initial experiments for system validation
+
+### Next Meeting
+- Date: February 6, 2025
+- Focus: Review student simulation results and evaluation metrics
+
+### Notes
+- Supervisor suggested focusing on artificial student testing rather than real student recruitment
+- Agreement to maintain focus on evaluation system before expanding scope
+- Discussion about handling function calling instability
+
 ## December 20, 2024 - State Machine and Evaluation Discussion
 
 ### Attendees
