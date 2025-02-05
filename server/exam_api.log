@@ -1499,3 +1499,924 @@ Valid transitions: ['EXPLAINING (student_confused/need_clarification)', 'EVALUAT
 2025-02-05 14:47:49,437 - INFO - Answer processed - SessionID: 3f122fc0-388c-449f-a1c0-e747f17872dc, State: ExamState.EVALUATING
 2025-02-05 14:47:51,439 - INFO - Evaluation requested - SessionID: 3f122fc0-388c-449f-a1c0-e747f17872dc
 2025-02-05 14:47:51,439 - INFO - Exam not completed, returning progress - SessionID: 3f122fc0-388c-449f-a1c0-e747f17872dc, State: ExamState.EVALUATING
+2025-02-05 21:10:06,496 - INFO - New exam session started - SessionID: b2a83e09-8a1d-433d-b8f5-406bb3594102, Topic: Direct Methods for Optimal Control
+2025-02-05 21:10:06,498 - INFO - Initializing exam state machine
+2025-02-05 21:10:06,498 - INFO - Initial state: ExamState.INIT, context initialized
+2025-02-05 21:10:07,300 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:10:07,310 - INFO - Attempting state transition: ExamState.INIT -> ExamState.TOPIC_SELECTED
+2025-02-05 21:10:07,310 - INFO - State transition successful: from_state=<ExamState.INIT: 'INIT'> to_state=<ExamState.TOPIC_SELECTED: 'TOPIC_SELECTED'> condition='student_ready' metadata=None
+2025-02-05 21:10:07,310 - INFO - Current state updated to: ExamState.TOPIC_SELECTED
+2025-02-05 21:10:07,311 - INFO - Starting new exam with topic: Direct Methods for Optimal Control
+2025-02-05 21:10:07,312 - INFO - Exam session created successfully
+2025-02-05 21:10:07,312 - INFO - Attempting state transition: ExamState.TOPIC_SELECTED -> ExamState.QUESTIONING
+2025-02-05 21:10:07,313 - INFO - State transition successful: from_state=<ExamState.TOPIC_SELECTED: 'TOPIC_SELECTED'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='start_exam()' metadata=None
+2025-02-05 21:10:07,313 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:10:07,313 - INFO - Transitioned to QUESTIONING state
+2025-02-05 21:10:07,314 - INFO - Retrieved current question: ID=Q1, difficulty=1
+2025-02-05 21:10:07,314 - INFO - Exam successfully initiated - SessionID: b2a83e09-8a1d-433d-b8f5-406bb3594102
+2025-02-05 21:10:07,315 - INFO - Retrieved current question: ID=Q1, difficulty=1
+2025-02-05 21:10:07,318 - INFO - Exam state requested - SessionID: b2a83e09-8a1d-433d-b8f5-406bb3594102
+2025-02-05 21:10:07,319 - INFO - Exam state returned - SessionID: b2a83e09-8a1d-433d-b8f5-406bb3594102, State: ExamState.QUESTIONING
+2025-02-05 21:10:07,319 - INFO - Retrieved current question: ID=Q1, difficulty=1
+2025-02-05 21:10:19,835 - INFO - Answer submitted - SessionID: b2a83e09-8a1d-433d-b8f5-406bb3594102
+2025-02-05 21:10:20,808 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:10:20,837 - INFO - Retrieved current question: ID=Q1, difficulty=1
+2025-02-05 21:10:20,838 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.INIT
+2025-02-05 21:10:20,839 - ERROR - Invalid state transition: ExamState.QUESTIONING -> ExamState.INIT
+Valid transitions: ['EXPLAINING (student_confused/need_clarification)', 'EVALUATING (questions_completed)', 'QUESTIONING (good_response/select_next_question)', 'PAUSED (student_needs_break)', 'CHAT (casual_conversation)']
+2025-02-05 21:10:20,839 - ERROR - Failed to process answer - SessionID: b2a83e09-8a1d-433d-b8f5-406bb3594102, Error: Invalid state transition: ExamState.QUESTIONING -> ExamState.INIT
+2025-02-05 21:10:21,843 - INFO - Exam state requested - SessionID: b2a83e09-8a1d-433d-b8f5-406bb3594102
+2025-02-05 21:10:21,844 - INFO - Exam state returned - SessionID: b2a83e09-8a1d-433d-b8f5-406bb3594102, State: ExamState.QUESTIONING
+2025-02-05 21:10:21,844 - INFO - Retrieved current question: ID=Q1, difficulty=1
+2025-02-05 21:15:42,045 - INFO - New exam session started - SessionID: e9dae917-8e25-43c8-acd9-54a94f4611f2, Topic: Direct Methods for Optimal Control
+2025-02-05 21:15:42,046 - INFO - Initializing exam state machine
+2025-02-05 21:15:42,046 - INFO - Initial state: ExamState.INIT, context initialized
+2025-02-05 21:15:43,080 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:15:43,099 - INFO - Attempting state transition: ExamState.INIT -> ExamState.TOPIC_SELECTED
+2025-02-05 21:15:43,100 - INFO - State transition successful: from_state=<ExamState.INIT: 'INIT'> to_state=<ExamState.TOPIC_SELECTED: 'TOPIC_SELECTED'> condition='student_ready' metadata=None
+2025-02-05 21:15:43,100 - INFO - Current state updated to: ExamState.TOPIC_SELECTED
+2025-02-05 21:15:43,103 - INFO - Starting new exam with topic: Direct Methods for Optimal Control
+2025-02-05 21:15:43,105 - INFO - Exam session created successfully
+2025-02-05 21:15:43,105 - INFO - Attempting state transition: ExamState.TOPIC_SELECTED -> ExamState.QUESTIONING
+2025-02-05 21:15:43,106 - INFO - State transition successful: from_state=<ExamState.TOPIC_SELECTED: 'TOPIC_SELECTED'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='start_exam()' metadata=None
+2025-02-05 21:15:43,106 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:15:43,107 - INFO - Transitioned to QUESTIONING state
+2025-02-05 21:15:43,109 - INFO - Retrieved current question: ID=Q1, difficulty=1
+2025-02-05 21:15:43,109 - INFO - Exam successfully initiated - SessionID: e9dae917-8e25-43c8-acd9-54a94f4611f2
+2025-02-05 21:15:43,110 - INFO - Retrieved current question: ID=Q6, difficulty=1
+2025-02-05 21:15:43,116 - INFO - Exam state requested - SessionID: e9dae917-8e25-43c8-acd9-54a94f4611f2
+2025-02-05 21:15:43,116 - INFO - Exam state returned - SessionID: e9dae917-8e25-43c8-acd9-54a94f4611f2, State: ExamState.QUESTIONING
+2025-02-05 21:15:43,116 - INFO - Retrieved current question: ID=Q11, difficulty=1
+2025-02-05 21:15:55,475 - INFO - Answer submitted - SessionID: e9dae917-8e25-43c8-acd9-54a94f4611f2
+2025-02-05 21:15:56,422 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:15:56,428 - INFO - Retrieved current question: ID=Q16, difficulty=1
+2025-02-05 21:15:56,428 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.QUESTIONING
+2025-02-05 21:15:56,428 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='good_response/select_next_question' metadata=None
+2025-02-05 21:15:56,428 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:15:56,428 - INFO - Retrieved current question: ID=Q21, difficulty=1
+2025-02-05 21:15:56,429 - INFO - Answer processed - SessionID: e9dae917-8e25-43c8-acd9-54a94f4611f2, State: ExamState.QUESTIONING
+2025-02-05 21:15:57,431 - INFO - Exam state requested - SessionID: e9dae917-8e25-43c8-acd9-54a94f4611f2
+2025-02-05 21:15:57,431 - INFO - Exam state returned - SessionID: e9dae917-8e25-43c8-acd9-54a94f4611f2, State: ExamState.QUESTIONING
+2025-02-05 21:15:57,431 - INFO - Retrieved current question: ID=Q2, difficulty=2
+2025-02-05 21:16:48,294 - INFO - Answer submitted - SessionID: e9dae917-8e25-43c8-acd9-54a94f4611f2
+2025-02-05 21:16:49,885 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:16:49,905 - INFO - Retrieved current question: ID=Q7, difficulty=2
+2025-02-05 21:16:49,906 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.EXPLAINING
+2025-02-05 21:16:49,907 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.EXPLAINING: 'EXPLAINING'> condition='student_confused/need_clarification' metadata=None
+2025-02-05 21:16:49,907 - INFO - Current state updated to: ExamState.EXPLAINING
+2025-02-05 21:16:49,907 - INFO - Answer processed - SessionID: e9dae917-8e25-43c8-acd9-54a94f4611f2, State: ExamState.EXPLAINING
+2025-02-05 21:16:50,911 - INFO - Exam state requested - SessionID: e9dae917-8e25-43c8-acd9-54a94f4611f2
+2025-02-05 21:16:50,911 - INFO - Exam state returned - SessionID: e9dae917-8e25-43c8-acd9-54a94f4611f2, State: ExamState.EXPLAINING
+2025-02-05 21:16:50,915 - INFO - Answer submitted - SessionID: e9dae917-8e25-43c8-acd9-54a94f4611f2
+2025-02-05 21:16:51,875 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:16:51,882 - INFO - Attempting state transition: ExamState.EXPLAINING -> ExamState.EVALUATING
+2025-02-05 21:16:51,883 - ERROR - Invalid state transition: ExamState.EXPLAINING -> ExamState.EVALUATING
+Valid transitions: ['QUESTIONING (provide_explanation())', 'CHAT (casual_conversation)']
+2025-02-05 21:16:51,883 - ERROR - Failed to process answer - SessionID: e9dae917-8e25-43c8-acd9-54a94f4611f2, Error: Invalid state transition: ExamState.EXPLAINING -> ExamState.EVALUATING
+2025-02-05 21:16:53,886 - INFO - Evaluation requested - SessionID: e9dae917-8e25-43c8-acd9-54a94f4611f2
+2025-02-05 21:16:53,886 - INFO - Exam not completed, returning progress - SessionID: e9dae917-8e25-43c8-acd9-54a94f4611f2, State: ExamState.EXPLAINING
+2025-02-05 21:17:35,111 - INFO - New exam session started - SessionID: 0b0edceb-650f-48ad-a98e-bfa8e45e84ab, Topic: Direct Methods for Optimal Control
+2025-02-05 21:17:35,111 - INFO - Initializing exam state machine
+2025-02-05 21:17:35,111 - INFO - Initial state: ExamState.INIT, context initialized
+2025-02-05 21:17:35,917 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:17:35,923 - INFO - Attempting state transition: ExamState.INIT -> ExamState.TOPIC_SELECTED
+2025-02-05 21:17:35,923 - INFO - State transition successful: from_state=<ExamState.INIT: 'INIT'> to_state=<ExamState.TOPIC_SELECTED: 'TOPIC_SELECTED'> condition='student_ready' metadata=None
+2025-02-05 21:17:35,923 - INFO - Current state updated to: ExamState.TOPIC_SELECTED
+2025-02-05 21:17:35,924 - INFO - Starting new exam with topic: Direct Methods for Optimal Control
+2025-02-05 21:17:35,925 - INFO - Exam session created successfully
+2025-02-05 21:17:35,926 - INFO - Attempting state transition: ExamState.TOPIC_SELECTED -> ExamState.QUESTIONING
+2025-02-05 21:17:35,926 - INFO - State transition successful: from_state=<ExamState.TOPIC_SELECTED: 'TOPIC_SELECTED'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='start_exam()' metadata=None
+2025-02-05 21:17:35,926 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:17:35,926 - INFO - Transitioned to QUESTIONING state
+2025-02-05 21:17:35,927 - INFO - Retrieved current question: ID=Q1, difficulty=1
+2025-02-05 21:17:35,927 - INFO - Exam successfully initiated - SessionID: 0b0edceb-650f-48ad-a98e-bfa8e45e84ab
+2025-02-05 21:17:35,927 - INFO - Retrieved current question: ID=Q6, difficulty=1
+2025-02-05 21:17:35,930 - INFO - Exam state requested - SessionID: 0b0edceb-650f-48ad-a98e-bfa8e45e84ab
+2025-02-05 21:17:35,930 - INFO - Exam state returned - SessionID: 0b0edceb-650f-48ad-a98e-bfa8e45e84ab, State: ExamState.QUESTIONING
+2025-02-05 21:17:35,930 - INFO - Retrieved current question: ID=Q11, difficulty=1
+2025-02-05 21:18:14,417 - INFO - Answer submitted - SessionID: 0b0edceb-650f-48ad-a98e-bfa8e45e84ab
+2025-02-05 21:18:15,749 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:18:15,756 - INFO - Retrieved current question: ID=Q16, difficulty=1
+2025-02-05 21:18:15,756 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.COMPLETED
+2025-02-05 21:18:15,757 - ERROR - Invalid state transition: ExamState.QUESTIONING -> ExamState.COMPLETED
+Valid transitions: ['EXPLAINING (student_confused/need_clarification)', 'EVALUATING (questions_completed)', 'QUESTIONING (good_response/select_next_question)', 'PAUSED (student_needs_break)', 'CHAT (casual_conversation)']
+2025-02-05 21:18:15,757 - ERROR - Failed to process answer - SessionID: 0b0edceb-650f-48ad-a98e-bfa8e45e84ab, Error: Invalid state transition: ExamState.QUESTIONING -> ExamState.COMPLETED
+2025-02-05 21:18:16,761 - INFO - Exam state requested - SessionID: 0b0edceb-650f-48ad-a98e-bfa8e45e84ab
+2025-02-05 21:18:16,762 - INFO - Exam state returned - SessionID: 0b0edceb-650f-48ad-a98e-bfa8e45e84ab, State: ExamState.QUESTIONING
+2025-02-05 21:18:16,762 - INFO - Retrieved current question: ID=Q21, difficulty=1
+2025-02-05 21:18:52,549 - INFO - Answer submitted - SessionID: 0b0edceb-650f-48ad-a98e-bfa8e45e84ab
+2025-02-05 21:18:54,247 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:18:54,248 - INFO - Retrieved current question: ID=Q2, difficulty=2
+2025-02-05 21:18:54,249 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.COMPLETED
+2025-02-05 21:18:54,249 - ERROR - Invalid state transition: ExamState.QUESTIONING -> ExamState.COMPLETED
+Valid transitions: ['EXPLAINING (student_confused/need_clarification)', 'EVALUATING (questions_completed)', 'QUESTIONING (good_response/select_next_question)', 'PAUSED (student_needs_break)', 'CHAT (casual_conversation)']
+2025-02-05 21:18:54,249 - ERROR - Failed to process answer - SessionID: 0b0edceb-650f-48ad-a98e-bfa8e45e84ab, Error: Invalid state transition: ExamState.QUESTIONING -> ExamState.COMPLETED
+2025-02-05 21:18:55,252 - INFO - Exam state requested - SessionID: 0b0edceb-650f-48ad-a98e-bfa8e45e84ab
+2025-02-05 21:18:55,253 - INFO - Exam state returned - SessionID: 0b0edceb-650f-48ad-a98e-bfa8e45e84ab, State: ExamState.QUESTIONING
+2025-02-05 21:18:55,253 - INFO - Retrieved current question: ID=Q7, difficulty=2
+2025-02-05 21:19:27,279 - INFO - Answer submitted - SessionID: 0b0edceb-650f-48ad-a98e-bfa8e45e84ab
+2025-02-05 21:19:27,998 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:19:28,001 - INFO - Retrieved current question: ID=Q12, difficulty=2
+2025-02-05 21:19:28,001 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.QUESTIONING
+2025-02-05 21:19:28,002 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='good_response/select_next_question' metadata=None
+2025-02-05 21:19:28,002 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:19:28,002 - INFO - Retrieved current question: ID=Q17, difficulty=2
+2025-02-05 21:19:28,002 - INFO - Answer processed - SessionID: 0b0edceb-650f-48ad-a98e-bfa8e45e84ab, State: ExamState.QUESTIONING
+2025-02-05 21:19:29,006 - INFO - Exam state requested - SessionID: 0b0edceb-650f-48ad-a98e-bfa8e45e84ab
+2025-02-05 21:19:29,006 - INFO - Exam state returned - SessionID: 0b0edceb-650f-48ad-a98e-bfa8e45e84ab, State: ExamState.QUESTIONING
+2025-02-05 21:19:29,006 - INFO - Retrieved current question: ID=Q22, difficulty=2
+2025-02-05 21:20:02,562 - INFO - Answer submitted - SessionID: 0b0edceb-650f-48ad-a98e-bfa8e45e84ab
+2025-02-05 21:20:03,456 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:20:03,457 - INFO - Retrieved current question: ID=Q3, difficulty=3
+2025-02-05 21:20:03,458 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.COMPLETED
+2025-02-05 21:20:03,458 - ERROR - Invalid state transition: ExamState.QUESTIONING -> ExamState.COMPLETED
+Valid transitions: ['EXPLAINING (student_confused/need_clarification)', 'EVALUATING (questions_completed)', 'QUESTIONING (good_response/select_next_question)', 'PAUSED (student_needs_break)', 'CHAT (casual_conversation)']
+2025-02-05 21:20:03,458 - ERROR - Failed to process answer - SessionID: 0b0edceb-650f-48ad-a98e-bfa8e45e84ab, Error: Invalid state transition: ExamState.QUESTIONING -> ExamState.COMPLETED
+2025-02-05 21:20:04,462 - INFO - Exam state requested - SessionID: 0b0edceb-650f-48ad-a98e-bfa8e45e84ab
+2025-02-05 21:20:04,462 - INFO - Exam state returned - SessionID: 0b0edceb-650f-48ad-a98e-bfa8e45e84ab, State: ExamState.QUESTIONING
+2025-02-05 21:20:04,463 - INFO - Retrieved current question: ID=Q8, difficulty=3
+2025-02-05 21:21:10,047 - INFO - Answer submitted - SessionID: 0b0edceb-650f-48ad-a98e-bfa8e45e84ab
+2025-02-05 21:21:10,972 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:21:10,978 - INFO - Retrieved current question: ID=Q13, difficulty=3
+2025-02-05 21:21:10,978 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.QUESTIONING
+2025-02-05 21:21:10,979 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='good_response/select_next_question' metadata=None
+2025-02-05 21:21:10,979 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:21:10,979 - INFO - Retrieved current question: ID=Q18, difficulty=3
+2025-02-05 21:21:10,979 - INFO - Answer processed - SessionID: 0b0edceb-650f-48ad-a98e-bfa8e45e84ab, State: ExamState.QUESTIONING
+2025-02-05 21:21:11,985 - INFO - Answer submitted - SessionID: 0b0edceb-650f-48ad-a98e-bfa8e45e84ab
+2025-02-05 21:21:12,817 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:21:12,822 - INFO - Retrieved current question: ID=Q23, difficulty=3
+2025-02-05 21:21:12,823 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.EVALUATING
+2025-02-05 21:21:12,823 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.EVALUATING: 'EVALUATING'> condition='questions_completed' metadata=None
+2025-02-05 21:21:12,823 - INFO - Current state updated to: ExamState.EVALUATING
+2025-02-05 21:21:12,824 - INFO - Answer processed - SessionID: 0b0edceb-650f-48ad-a98e-bfa8e45e84ab, State: ExamState.EVALUATING
+2025-02-05 21:21:14,828 - INFO - Evaluation requested - SessionID: 0b0edceb-650f-48ad-a98e-bfa8e45e84ab
+2025-02-05 21:21:14,828 - INFO - Exam not completed, returning progress - SessionID: 0b0edceb-650f-48ad-a98e-bfa8e45e84ab, State: ExamState.EVALUATING
+2025-02-05 21:22:00,844 - INFO - New exam session started - SessionID: a482d984-71b9-4420-9b67-6c1fbf7dd569, Topic: Direct Methods for Optimal Control
+2025-02-05 21:22:00,844 - INFO - Initializing exam state machine
+2025-02-05 21:22:00,845 - INFO - Initial state: ExamState.INIT, context initialized
+2025-02-05 21:22:01,879 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:22:01,880 - INFO - Attempting state transition: ExamState.INIT -> ExamState.TOPIC_SELECTED
+2025-02-05 21:22:01,881 - INFO - State transition successful: from_state=<ExamState.INIT: 'INIT'> to_state=<ExamState.TOPIC_SELECTED: 'TOPIC_SELECTED'> condition='student_ready' metadata=None
+2025-02-05 21:22:01,881 - INFO - Current state updated to: ExamState.TOPIC_SELECTED
+2025-02-05 21:22:01,884 - INFO - Starting new exam with topic: Direct Methods for Optimal Control
+2025-02-05 21:22:01,887 - INFO - Exam session created successfully
+2025-02-05 21:22:01,888 - INFO - Attempting state transition: ExamState.TOPIC_SELECTED -> ExamState.QUESTIONING
+2025-02-05 21:22:01,888 - INFO - State transition successful: from_state=<ExamState.TOPIC_SELECTED: 'TOPIC_SELECTED'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='start_exam()' metadata=None
+2025-02-05 21:22:01,889 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:22:01,889 - INFO - Transitioned to QUESTIONING state
+2025-02-05 21:22:01,892 - INFO - Retrieved current question: ID=Q1, difficulty=1
+2025-02-05 21:22:01,893 - INFO - Exam successfully initiated - SessionID: a482d984-71b9-4420-9b67-6c1fbf7dd569
+2025-02-05 21:22:01,894 - INFO - Retrieved current question: ID=Q6, difficulty=1
+2025-02-05 21:22:01,902 - INFO - Exam state requested - SessionID: a482d984-71b9-4420-9b67-6c1fbf7dd569
+2025-02-05 21:22:01,903 - INFO - Exam state returned - SessionID: a482d984-71b9-4420-9b67-6c1fbf7dd569, State: ExamState.QUESTIONING
+2025-02-05 21:22:01,904 - INFO - Retrieved current question: ID=Q11, difficulty=1
+2025-02-05 21:23:06,097 - INFO - Answer submitted - SessionID: a482d984-71b9-4420-9b67-6c1fbf7dd569
+2025-02-05 21:23:06,878 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:23:06,891 - INFO - Retrieved current question: ID=Q16, difficulty=1
+2025-02-05 21:23:06,892 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.COMPLETED
+2025-02-05 21:23:06,892 - ERROR - Invalid state transition: ExamState.QUESTIONING -> ExamState.COMPLETED
+Valid transitions: ['EXPLAINING (student_confused/need_clarification)', 'EVALUATING (questions_completed)', 'QUESTIONING (good_response/select_next_question)', 'PAUSED (student_needs_break)', 'CHAT (casual_conversation)']
+2025-02-05 21:23:06,892 - ERROR - Failed to process answer - SessionID: a482d984-71b9-4420-9b67-6c1fbf7dd569, Error: Invalid state transition: ExamState.QUESTIONING -> ExamState.COMPLETED
+2025-02-05 21:23:07,895 - INFO - Exam state requested - SessionID: a482d984-71b9-4420-9b67-6c1fbf7dd569
+2025-02-05 21:23:07,895 - INFO - Exam state returned - SessionID: a482d984-71b9-4420-9b67-6c1fbf7dd569, State: ExamState.QUESTIONING
+2025-02-05 21:23:07,895 - INFO - Retrieved current question: ID=Q21, difficulty=1
+2025-02-05 21:23:45,353 - INFO - Answer submitted - SessionID: a482d984-71b9-4420-9b67-6c1fbf7dd569
+2025-02-05 21:23:46,557 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:23:46,569 - INFO - Retrieved current question: ID=Q2, difficulty=2
+2025-02-05 21:23:46,569 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.QUESTIONING
+2025-02-05 21:23:46,570 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='good_response/select_next_question' metadata=None
+2025-02-05 21:23:46,570 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:23:46,570 - INFO - Retrieved current question: ID=Q7, difficulty=2
+2025-02-05 21:23:46,570 - INFO - Answer processed - SessionID: a482d984-71b9-4420-9b67-6c1fbf7dd569, State: ExamState.QUESTIONING
+2025-02-05 21:23:47,573 - INFO - Exam state requested - SessionID: a482d984-71b9-4420-9b67-6c1fbf7dd569
+2025-02-05 21:23:47,573 - INFO - Exam state returned - SessionID: a482d984-71b9-4420-9b67-6c1fbf7dd569, State: ExamState.QUESTIONING
+2025-02-05 21:23:47,573 - INFO - Retrieved current question: ID=Q12, difficulty=2
+2025-02-05 21:24:21,482 - INFO - Answer submitted - SessionID: a482d984-71b9-4420-9b67-6c1fbf7dd569
+2025-02-05 21:24:22,530 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:24:22,537 - INFO - Retrieved current question: ID=Q17, difficulty=2
+2025-02-05 21:24:22,538 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.QUESTIONING
+2025-02-05 21:24:22,538 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='good_response/select_next_question' metadata=None
+2025-02-05 21:24:22,538 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:24:22,538 - INFO - Retrieved current question: ID=Q22, difficulty=2
+2025-02-05 21:24:22,538 - INFO - Answer processed - SessionID: a482d984-71b9-4420-9b67-6c1fbf7dd569, State: ExamState.QUESTIONING
+2025-02-05 21:24:23,541 - INFO - Exam state requested - SessionID: a482d984-71b9-4420-9b67-6c1fbf7dd569
+2025-02-05 21:24:23,541 - INFO - Exam state returned - SessionID: a482d984-71b9-4420-9b67-6c1fbf7dd569, State: ExamState.QUESTIONING
+2025-02-05 21:24:23,542 - INFO - Retrieved current question: ID=Q3, difficulty=3
+2025-02-05 21:24:54,191 - INFO - Answer submitted - SessionID: a482d984-71b9-4420-9b67-6c1fbf7dd569
+2025-02-05 21:24:55,422 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:24:55,433 - INFO - Retrieved current question: ID=Q8, difficulty=3
+2025-02-05 21:24:55,433 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.QUESTIONING
+2025-02-05 21:24:55,434 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='good_response/select_next_question' metadata=None
+2025-02-05 21:24:55,434 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:24:55,434 - INFO - Retrieved current question: ID=Q13, difficulty=3
+2025-02-05 21:24:55,434 - INFO - Answer processed - SessionID: a482d984-71b9-4420-9b67-6c1fbf7dd569, State: ExamState.QUESTIONING
+2025-02-05 21:24:56,437 - INFO - Exam state requested - SessionID: a482d984-71b9-4420-9b67-6c1fbf7dd569
+2025-02-05 21:24:56,437 - INFO - Exam state returned - SessionID: a482d984-71b9-4420-9b67-6c1fbf7dd569, State: ExamState.QUESTIONING
+2025-02-05 21:24:56,437 - INFO - Retrieved current question: ID=Q18, difficulty=3
+2025-02-05 21:25:28,899 - INFO - Answer submitted - SessionID: a482d984-71b9-4420-9b67-6c1fbf7dd569
+2025-02-05 21:25:30,493 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:25:30,497 - INFO - Retrieved current question: ID=Q23, difficulty=3
+2025-02-05 21:25:30,498 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.QUESTIONING
+2025-02-05 21:25:30,498 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='good_response/select_next_question' metadata=None
+2025-02-05 21:25:30,499 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:25:30,499 - INFO - Retrieved current question: ID=Q4, difficulty=4
+2025-02-05 21:25:30,499 - INFO - Answer processed - SessionID: a482d984-71b9-4420-9b67-6c1fbf7dd569, State: ExamState.QUESTIONING
+2025-02-05 21:25:31,502 - INFO - Answer submitted - SessionID: a482d984-71b9-4420-9b67-6c1fbf7dd569
+2025-02-05 21:25:32,323 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:25:32,345 - INFO - Retrieved current question: ID=Q9, difficulty=4
+2025-02-05 21:25:32,346 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.EVALUATING
+2025-02-05 21:25:32,346 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.EVALUATING: 'EVALUATING'> condition='questions_completed' metadata=None
+2025-02-05 21:25:32,346 - INFO - Current state updated to: ExamState.EVALUATING
+2025-02-05 21:25:32,346 - INFO - Answer processed - SessionID: a482d984-71b9-4420-9b67-6c1fbf7dd569, State: ExamState.EVALUATING
+2025-02-05 21:25:34,349 - INFO - Evaluation requested - SessionID: a482d984-71b9-4420-9b67-6c1fbf7dd569
+2025-02-05 21:25:34,349 - INFO - Exam not completed, returning progress - SessionID: a482d984-71b9-4420-9b67-6c1fbf7dd569, State: ExamState.EVALUATING
+2025-02-05 21:27:45,506 - INFO - New exam session started - SessionID: a6e4d086-a57f-4da7-84b0-d55882ab1687, Topic: Direct Methods for Optimal Control
+2025-02-05 21:27:45,506 - INFO - Initializing exam state machine
+2025-02-05 21:27:45,506 - INFO - Initial state: ExamState.INIT, context initialized
+2025-02-05 21:27:46,547 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:27:46,560 - INFO - Attempting state transition: ExamState.INIT -> ExamState.TOPIC_SELECTED
+2025-02-05 21:27:46,560 - INFO - State transition successful: from_state=<ExamState.INIT: 'INIT'> to_state=<ExamState.TOPIC_SELECTED: 'TOPIC_SELECTED'> condition='student_ready' metadata=None
+2025-02-05 21:27:46,560 - INFO - Current state updated to: ExamState.TOPIC_SELECTED
+2025-02-05 21:27:46,561 - INFO - Starting new exam with topic: Direct Methods for Optimal Control
+2025-02-05 21:27:46,563 - INFO - Exam session created successfully
+2025-02-05 21:27:46,563 - INFO - Attempting state transition: ExamState.TOPIC_SELECTED -> ExamState.QUESTIONING
+2025-02-05 21:27:46,564 - INFO - State transition successful: from_state=<ExamState.TOPIC_SELECTED: 'TOPIC_SELECTED'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='start_exam()' metadata=None
+2025-02-05 21:27:46,564 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:27:46,564 - INFO - Transitioned to QUESTIONING state
+2025-02-05 21:27:46,565 - INFO - Retrieved current question: ID=Q1, difficulty=1
+2025-02-05 21:27:46,565 - INFO - Exam successfully initiated - SessionID: a6e4d086-a57f-4da7-84b0-d55882ab1687
+2025-02-05 21:27:46,565 - INFO - Retrieved current question: ID=Q6, difficulty=1
+2025-02-05 21:27:46,568 - INFO - Exam state requested - SessionID: a6e4d086-a57f-4da7-84b0-d55882ab1687
+2025-02-05 21:27:46,568 - INFO - Exam state returned - SessionID: a6e4d086-a57f-4da7-84b0-d55882ab1687, State: ExamState.QUESTIONING
+2025-02-05 21:27:46,569 - INFO - Retrieved current question: ID=Q11, difficulty=1
+2025-02-05 21:29:15,530 - INFO - Answer submitted - SessionID: a6e4d086-a57f-4da7-84b0-d55882ab1687
+2025-02-05 21:29:16,857 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:29:16,858 - INFO - Retrieved current question: ID=Q16, difficulty=1
+2025-02-05 21:29:16,858 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.QUESTIONING
+2025-02-05 21:29:16,858 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='good_response/select_next_question' metadata=None
+2025-02-05 21:29:16,858 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:29:16,858 - INFO - Retrieved current question: ID=Q21, difficulty=1
+2025-02-05 21:29:16,859 - INFO - Answer processed - SessionID: a6e4d086-a57f-4da7-84b0-d55882ab1687, State: ExamState.QUESTIONING
+2025-02-05 21:29:17,864 - INFO - Exam state requested - SessionID: a6e4d086-a57f-4da7-84b0-d55882ab1687
+2025-02-05 21:29:17,864 - INFO - Exam state returned - SessionID: a6e4d086-a57f-4da7-84b0-d55882ab1687, State: ExamState.QUESTIONING
+2025-02-05 21:29:17,864 - INFO - Retrieved current question: ID=Q2, difficulty=2
+2025-02-05 21:29:59,437 - INFO - Answer submitted - SessionID: a6e4d086-a57f-4da7-84b0-d55882ab1687
+2025-02-05 21:30:00,844 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:30:00,847 - INFO - Retrieved current question: ID=Q7, difficulty=2
+2025-02-05 21:30:00,848 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.QUESTIONING
+2025-02-05 21:30:00,848 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='good_response/select_next_question' metadata=None
+2025-02-05 21:30:00,848 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:30:00,848 - INFO - Retrieved current question: ID=Q12, difficulty=2
+2025-02-05 21:30:00,848 - INFO - Answer processed - SessionID: a6e4d086-a57f-4da7-84b0-d55882ab1687, State: ExamState.QUESTIONING
+2025-02-05 21:30:01,852 - INFO - Exam state requested - SessionID: a6e4d086-a57f-4da7-84b0-d55882ab1687
+2025-02-05 21:30:01,852 - INFO - Exam state returned - SessionID: a6e4d086-a57f-4da7-84b0-d55882ab1687, State: ExamState.QUESTIONING
+2025-02-05 21:30:01,853 - INFO - Retrieved current question: ID=Q17, difficulty=2
+2025-02-05 21:30:34,140 - INFO - Answer submitted - SessionID: a6e4d086-a57f-4da7-84b0-d55882ab1687
+2025-02-05 21:30:34,947 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:30:34,952 - INFO - Retrieved current question: ID=Q22, difficulty=2
+2025-02-05 21:30:34,952 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.CHAT
+2025-02-05 21:30:34,952 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.CHAT: 'CHAT'> condition='casual_conversation' metadata=None
+2025-02-05 21:30:34,952 - INFO - Current state updated to: ExamState.CHAT
+2025-02-05 21:30:34,952 - INFO - Answer processed - SessionID: a6e4d086-a57f-4da7-84b0-d55882ab1687, State: ExamState.CHAT
+2025-02-05 21:30:35,955 - INFO - Exam state requested - SessionID: a6e4d086-a57f-4da7-84b0-d55882ab1687
+2025-02-05 21:30:35,955 - INFO - Exam state returned - SessionID: a6e4d086-a57f-4da7-84b0-d55882ab1687, State: ExamState.CHAT
+2025-02-05 21:30:35,958 - INFO - Answer submitted - SessionID: a6e4d086-a57f-4da7-84b0-d55882ab1687
+2025-02-05 21:30:37,140 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:30:37,142 - INFO - Attempting state transition: ExamState.CHAT -> EVALUATING
+2025-02-05 21:30:37,142 - INFO - State transition successful: from_state=<ExamState.CHAT: 'CHAT'> to_state=<ExamState.EVALUATING: 'EVALUATING'> condition='return_to_evaluation' metadata=None
+2025-02-05 21:30:37,143 - INFO - Current state updated to: EVALUATING
+2025-02-05 21:30:37,143 - INFO - Answer processed - SessionID: a6e4d086-a57f-4da7-84b0-d55882ab1687, State: EVALUATING
+2025-02-05 21:30:39,697 - INFO - Evaluation requested - SessionID: a6e4d086-a57f-4da7-84b0-d55882ab1687
+2025-02-05 21:30:39,697 - INFO - Exam not completed, returning progress - SessionID: a6e4d086-a57f-4da7-84b0-d55882ab1687, State: EVALUATING
+2025-02-05 21:32:36,351 - INFO - New exam session started - SessionID: 1073e517-548d-41bd-b392-bab519c56183, Topic: Direct Methods for Optimal Control
+2025-02-05 21:32:36,351 - INFO - Initializing exam state machine
+2025-02-05 21:32:36,351 - INFO - Initial state: ExamState.INIT, context initialized
+2025-02-05 21:32:37,875 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:32:37,880 - INFO - Attempting state transition: ExamState.INIT -> ExamState.TOPIC_SELECTED
+2025-02-05 21:32:37,881 - INFO - State transition successful: from_state=<ExamState.INIT: 'INIT'> to_state=<ExamState.TOPIC_SELECTED: 'TOPIC_SELECTED'> condition='student_ready' metadata=None
+2025-02-05 21:32:37,881 - INFO - Current state updated to: ExamState.TOPIC_SELECTED
+2025-02-05 21:32:37,883 - INFO - Starting new exam with topic: Direct Methods for Optimal Control
+2025-02-05 21:32:37,884 - INFO - Exam session created successfully
+2025-02-05 21:32:37,884 - INFO - Attempting state transition: ExamState.TOPIC_SELECTED -> ExamState.QUESTIONING
+2025-02-05 21:32:37,885 - INFO - State transition successful: from_state=<ExamState.TOPIC_SELECTED: 'TOPIC_SELECTED'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='start_exam()' metadata=None
+2025-02-05 21:32:37,885 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:32:37,885 - INFO - Transitioned to QUESTIONING state
+2025-02-05 21:32:37,890 - INFO - Retrieved current question: ID=Q1, difficulty=1
+2025-02-05 21:32:37,890 - INFO - Exam successfully initiated - SessionID: 1073e517-548d-41bd-b392-bab519c56183
+2025-02-05 21:32:37,890 - INFO - Retrieved current question: ID=Q6, difficulty=1
+2025-02-05 21:32:37,896 - INFO - Exam state requested - SessionID: 1073e517-548d-41bd-b392-bab519c56183
+2025-02-05 21:32:37,896 - INFO - Exam state returned - SessionID: 1073e517-548d-41bd-b392-bab519c56183, State: ExamState.QUESTIONING
+2025-02-05 21:32:37,896 - INFO - Retrieved current question: ID=Q11, difficulty=1
+2025-02-05 21:33:49,541 - INFO - Answer submitted - SessionID: 1073e517-548d-41bd-b392-bab519c56183
+2025-02-05 21:33:51,405 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:33:51,413 - INFO - Retrieved current question: ID=Q16, difficulty=1
+2025-02-05 21:33:51,413 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.QUESTIONING
+2025-02-05 21:33:51,413 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='good_response/select_next_question' metadata=None
+2025-02-05 21:33:51,414 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:33:51,414 - INFO - Retrieved current question: ID=Q21, difficulty=1
+2025-02-05 21:33:51,414 - INFO - Answer processed - SessionID: 1073e517-548d-41bd-b392-bab519c56183, State: ExamState.QUESTIONING
+2025-02-05 21:33:52,416 - INFO - Exam state requested - SessionID: 1073e517-548d-41bd-b392-bab519c56183
+2025-02-05 21:33:52,416 - INFO - Exam state returned - SessionID: 1073e517-548d-41bd-b392-bab519c56183, State: ExamState.QUESTIONING
+2025-02-05 21:33:52,417 - INFO - Retrieved current question: ID=Q2, difficulty=2
+2025-02-05 21:34:18,529 - INFO - Answer submitted - SessionID: 1073e517-548d-41bd-b392-bab519c56183
+2025-02-05 21:34:19,373 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:34:19,383 - INFO - Retrieved current question: ID=Q7, difficulty=2
+2025-02-05 21:34:19,384 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.QUESTIONING
+2025-02-05 21:34:19,384 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='good_response/select_next_question' metadata=None
+2025-02-05 21:34:19,384 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:34:19,384 - INFO - Retrieved current question: ID=Q12, difficulty=2
+2025-02-05 21:34:19,385 - INFO - Answer processed - SessionID: 1073e517-548d-41bd-b392-bab519c56183, State: ExamState.QUESTIONING
+2025-02-05 21:34:20,388 - INFO - Exam state requested - SessionID: 1073e517-548d-41bd-b392-bab519c56183
+2025-02-05 21:34:20,389 - INFO - Exam state returned - SessionID: 1073e517-548d-41bd-b392-bab519c56183, State: ExamState.QUESTIONING
+2025-02-05 21:34:20,389 - INFO - Retrieved current question: ID=Q17, difficulty=2
+2025-02-05 21:36:16,276 - INFO - Answer submitted - SessionID: 1073e517-548d-41bd-b392-bab519c56183
+2025-02-05 21:36:18,062 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:36:18,063 - INFO - Retrieved current question: ID=Q22, difficulty=2
+2025-02-05 21:36:18,064 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.QUESTIONING
+2025-02-05 21:36:18,064 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='good_response/select_next_question' metadata=None
+2025-02-05 21:36:18,064 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:36:18,064 - INFO - Retrieved current question: ID=Q3, difficulty=3
+2025-02-05 21:36:18,065 - INFO - Answer processed - SessionID: 1073e517-548d-41bd-b392-bab519c56183, State: ExamState.QUESTIONING
+2025-02-05 21:36:19,067 - INFO - Exam state requested - SessionID: 1073e517-548d-41bd-b392-bab519c56183
+2025-02-05 21:36:19,068 - INFO - Exam state returned - SessionID: 1073e517-548d-41bd-b392-bab519c56183, State: ExamState.QUESTIONING
+2025-02-05 21:36:19,068 - INFO - Retrieved current question: ID=Q8, difficulty=3
+2025-02-05 21:36:50,483 - INFO - Answer submitted - SessionID: 1073e517-548d-41bd-b392-bab519c56183
+2025-02-05 21:36:51,923 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:36:51,928 - INFO - Retrieved current question: ID=Q13, difficulty=3
+2025-02-05 21:36:51,929 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.QUESTIONING
+2025-02-05 21:36:51,929 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='good_response/select_next_question' metadata=None
+2025-02-05 21:36:51,929 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:36:51,929 - INFO - Retrieved current question: ID=Q18, difficulty=3
+2025-02-05 21:36:51,929 - INFO - Answer processed - SessionID: 1073e517-548d-41bd-b392-bab519c56183, State: ExamState.QUESTIONING
+2025-02-05 21:36:52,932 - INFO - Exam state requested - SessionID: 1073e517-548d-41bd-b392-bab519c56183
+2025-02-05 21:36:52,932 - INFO - Exam state returned - SessionID: 1073e517-548d-41bd-b392-bab519c56183, State: ExamState.QUESTIONING
+2025-02-05 21:36:52,932 - INFO - Retrieved current question: ID=Q23, difficulty=3
+2025-02-05 21:37:03,642 - INFO - Answer submitted - SessionID: 1073e517-548d-41bd-b392-bab519c56183
+2025-02-05 21:37:05,254 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:37:05,259 - INFO - Retrieved current question: ID=Q4, difficulty=4
+2025-02-05 21:37:05,260 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.QUESTIONING
+2025-02-05 21:37:05,261 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='good_response/select_next_question' metadata=None
+2025-02-05 21:37:05,261 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:37:05,261 - INFO - Retrieved current question: ID=Q9, difficulty=4
+2025-02-05 21:37:05,262 - INFO - Answer processed - SessionID: 1073e517-548d-41bd-b392-bab519c56183, State: ExamState.QUESTIONING
+2025-02-05 21:37:06,266 - INFO - Answer submitted - SessionID: 1073e517-548d-41bd-b392-bab519c56183
+2025-02-05 21:37:07,038 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:37:07,041 - INFO - Retrieved current question: ID=Q14, difficulty=4
+2025-02-05 21:37:07,042 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.EVALUATING
+2025-02-05 21:37:07,042 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.EVALUATING: 'EVALUATING'> condition='questions_completed' metadata=None
+2025-02-05 21:37:07,043 - INFO - Current state updated to: ExamState.EVALUATING
+2025-02-05 21:37:07,043 - INFO - Answer processed - SessionID: 1073e517-548d-41bd-b392-bab519c56183, State: ExamState.EVALUATING
+2025-02-05 21:37:09,047 - INFO - Evaluation requested - SessionID: 1073e517-548d-41bd-b392-bab519c56183
+2025-02-05 21:37:09,047 - INFO - Exam not completed, returning progress - SessionID: 1073e517-548d-41bd-b392-bab519c56183, State: ExamState.EVALUATING
+2025-02-05 21:38:27,150 - INFO - New exam session started - SessionID: fe6a9c64-7143-4e8e-b89a-cc5f7c59611b, Topic: Direct Methods for Optimal Control
+2025-02-05 21:38:27,150 - INFO - Initializing exam state machine
+2025-02-05 21:38:27,150 - INFO - Initial state: ExamState.INIT, context initialized
+2025-02-05 21:38:29,772 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:38:29,791 - INFO - Attempting state transition: ExamState.INIT -> ExamState.TOPIC_SELECTED
+2025-02-05 21:38:29,792 - INFO - State transition successful: from_state=<ExamState.INIT: 'INIT'> to_state=<ExamState.TOPIC_SELECTED: 'TOPIC_SELECTED'> condition='student_ready' metadata=None
+2025-02-05 21:38:29,792 - INFO - Current state updated to: ExamState.TOPIC_SELECTED
+2025-02-05 21:38:29,792 - INFO - Starting new exam with topic: Direct Methods for Optimal Control
+2025-02-05 21:38:29,793 - INFO - Exam session created successfully
+2025-02-05 21:38:29,793 - INFO - Attempting state transition: ExamState.TOPIC_SELECTED -> ExamState.QUESTIONING
+2025-02-05 21:38:29,793 - INFO - State transition successful: from_state=<ExamState.TOPIC_SELECTED: 'TOPIC_SELECTED'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='start_exam()' metadata=None
+2025-02-05 21:38:29,793 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:38:29,793 - INFO - Transitioned to QUESTIONING state
+2025-02-05 21:38:29,794 - INFO - Retrieved current question: ID=Q1, difficulty=1
+2025-02-05 21:38:29,795 - INFO - Exam successfully initiated - SessionID: fe6a9c64-7143-4e8e-b89a-cc5f7c59611b
+2025-02-05 21:38:29,795 - INFO - Retrieved current question: ID=Q6, difficulty=1
+2025-02-05 21:38:29,797 - INFO - Exam state requested - SessionID: fe6a9c64-7143-4e8e-b89a-cc5f7c59611b
+2025-02-05 21:38:29,797 - INFO - Exam state returned - SessionID: fe6a9c64-7143-4e8e-b89a-cc5f7c59611b, State: ExamState.QUESTIONING
+2025-02-05 21:38:29,797 - INFO - Retrieved current question: ID=Q11, difficulty=1
+2025-02-05 21:39:31,068 - INFO - Answer submitted - SessionID: fe6a9c64-7143-4e8e-b89a-cc5f7c59611b
+2025-02-05 21:39:31,930 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:39:31,932 - INFO - Retrieved current question: ID=Q16, difficulty=1
+2025-02-05 21:39:31,933 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.CHAT
+2025-02-05 21:39:31,933 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.CHAT: 'CHAT'> condition='casual_conversation' metadata=None
+2025-02-05 21:39:31,933 - INFO - Current state updated to: ExamState.CHAT
+2025-02-05 21:39:31,934 - INFO - Answer processed - SessionID: fe6a9c64-7143-4e8e-b89a-cc5f7c59611b, State: ExamState.CHAT
+2025-02-05 21:39:32,938 - INFO - Exam state requested - SessionID: fe6a9c64-7143-4e8e-b89a-cc5f7c59611b
+2025-02-05 21:39:32,938 - INFO - Exam state returned - SessionID: fe6a9c64-7143-4e8e-b89a-cc5f7c59611b, State: ExamState.CHAT
+2025-02-05 21:39:32,945 - INFO - Answer submitted - SessionID: fe6a9c64-7143-4e8e-b89a-cc5f7c59611b
+2025-02-05 21:39:34,260 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:39:34,266 - INFO - Attempting state transition: ExamState.CHAT -> EVALUATING
+2025-02-05 21:39:34,267 - INFO - State transition successful: from_state=<ExamState.CHAT: 'CHAT'> to_state=<ExamState.EVALUATING: 'EVALUATING'> condition='return_to_evaluation' metadata=None
+2025-02-05 21:39:34,267 - INFO - Current state updated to: EVALUATING
+2025-02-05 21:39:34,267 - INFO - Answer processed - SessionID: fe6a9c64-7143-4e8e-b89a-cc5f7c59611b, State: EVALUATING
+2025-02-05 21:39:36,270 - INFO - Evaluation requested - SessionID: fe6a9c64-7143-4e8e-b89a-cc5f7c59611b
+2025-02-05 21:39:36,270 - INFO - Exam not completed, returning progress - SessionID: fe6a9c64-7143-4e8e-b89a-cc5f7c59611b, State: EVALUATING
+2025-02-05 21:41:21,311 - INFO - New exam session started - SessionID: bf6e214d-f743-4e54-bf0d-b13110437ade, Topic: Direct Methods for Optimal Control
+2025-02-05 21:41:21,312 - INFO - Initializing exam state machine
+2025-02-05 21:41:21,312 - INFO - Initial state: ExamState.INIT, context initialized
+2025-02-05 21:41:22,146 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:41:22,150 - INFO - Attempting state transition: ExamState.INIT -> ExamState.TOPIC_SELECTED
+2025-02-05 21:41:22,150 - INFO - State transition successful: from_state=<ExamState.INIT: 'INIT'> to_state=<ExamState.TOPIC_SELECTED: 'TOPIC_SELECTED'> condition='student_ready' metadata=None
+2025-02-05 21:41:22,151 - INFO - Current state updated to: ExamState.TOPIC_SELECTED
+2025-02-05 21:41:22,152 - INFO - Starting new exam with topic: Direct Methods for Optimal Control
+2025-02-05 21:41:22,152 - INFO - Exam session created successfully
+2025-02-05 21:41:22,152 - INFO - Attempting state transition: ExamState.TOPIC_SELECTED -> ExamState.QUESTIONING
+2025-02-05 21:41:22,152 - INFO - State transition successful: from_state=<ExamState.TOPIC_SELECTED: 'TOPIC_SELECTED'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='start_exam()' metadata=None
+2025-02-05 21:41:22,153 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:41:22,153 - INFO - Transitioned to QUESTIONING state
+2025-02-05 21:41:22,153 - INFO - Retrieved current question: ID=Q1, difficulty=1
+2025-02-05 21:41:22,154 - INFO - Exam successfully initiated - SessionID: bf6e214d-f743-4e54-bf0d-b13110437ade
+2025-02-05 21:41:22,154 - INFO - Retrieved current question: ID=Q6, difficulty=1
+2025-02-05 21:41:22,157 - INFO - Exam state requested - SessionID: bf6e214d-f743-4e54-bf0d-b13110437ade
+2025-02-05 21:41:22,157 - INFO - Exam state returned - SessionID: bf6e214d-f743-4e54-bf0d-b13110437ade, State: ExamState.QUESTIONING
+2025-02-05 21:41:22,157 - INFO - Retrieved current question: ID=Q11, difficulty=1
+2025-02-05 21:41:47,224 - INFO - Answer submitted - SessionID: bf6e214d-f743-4e54-bf0d-b13110437ade
+2025-02-05 21:41:48,190 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:41:48,194 - INFO - Retrieved current question: ID=Q16, difficulty=1
+2025-02-05 21:41:48,194 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.QUESTIONING
+2025-02-05 21:41:48,194 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='good_response/select_next_question' metadata=None
+2025-02-05 21:41:48,195 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:41:48,195 - INFO - Retrieved current question: ID=Q21, difficulty=1
+2025-02-05 21:41:48,195 - INFO - Answer processed - SessionID: bf6e214d-f743-4e54-bf0d-b13110437ade, State: ExamState.QUESTIONING
+2025-02-05 21:41:49,198 - INFO - Exam state requested - SessionID: bf6e214d-f743-4e54-bf0d-b13110437ade
+2025-02-05 21:41:49,199 - INFO - Exam state returned - SessionID: bf6e214d-f743-4e54-bf0d-b13110437ade, State: ExamState.QUESTIONING
+2025-02-05 21:41:49,199 - INFO - Retrieved current question: ID=Q2, difficulty=2
+2025-02-05 21:41:51,872 - INFO - Exam state requested - SessionID: bf6e214d-f743-4e54-bf0d-b13110437ade
+2025-02-05 21:41:51,872 - INFO - Exam state returned - SessionID: bf6e214d-f743-4e54-bf0d-b13110437ade, State: ExamState.QUESTIONING
+2025-02-05 21:41:51,872 - INFO - Retrieved current question: ID=Q7, difficulty=2
+2025-02-05 21:41:57,646 - INFO - Answer submitted - SessionID: bf6e214d-f743-4e54-bf0d-b13110437ade
+2025-02-05 21:41:59,033 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:41:59,039 - INFO - Retrieved current question: ID=Q12, difficulty=2
+2025-02-05 21:41:59,039 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.QUESTIONING
+2025-02-05 21:41:59,039 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='good_response/select_next_question' metadata=None
+2025-02-05 21:41:59,039 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:41:59,039 - INFO - Retrieved current question: ID=Q17, difficulty=2
+2025-02-05 21:41:59,040 - INFO - Answer processed - SessionID: bf6e214d-f743-4e54-bf0d-b13110437ade, State: ExamState.QUESTIONING
+2025-02-05 21:42:00,042 - INFO - Exam state requested - SessionID: bf6e214d-f743-4e54-bf0d-b13110437ade
+2025-02-05 21:42:00,043 - INFO - Exam state returned - SessionID: bf6e214d-f743-4e54-bf0d-b13110437ade, State: ExamState.QUESTIONING
+2025-02-05 21:42:00,043 - INFO - Retrieved current question: ID=Q22, difficulty=2
+2025-02-05 21:42:11,016 - INFO - Answer submitted - SessionID: bf6e214d-f743-4e54-bf0d-b13110437ade
+2025-02-05 21:42:12,077 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:42:12,090 - INFO - Retrieved current question: ID=Q3, difficulty=3
+2025-02-05 21:42:12,091 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.EVALUATING
+2025-02-05 21:42:12,091 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.EVALUATING: 'EVALUATING'> condition='questions_completed' metadata=None
+2025-02-05 21:42:12,091 - INFO - Current state updated to: ExamState.EVALUATING
+2025-02-05 21:42:12,091 - INFO - Answer processed - SessionID: bf6e214d-f743-4e54-bf0d-b13110437ade, State: ExamState.EVALUATING
+2025-02-05 21:42:13,093 - INFO - Exam state requested - SessionID: bf6e214d-f743-4e54-bf0d-b13110437ade
+2025-02-05 21:42:13,093 - INFO - Exam state returned - SessionID: bf6e214d-f743-4e54-bf0d-b13110437ade, State: ExamState.EVALUATING
+2025-02-05 21:42:13,097 - INFO - Answer submitted - SessionID: bf6e214d-f743-4e54-bf0d-b13110437ade
+2025-02-05 21:42:14,288 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:42:14,300 - INFO - Attempting state transition: ExamState.EVALUATING -> ExamState.EVALUATING
+2025-02-05 21:42:14,300 - ERROR - Invalid state transition: ExamState.EVALUATING -> ExamState.EVALUATING
+Valid transitions: ['COMPLETED (generate_final_evaluation())', 'CHAT (casual_conversation)']
+2025-02-05 21:42:14,300 - ERROR - Failed to process answer - SessionID: bf6e214d-f743-4e54-bf0d-b13110437ade, Error: Invalid state transition: ExamState.EVALUATING -> ExamState.EVALUATING
+2025-02-05 21:42:16,303 - INFO - Evaluation requested - SessionID: bf6e214d-f743-4e54-bf0d-b13110437ade
+2025-02-05 21:42:16,303 - INFO - Exam not completed, returning progress - SessionID: bf6e214d-f743-4e54-bf0d-b13110437ade, State: ExamState.EVALUATING
+2025-02-05 21:43:05,230 - INFO - New exam session started - SessionID: 68eb3159-cd8e-4e47-ae50-059973930ca8, Topic: Direct Methods for Optimal Control
+2025-02-05 21:43:05,231 - INFO - Initializing exam state machine
+2025-02-05 21:43:05,231 - INFO - Initial state: ExamState.INIT, context initialized
+2025-02-05 21:43:06,126 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:43:06,134 - INFO - Attempting state transition: ExamState.INIT -> ExamState.TOPIC_SELECTED
+2025-02-05 21:43:06,134 - INFO - State transition successful: from_state=<ExamState.INIT: 'INIT'> to_state=<ExamState.TOPIC_SELECTED: 'TOPIC_SELECTED'> condition='student_ready' metadata=None
+2025-02-05 21:43:06,135 - INFO - Current state updated to: ExamState.TOPIC_SELECTED
+2025-02-05 21:43:06,136 - INFO - Starting new exam with topic: Direct Methods for Optimal Control
+2025-02-05 21:43:06,137 - INFO - Exam session created successfully
+2025-02-05 21:43:06,138 - INFO - Attempting state transition: ExamState.TOPIC_SELECTED -> ExamState.QUESTIONING
+2025-02-05 21:43:06,138 - INFO - State transition successful: from_state=<ExamState.TOPIC_SELECTED: 'TOPIC_SELECTED'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='start_exam()' metadata=None
+2025-02-05 21:43:06,139 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:43:06,139 - INFO - Transitioned to QUESTIONING state
+2025-02-05 21:43:06,140 - INFO - Retrieved current question: ID=Q1, difficulty=1
+2025-02-05 21:43:06,140 - INFO - Exam successfully initiated - SessionID: 68eb3159-cd8e-4e47-ae50-059973930ca8
+2025-02-05 21:43:06,141 - INFO - Retrieved current question: ID=Q6, difficulty=1
+2025-02-05 21:43:06,143 - INFO - Exam state requested - SessionID: 68eb3159-cd8e-4e47-ae50-059973930ca8
+2025-02-05 21:43:06,144 - INFO - Exam state returned - SessionID: 68eb3159-cd8e-4e47-ae50-059973930ca8, State: ExamState.QUESTIONING
+2025-02-05 21:43:06,144 - INFO - Retrieved current question: ID=Q11, difficulty=1
+2025-02-05 21:43:14,519 - INFO - Answer submitted - SessionID: 68eb3159-cd8e-4e47-ae50-059973930ca8
+2025-02-05 21:43:16,055 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:43:16,066 - INFO - Retrieved current question: ID=Q16, difficulty=1
+2025-02-05 21:43:16,066 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.QUESTIONING
+2025-02-05 21:43:16,066 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='good_response/select_next_question' metadata=None
+2025-02-05 21:43:16,066 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:43:16,067 - INFO - Retrieved current question: ID=Q21, difficulty=1
+2025-02-05 21:43:16,067 - INFO - Answer processed - SessionID: 68eb3159-cd8e-4e47-ae50-059973930ca8, State: ExamState.QUESTIONING
+2025-02-05 21:43:17,069 - INFO - Exam state requested - SessionID: 68eb3159-cd8e-4e47-ae50-059973930ca8
+2025-02-05 21:43:17,069 - INFO - Exam state returned - SessionID: 68eb3159-cd8e-4e47-ae50-059973930ca8, State: ExamState.QUESTIONING
+2025-02-05 21:43:17,070 - INFO - Retrieved current question: ID=Q2, difficulty=2
+2025-02-05 21:43:24,252 - INFO - Answer submitted - SessionID: 68eb3159-cd8e-4e47-ae50-059973930ca8
+2025-02-05 21:43:25,706 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:43:25,713 - INFO - Retrieved current question: ID=Q7, difficulty=2
+2025-02-05 21:43:25,714 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.QUESTIONING
+2025-02-05 21:43:25,714 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='good_response/select_next_question' metadata=None
+2025-02-05 21:43:25,714 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:43:25,715 - INFO - Retrieved current question: ID=Q12, difficulty=2
+2025-02-05 21:43:25,715 - INFO - Answer processed - SessionID: 68eb3159-cd8e-4e47-ae50-059973930ca8, State: ExamState.QUESTIONING
+2025-02-05 21:43:26,717 - INFO - Exam state requested - SessionID: 68eb3159-cd8e-4e47-ae50-059973930ca8
+2025-02-05 21:43:26,717 - INFO - Exam state returned - SessionID: 68eb3159-cd8e-4e47-ae50-059973930ca8, State: ExamState.QUESTIONING
+2025-02-05 21:43:26,717 - INFO - Retrieved current question: ID=Q17, difficulty=2
+2025-02-05 21:43:32,175 - INFO - Answer submitted - SessionID: 68eb3159-cd8e-4e47-ae50-059973930ca8
+2025-02-05 21:43:33,106 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:43:33,108 - INFO - Retrieved current question: ID=Q22, difficulty=2
+2025-02-05 21:43:33,109 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.QUESTIONING
+2025-02-05 21:43:33,109 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='good_response/select_next_question' metadata=None
+2025-02-05 21:43:33,109 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:43:33,109 - INFO - Retrieved current question: ID=Q3, difficulty=3
+2025-02-05 21:43:33,109 - INFO - Answer processed - SessionID: 68eb3159-cd8e-4e47-ae50-059973930ca8, State: ExamState.QUESTIONING
+2025-02-05 21:43:34,114 - INFO - Exam state requested - SessionID: 68eb3159-cd8e-4e47-ae50-059973930ca8
+2025-02-05 21:43:34,114 - INFO - Exam state returned - SessionID: 68eb3159-cd8e-4e47-ae50-059973930ca8, State: ExamState.QUESTIONING
+2025-02-05 21:43:34,114 - INFO - Retrieved current question: ID=Q8, difficulty=3
+2025-02-05 21:43:53,692 - INFO - Answer submitted - SessionID: 68eb3159-cd8e-4e47-ae50-059973930ca8
+2025-02-05 21:43:55,084 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:43:55,090 - INFO - Retrieved current question: ID=Q13, difficulty=3
+2025-02-05 21:43:55,091 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.QUESTIONING
+2025-02-05 21:43:55,091 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='good_response/select_next_question' metadata=None
+2025-02-05 21:43:55,091 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:43:55,091 - INFO - Retrieved current question: ID=Q18, difficulty=3
+2025-02-05 21:43:55,091 - INFO - Answer processed - SessionID: 68eb3159-cd8e-4e47-ae50-059973930ca8, State: ExamState.QUESTIONING
+2025-02-05 21:43:56,094 - INFO - Exam state requested - SessionID: 68eb3159-cd8e-4e47-ae50-059973930ca8
+2025-02-05 21:43:56,094 - INFO - Exam state returned - SessionID: 68eb3159-cd8e-4e47-ae50-059973930ca8, State: ExamState.QUESTIONING
+2025-02-05 21:43:56,094 - INFO - Retrieved current question: ID=Q23, difficulty=3
+2025-02-05 21:44:02,394 - INFO - Answer submitted - SessionID: 68eb3159-cd8e-4e47-ae50-059973930ca8
+2025-02-05 21:44:04,139 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:44:04,151 - INFO - Retrieved current question: ID=Q4, difficulty=4
+2025-02-05 21:44:04,151 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.QUESTIONING
+2025-02-05 21:44:04,151 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='good_response/select_next_question' metadata=None
+2025-02-05 21:44:04,152 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:44:04,152 - INFO - Retrieved current question: ID=Q9, difficulty=4
+2025-02-05 21:44:04,152 - INFO - Answer processed - SessionID: 68eb3159-cd8e-4e47-ae50-059973930ca8, State: ExamState.QUESTIONING
+2025-02-05 21:44:05,155 - INFO - Answer submitted - SessionID: 68eb3159-cd8e-4e47-ae50-059973930ca8
+2025-02-05 21:44:08,022 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:44:08,029 - INFO - Retrieved current question: ID=Q14, difficulty=4
+2025-02-05 21:44:08,030 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.EVALUATING
+2025-02-05 21:44:08,030 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.EVALUATING: 'EVALUATING'> condition='questions_completed' metadata=None
+2025-02-05 21:44:08,030 - INFO - Current state updated to: ExamState.EVALUATING
+2025-02-05 21:44:08,030 - INFO - Answer processed - SessionID: 68eb3159-cd8e-4e47-ae50-059973930ca8, State: ExamState.EVALUATING
+2025-02-05 21:44:10,033 - INFO - Evaluation requested - SessionID: 68eb3159-cd8e-4e47-ae50-059973930ca8
+2025-02-05 21:44:10,033 - INFO - Exam not completed, returning progress - SessionID: 68eb3159-cd8e-4e47-ae50-059973930ca8, State: ExamState.EVALUATING
+2025-02-05 21:50:54,832 - INFO - New exam session started - SessionID: be823be8-4309-4962-84db-a607c999f034, Topic: Direct Methods for Optimal Control
+2025-02-05 21:50:54,832 - INFO - Initializing exam state machine
+2025-02-05 21:50:54,832 - INFO - Initial state: ExamState.INIT, context initialized
+2025-02-05 21:50:56,381 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:50:56,395 - INFO - Attempting state transition: ExamState.INIT -> ExamState.TOPIC_SELECTED
+2025-02-05 21:50:56,395 - INFO - State transition successful: from_state=<ExamState.INIT: 'INIT'> to_state=<ExamState.TOPIC_SELECTED: 'TOPIC_SELECTED'> condition='student_ready' metadata=None
+2025-02-05 21:50:56,395 - INFO - Current state updated to: ExamState.TOPIC_SELECTED
+2025-02-05 21:50:56,396 - INFO - Starting new exam with topic: Direct Methods for Optimal Control
+2025-02-05 21:50:56,397 - INFO - Exam session created successfully
+2025-02-05 21:50:56,397 - INFO - Attempting state transition: ExamState.TOPIC_SELECTED -> ExamState.QUESTIONING
+2025-02-05 21:50:56,398 - INFO - State transition successful: from_state=<ExamState.TOPIC_SELECTED: 'TOPIC_SELECTED'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='start_exam()' metadata=None
+2025-02-05 21:50:56,398 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:50:56,398 - INFO - Transitioned to QUESTIONING state
+2025-02-05 21:50:56,399 - INFO - Retrieved current question: ID=Q1, difficulty=1
+2025-02-05 21:50:56,399 - INFO - Exam successfully initiated - SessionID: be823be8-4309-4962-84db-a607c999f034
+2025-02-05 21:50:56,400 - INFO - Retrieved current question: ID=Q6, difficulty=1
+2025-02-05 21:50:56,403 - INFO - Exam state requested - SessionID: be823be8-4309-4962-84db-a607c999f034
+2025-02-05 21:50:56,404 - INFO - Exam state returned - SessionID: be823be8-4309-4962-84db-a607c999f034, State: ExamState.QUESTIONING
+2025-02-05 21:50:56,405 - INFO - Retrieved current question: ID=Q11, difficulty=1
+2025-02-05 21:51:13,176 - INFO - Answer submitted - SessionID: be823be8-4309-4962-84db-a607c999f034
+2025-02-05 21:51:14,824 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:51:14,830 - INFO - Retrieved current question: ID=Q16, difficulty=1
+2025-02-05 21:51:14,830 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.QUESTIONING
+2025-02-05 21:51:14,831 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='good_response/select_next_question' metadata=None
+2025-02-05 21:51:14,831 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:51:14,831 - INFO - Retrieved current question: ID=Q21, difficulty=1
+2025-02-05 21:51:14,831 - INFO - Answer processed - SessionID: be823be8-4309-4962-84db-a607c999f034, State: ExamState.QUESTIONING
+2025-02-05 21:51:15,834 - INFO - Exam state requested - SessionID: be823be8-4309-4962-84db-a607c999f034
+2025-02-05 21:51:15,835 - INFO - Exam state returned - SessionID: be823be8-4309-4962-84db-a607c999f034, State: ExamState.QUESTIONING
+2025-02-05 21:51:15,835 - INFO - Retrieved current question: ID=Q2, difficulty=2
+2025-02-05 21:51:38,296 - INFO - New exam session started - SessionID: f36c6b66-eca5-45ee-a1e8-bdf7332dad84, Topic: Direct Methods for Optimal Control
+2025-02-05 21:51:38,296 - INFO - Initializing exam state machine
+2025-02-05 21:51:38,297 - INFO - Initial state: ExamState.INIT, context initialized
+2025-02-05 21:51:41,280 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:51:41,286 - INFO - Attempting state transition: ExamState.INIT -> ExamState.TOPIC_SELECTED
+2025-02-05 21:51:41,286 - INFO - State transition successful: from_state=<ExamState.INIT: 'INIT'> to_state=<ExamState.TOPIC_SELECTED: 'TOPIC_SELECTED'> condition='student_ready' metadata=None
+2025-02-05 21:51:41,286 - INFO - Current state updated to: ExamState.TOPIC_SELECTED
+2025-02-05 21:51:41,287 - INFO - Starting new exam with topic: Direct Methods for Optimal Control
+2025-02-05 21:51:41,289 - INFO - Exam session created successfully
+2025-02-05 21:51:41,289 - INFO - Attempting state transition: ExamState.TOPIC_SELECTED -> ExamState.QUESTIONING
+2025-02-05 21:51:41,289 - INFO - State transition successful: from_state=<ExamState.TOPIC_SELECTED: 'TOPIC_SELECTED'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='start_exam()' metadata=None
+2025-02-05 21:51:41,289 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:51:41,289 - INFO - Transitioned to QUESTIONING state
+2025-02-05 21:51:41,291 - INFO - Retrieved current question: ID=Q1, difficulty=1
+2025-02-05 21:51:41,291 - INFO - Exam successfully initiated - SessionID: f36c6b66-eca5-45ee-a1e8-bdf7332dad84
+2025-02-05 21:51:41,292 - INFO - Retrieved current question: ID=Q6, difficulty=1
+2025-02-05 21:51:41,295 - INFO - Exam state requested - SessionID: f36c6b66-eca5-45ee-a1e8-bdf7332dad84
+2025-02-05 21:51:41,295 - INFO - Exam state returned - SessionID: f36c6b66-eca5-45ee-a1e8-bdf7332dad84, State: ExamState.QUESTIONING
+2025-02-05 21:51:41,295 - INFO - Retrieved current question: ID=Q11, difficulty=1
+2025-02-05 21:52:03,489 - INFO - Answer submitted - SessionID: f36c6b66-eca5-45ee-a1e8-bdf7332dad84
+2025-02-05 21:52:05,360 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:52:05,363 - INFO - Retrieved current question: ID=Q16, difficulty=1
+2025-02-05 21:52:05,363 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.QUESTIONING
+2025-02-05 21:52:05,363 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='good_response/select_next_question' metadata=None
+2025-02-05 21:52:05,364 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:52:05,364 - INFO - Retrieved current question: ID=Q21, difficulty=1
+2025-02-05 21:52:05,364 - INFO - Answer processed - SessionID: f36c6b66-eca5-45ee-a1e8-bdf7332dad84, State: ExamState.QUESTIONING
+2025-02-05 21:52:06,368 - INFO - Exam state requested - SessionID: f36c6b66-eca5-45ee-a1e8-bdf7332dad84
+2025-02-05 21:52:06,368 - INFO - Exam state returned - SessionID: f36c6b66-eca5-45ee-a1e8-bdf7332dad84, State: ExamState.QUESTIONING
+2025-02-05 21:52:06,369 - INFO - Retrieved current question: ID=Q2, difficulty=2
+2025-02-05 21:52:21,250 - INFO - New exam session started - SessionID: 386c8a08-b55a-493e-8ee3-b3fc97896f6d, Topic: Direct Methods for Optimal Control
+2025-02-05 21:52:21,250 - INFO - Initializing exam state machine
+2025-02-05 21:52:21,250 - INFO - Initial state: ExamState.INIT, context initialized
+2025-02-05 21:52:22,888 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:52:22,898 - INFO - Attempting state transition: ExamState.INIT -> ExamState.TOPIC_SELECTED
+2025-02-05 21:52:22,899 - INFO - State transition successful: from_state=<ExamState.INIT: 'INIT'> to_state=<ExamState.TOPIC_SELECTED: 'TOPIC_SELECTED'> condition='student_ready' metadata=None
+2025-02-05 21:52:22,900 - INFO - Current state updated to: ExamState.TOPIC_SELECTED
+2025-02-05 21:52:22,901 - INFO - Starting new exam with topic: Direct Methods for Optimal Control
+2025-02-05 21:52:22,902 - INFO - Exam session created successfully
+2025-02-05 21:52:22,902 - INFO - Attempting state transition: ExamState.TOPIC_SELECTED -> ExamState.QUESTIONING
+2025-02-05 21:52:22,903 - INFO - State transition successful: from_state=<ExamState.TOPIC_SELECTED: 'TOPIC_SELECTED'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='start_exam()' metadata=None
+2025-02-05 21:52:22,903 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:52:22,903 - INFO - Transitioned to QUESTIONING state
+2025-02-05 21:52:22,905 - INFO - Retrieved current question: ID=Q1, difficulty=1
+2025-02-05 21:52:22,905 - INFO - Exam successfully initiated - SessionID: 386c8a08-b55a-493e-8ee3-b3fc97896f6d
+2025-02-05 21:52:22,905 - INFO - Retrieved current question: ID=Q6, difficulty=1
+2025-02-05 21:52:22,909 - INFO - Exam state requested - SessionID: 386c8a08-b55a-493e-8ee3-b3fc97896f6d
+2025-02-05 21:52:22,910 - INFO - Exam state returned - SessionID: 386c8a08-b55a-493e-8ee3-b3fc97896f6d, State: ExamState.QUESTIONING
+2025-02-05 21:52:22,910 - INFO - Retrieved current question: ID=Q11, difficulty=1
+2025-02-05 21:52:35,700 - INFO - Answer submitted - SessionID: 386c8a08-b55a-493e-8ee3-b3fc97896f6d
+2025-02-05 21:52:37,594 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:52:37,597 - INFO - Retrieved current question: ID=Q16, difficulty=1
+2025-02-05 21:52:37,597 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.QUESTIONING
+2025-02-05 21:52:37,598 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='good_response/select_next_question' metadata=None
+2025-02-05 21:52:37,598 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:52:37,598 - INFO - Retrieved current question: ID=Q21, difficulty=1
+2025-02-05 21:52:37,598 - INFO - Answer processed - SessionID: 386c8a08-b55a-493e-8ee3-b3fc97896f6d, State: ExamState.QUESTIONING
+2025-02-05 21:52:38,602 - INFO - Exam state requested - SessionID: 386c8a08-b55a-493e-8ee3-b3fc97896f6d
+2025-02-05 21:52:38,603 - INFO - Exam state returned - SessionID: 386c8a08-b55a-493e-8ee3-b3fc97896f6d, State: ExamState.QUESTIONING
+2025-02-05 21:52:38,603 - INFO - Retrieved current question: ID=Q2, difficulty=2
+2025-02-05 21:55:25,339 - INFO - New exam session started - SessionID: 58ca4e92-0f02-4a7d-89ae-996016a86eb9, Topic: Direct Methods for Optimal Control
+2025-02-05 21:55:25,340 - INFO - Initializing exam state machine
+2025-02-05 21:55:25,340 - INFO - Initial state: ExamState.INIT, context initialized
+2025-02-05 21:55:27,663 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:55:27,668 - INFO - Attempting state transition: ExamState.INIT -> ExamState.TOPIC_SELECTED
+2025-02-05 21:55:27,669 - INFO - State transition successful: from_state=<ExamState.INIT: 'INIT'> to_state=<ExamState.TOPIC_SELECTED: 'TOPIC_SELECTED'> condition='student_ready' metadata=None
+2025-02-05 21:55:27,669 - INFO - Current state updated to: ExamState.TOPIC_SELECTED
+2025-02-05 21:55:27,670 - INFO - Starting new exam with topic: Direct Methods for Optimal Control
+2025-02-05 21:55:27,671 - INFO - Exam session created successfully
+2025-02-05 21:55:27,671 - INFO - Attempting state transition: ExamState.TOPIC_SELECTED -> ExamState.QUESTIONING
+2025-02-05 21:55:27,671 - INFO - State transition successful: from_state=<ExamState.TOPIC_SELECTED: 'TOPIC_SELECTED'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='start_exam()' metadata=None
+2025-02-05 21:55:27,671 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:55:27,672 - INFO - Transitioned to QUESTIONING state
+2025-02-05 21:55:27,673 - INFO - Retrieved current question: ID=Q1, difficulty=1
+2025-02-05 21:55:27,673 - INFO - Exam successfully initiated - SessionID: 58ca4e92-0f02-4a7d-89ae-996016a86eb9
+2025-02-05 21:55:27,673 - INFO - Retrieved current question: ID=Q6, difficulty=1
+2025-02-05 21:55:27,677 - INFO - Answer submitted - SessionID: 58ca4e92-0f02-4a7d-89ae-996016a86eb9
+2025-02-05 21:55:30,254 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:55:30,297 - INFO - Retrieved current question: ID=Q11, difficulty=1
+2025-02-05 21:55:30,298 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.QUESTIONING
+2025-02-05 21:55:30,298 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='good_response/select_next_question' metadata=None
+2025-02-05 21:55:30,298 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:55:30,299 - INFO - Retrieved current question: ID=Q16, difficulty=1
+2025-02-05 21:55:30,299 - INFO - Answer processed - SessionID: 58ca4e92-0f02-4a7d-89ae-996016a86eb9, State: ExamState.QUESTIONING
+2025-02-05 21:55:30,306 - INFO - Exam state requested - SessionID: 58ca4e92-0f02-4a7d-89ae-996016a86eb9
+2025-02-05 21:55:30,306 - INFO - Exam state returned - SessionID: 58ca4e92-0f02-4a7d-89ae-996016a86eb9, State: ExamState.QUESTIONING
+2025-02-05 21:55:30,306 - INFO - Retrieved current question: ID=Q21, difficulty=1
+2025-02-05 21:55:31,313 - INFO - Hint requested - SessionID: 58ca4e92-0f02-4a7d-89ae-996016a86eb9
+2025-02-05 21:55:31,314 - INFO - Retrieved current question: ID=Q2, difficulty=2
+2025-02-05 21:55:33,307 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:55:33,318 - INFO - Hint provided - SessionID: 58ca4e92-0f02-4a7d-89ae-996016a86eb9, Hints used: 1
+2025-02-05 21:55:34,321 - INFO - Answer submitted - SessionID: 58ca4e92-0f02-4a7d-89ae-996016a86eb9
+2025-02-05 21:55:35,745 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:55:35,746 - INFO - Retrieved current question: ID=Q7, difficulty=2
+2025-02-05 21:55:35,747 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.CHAT
+2025-02-05 21:55:35,748 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.CHAT: 'CHAT'> condition='casual_conversation' metadata=None
+2025-02-05 21:55:35,748 - INFO - Current state updated to: ExamState.CHAT
+2025-02-05 21:55:35,748 - INFO - Answer processed - SessionID: 58ca4e92-0f02-4a7d-89ae-996016a86eb9, State: ExamState.CHAT
+2025-02-05 21:55:35,753 - INFO - Exam state requested - SessionID: 58ca4e92-0f02-4a7d-89ae-996016a86eb9
+2025-02-05 21:55:35,753 - INFO - Exam state returned - SessionID: 58ca4e92-0f02-4a7d-89ae-996016a86eb9, State: ExamState.CHAT
+2025-02-05 21:55:36,758 - INFO - Answer submitted - SessionID: 58ca4e92-0f02-4a7d-89ae-996016a86eb9
+2025-02-05 21:55:38,036 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:55:38,037 - INFO - Attempting state transition: ExamState.CHAT -> QUESTIONING
+2025-02-05 21:55:38,037 - INFO - State transition successful: from_state=<ExamState.CHAT: 'CHAT'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='return_to_question' metadata=None
+2025-02-05 21:55:38,037 - INFO - Current state updated to: QUESTIONING
+2025-02-05 21:55:38,037 - INFO - Answer processed - SessionID: 58ca4e92-0f02-4a7d-89ae-996016a86eb9, State: QUESTIONING
+2025-02-05 21:55:38,042 - INFO - Exam state requested - SessionID: 58ca4e92-0f02-4a7d-89ae-996016a86eb9
+2025-02-05 21:55:38,043 - INFO - Exam state returned - SessionID: 58ca4e92-0f02-4a7d-89ae-996016a86eb9, State: QUESTIONING
+2025-02-05 21:55:38,043 - INFO - Retrieved current question: ID=Q12, difficulty=2
+2025-02-05 21:55:39,049 - INFO - Progress evaluation requested - SessionID: 58ca4e92-0f02-4a7d-89ae-996016a86eb9
+2025-02-05 21:55:39,049 - INFO - Progress evaluation completed - SessionID: 58ca4e92-0f02-4a7d-89ae-996016a86eb9, Questions Answered: 2
+2025-02-05 21:55:39,052 - INFO - Answer submitted - SessionID: 58ca4e92-0f02-4a7d-89ae-996016a86eb9
+2025-02-05 21:55:39,961 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:55:39,962 - INFO - Retrieved current question: ID=Q17, difficulty=2
+2025-02-05 21:55:39,962 - INFO - Attempting state transition: QUESTIONING -> ExamState.EVALUATING
+2025-02-05 21:55:39,962 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.EVALUATING: 'EVALUATING'> condition='questions_completed' metadata=None
+2025-02-05 21:55:39,962 - INFO - Current state updated to: ExamState.EVALUATING
+2025-02-05 21:55:39,963 - INFO - Answer processed - SessionID: 58ca4e92-0f02-4a7d-89ae-996016a86eb9, State: ExamState.EVALUATING
+2025-02-05 21:55:39,966 - INFO - Exam state requested - SessionID: 58ca4e92-0f02-4a7d-89ae-996016a86eb9
+2025-02-05 21:55:39,966 - INFO - Exam state returned - SessionID: 58ca4e92-0f02-4a7d-89ae-996016a86eb9, State: ExamState.EVALUATING
+2025-02-05 21:55:39,969 - INFO - Answer submitted - SessionID: 58ca4e92-0f02-4a7d-89ae-996016a86eb9
+2025-02-05 21:55:40,995 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:55:41,011 - INFO - Attempting state transition: ExamState.EVALUATING -> ExamState.COMPLETED
+2025-02-05 21:55:41,011 - INFO - State transition successful: from_state=<ExamState.EVALUATING: 'EVALUATING'> to_state=<ExamState.COMPLETED: 'COMPLETED'> condition='generate_final_evaluation()' metadata=None
+2025-02-05 21:55:41,011 - INFO - Current state updated to: ExamState.COMPLETED
+2025-02-05 21:55:41,011 - INFO - Answer processed - SessionID: 58ca4e92-0f02-4a7d-89ae-996016a86eb9, State: ExamState.COMPLETED
+2025-02-05 21:55:43,014 - INFO - Evaluation requested - SessionID: 58ca4e92-0f02-4a7d-89ae-996016a86eb9
+2025-02-05 21:55:43,014 - INFO - Final evaluation generated - SessionID: 58ca4e92-0f02-4a7d-89ae-996016a86eb9, Total Score: 16.0
+2025-02-05 21:57:21,903 - INFO - New exam session started - SessionID: 0ca3cce6-c4c0-4fad-8a3c-0c75855ed0d6, Topic: Direct Methods for Optimal Control
+2025-02-05 21:57:21,903 - INFO - Initializing exam state machine
+2025-02-05 21:57:21,903 - INFO - Initial state: ExamState.INIT, context initialized
+2025-02-05 21:57:24,579 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:57:24,592 - INFO - Attempting state transition: ExamState.INIT -> ExamState.TOPIC_SELECTED
+2025-02-05 21:57:24,592 - INFO - State transition successful: from_state=<ExamState.INIT: 'INIT'> to_state=<ExamState.TOPIC_SELECTED: 'TOPIC_SELECTED'> condition='student_ready' metadata=None
+2025-02-05 21:57:24,593 - INFO - Current state updated to: ExamState.TOPIC_SELECTED
+2025-02-05 21:57:24,594 - INFO - Starting new exam with topic: Direct Methods for Optimal Control
+2025-02-05 21:57:24,594 - INFO - Exam session created successfully
+2025-02-05 21:57:24,595 - INFO - Attempting state transition: ExamState.TOPIC_SELECTED -> ExamState.QUESTIONING
+2025-02-05 21:57:24,595 - INFO - State transition successful: from_state=<ExamState.TOPIC_SELECTED: 'TOPIC_SELECTED'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='start_exam()' metadata=None
+2025-02-05 21:57:24,595 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:57:24,595 - INFO - Transitioned to QUESTIONING state
+2025-02-05 21:57:24,596 - INFO - Retrieved current question: ID=Q1, difficulty=1
+2025-02-05 21:57:24,596 - INFO - Exam successfully initiated - SessionID: 0ca3cce6-c4c0-4fad-8a3c-0c75855ed0d6
+2025-02-05 21:57:24,597 - INFO - Retrieved current question: ID=Q6, difficulty=1
+2025-02-05 21:57:24,605 - INFO - Answer submitted - SessionID: 0ca3cce6-c4c0-4fad-8a3c-0c75855ed0d6
+2025-02-05 21:57:25,786 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:57:25,789 - INFO - Retrieved current question: ID=Q11, difficulty=1
+2025-02-05 21:57:25,790 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.QUESTIONING
+2025-02-05 21:57:25,790 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='good_response/select_next_question' metadata=None
+2025-02-05 21:57:25,790 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 21:57:25,791 - INFO - Retrieved current question: ID=Q16, difficulty=1
+2025-02-05 21:57:25,791 - INFO - Answer processed - SessionID: 0ca3cce6-c4c0-4fad-8a3c-0c75855ed0d6, State: ExamState.QUESTIONING
+2025-02-05 21:57:25,796 - INFO - Exam state requested - SessionID: 0ca3cce6-c4c0-4fad-8a3c-0c75855ed0d6
+2025-02-05 21:57:25,796 - INFO - Exam state returned - SessionID: 0ca3cce6-c4c0-4fad-8a3c-0c75855ed0d6, State: ExamState.QUESTIONING
+2025-02-05 21:57:25,796 - INFO - Retrieved current question: ID=Q21, difficulty=1
+2025-02-05 21:57:26,801 - INFO - Hint requested - SessionID: 0ca3cce6-c4c0-4fad-8a3c-0c75855ed0d6
+2025-02-05 21:57:26,801 - INFO - Retrieved current question: ID=Q2, difficulty=2
+2025-02-05 21:57:28,407 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:57:28,415 - INFO - Hint provided - SessionID: 0ca3cce6-c4c0-4fad-8a3c-0c75855ed0d6, Hints used: 1
+2025-02-05 21:57:29,419 - INFO - Answer submitted - SessionID: 0ca3cce6-c4c0-4fad-8a3c-0c75855ed0d6
+2025-02-05 21:57:30,576 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:57:30,579 - INFO - Retrieved current question: ID=Q7, difficulty=2
+2025-02-05 21:57:30,579 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.CHAT
+2025-02-05 21:57:30,579 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.CHAT: 'CHAT'> condition='casual_conversation' metadata=None
+2025-02-05 21:57:30,580 - INFO - Current state updated to: ExamState.CHAT
+2025-02-05 21:57:30,580 - INFO - Answer processed - SessionID: 0ca3cce6-c4c0-4fad-8a3c-0c75855ed0d6, State: ExamState.CHAT
+2025-02-05 21:57:30,582 - INFO - Exam state requested - SessionID: 0ca3cce6-c4c0-4fad-8a3c-0c75855ed0d6
+2025-02-05 21:57:30,583 - INFO - Exam state returned - SessionID: 0ca3cce6-c4c0-4fad-8a3c-0c75855ed0d6, State: ExamState.CHAT
+2025-02-05 21:57:31,587 - INFO - Answer submitted - SessionID: 0ca3cce6-c4c0-4fad-8a3c-0c75855ed0d6
+2025-02-05 21:57:33,429 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:57:33,439 - INFO - Attempting state transition: ExamState.CHAT -> QUESTIONING
+2025-02-05 21:57:33,440 - INFO - State transition successful: from_state=<ExamState.CHAT: 'CHAT'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='return_to_question' metadata=None
+2025-02-05 21:57:33,441 - INFO - Current state updated to: QUESTIONING
+2025-02-05 21:57:33,441 - INFO - Answer processed - SessionID: 0ca3cce6-c4c0-4fad-8a3c-0c75855ed0d6, State: QUESTIONING
+2025-02-05 21:57:33,444 - INFO - Exam state requested - SessionID: 0ca3cce6-c4c0-4fad-8a3c-0c75855ed0d6
+2025-02-05 21:57:33,444 - INFO - Exam state returned - SessionID: 0ca3cce6-c4c0-4fad-8a3c-0c75855ed0d6, State: QUESTIONING
+2025-02-05 21:57:33,444 - INFO - Retrieved current question: ID=Q12, difficulty=2
+2025-02-05 21:57:34,448 - INFO - Progress evaluation requested - SessionID: 0ca3cce6-c4c0-4fad-8a3c-0c75855ed0d6
+2025-02-05 21:57:34,448 - INFO - Progress evaluation completed - SessionID: 0ca3cce6-c4c0-4fad-8a3c-0c75855ed0d6, Questions Answered: 2
+2025-02-05 21:57:34,451 - INFO - Answer submitted - SessionID: 0ca3cce6-c4c0-4fad-8a3c-0c75855ed0d6
+2025-02-05 21:57:35,295 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:57:35,300 - INFO - Retrieved current question: ID=Q17, difficulty=2
+2025-02-05 21:57:35,301 - INFO - Attempting state transition: QUESTIONING -> ExamState.EVALUATING
+2025-02-05 21:57:35,301 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.EVALUATING: 'EVALUATING'> condition='questions_completed' metadata=None
+2025-02-05 21:57:35,301 - INFO - Current state updated to: ExamState.EVALUATING
+2025-02-05 21:57:35,301 - INFO - Answer processed - SessionID: 0ca3cce6-c4c0-4fad-8a3c-0c75855ed0d6, State: ExamState.EVALUATING
+2025-02-05 21:57:35,303 - INFO - Exam state requested - SessionID: 0ca3cce6-c4c0-4fad-8a3c-0c75855ed0d6
+2025-02-05 21:57:35,303 - INFO - Exam state returned - SessionID: 0ca3cce6-c4c0-4fad-8a3c-0c75855ed0d6, State: ExamState.EVALUATING
+2025-02-05 21:57:35,307 - INFO - Answer submitted - SessionID: 0ca3cce6-c4c0-4fad-8a3c-0c75855ed0d6
+2025-02-05 21:57:36,367 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 21:57:36,376 - INFO - Attempting state transition: ExamState.EVALUATING -> ExamState.COMPLETED
+2025-02-05 21:57:36,376 - INFO - State transition successful: from_state=<ExamState.EVALUATING: 'EVALUATING'> to_state=<ExamState.COMPLETED: 'COMPLETED'> condition='generate_final_evaluation()' metadata=None
+2025-02-05 21:57:36,376 - INFO - Current state updated to: ExamState.COMPLETED
+2025-02-05 21:57:36,376 - INFO - Answer processed - SessionID: 0ca3cce6-c4c0-4fad-8a3c-0c75855ed0d6, State: ExamState.COMPLETED
+2025-02-05 21:57:38,379 - INFO - Evaluation requested - SessionID: 0ca3cce6-c4c0-4fad-8a3c-0c75855ed0d6
+2025-02-05 21:57:38,379 - INFO - Final evaluation generated - SessionID: 0ca3cce6-c4c0-4fad-8a3c-0c75855ed0d6, Total Score: 14.666666666666666
+2025-02-05 22:04:06,291 - INFO - New exam session started - SessionID: 659ea70b-63b8-432d-b403-2bafc8106e66, Topic: Direct Methods for Optimal Control
+2025-02-05 22:04:06,291 - INFO - Initializing exam state machine
+2025-02-05 22:04:06,291 - INFO - Initial state: ExamState.INIT, context initialized
+2025-02-05 22:04:07,699 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 22:04:07,716 - INFO - Attempting state transition: ExamState.INIT -> ExamState.TOPIC_SELECTED
+2025-02-05 22:04:07,717 - INFO - State transition successful: from_state=<ExamState.INIT: 'INIT'> to_state=<ExamState.TOPIC_SELECTED: 'TOPIC_SELECTED'> condition='student_ready' metadata=None
+2025-02-05 22:04:07,717 - INFO - Current state updated to: ExamState.TOPIC_SELECTED
+2025-02-05 22:04:07,719 - INFO - Starting new exam with topic: Direct Methods for Optimal Control
+2025-02-05 22:04:07,720 - INFO - Exam session created successfully
+2025-02-05 22:04:07,721 - INFO - Attempting state transition: ExamState.TOPIC_SELECTED -> ExamState.QUESTIONING
+2025-02-05 22:04:07,721 - INFO - State transition successful: from_state=<ExamState.TOPIC_SELECTED: 'TOPIC_SELECTED'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='start_exam()' metadata=None
+2025-02-05 22:04:07,723 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 22:04:07,724 - INFO - Transitioned to QUESTIONING state
+2025-02-05 22:04:07,730 - INFO - Retrieved current question: ID=Q1, difficulty=1
+2025-02-05 22:04:07,730 - INFO - Exam successfully initiated - SessionID: 659ea70b-63b8-432d-b403-2bafc8106e66
+2025-02-05 22:04:07,731 - INFO - Retrieved current question: ID=Q6, difficulty=1
+2025-02-05 22:04:07,745 - INFO - Answer submitted - SessionID: 659ea70b-63b8-432d-b403-2bafc8106e66
+2025-02-05 22:04:08,837 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 22:04:08,842 - INFO - Retrieved current question: ID=Q11, difficulty=1
+2025-02-05 22:04:08,843 - INFO -
+==================================================
+评估新的回答
+==================================================
+2025-02-05 22:04:08,844 - INFO - 问题ID: Q11
+2025-02-05 22:04:08,845 - INFO - 问题难度: 1
+2025-02-05 22:04:08,845 - INFO - 学生回答: A nonlinear optimization problem is about optimizing something, like making a value as big or small ...
+2025-02-05 22:04:08,846 - INFO - 使用提示次数: 0
+2025-02-05 22:04:08,846 - INFO - 回答用时: 1.11秒
+2025-02-05 22:04:12,787 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 22:04:12,789 - INFO -
+评分结果:
+2025-02-05 22:04:12,789 - INFO - 准确性(Accuracy): 50/100
+2025-02-05 22:04:12,790 - INFO - 清晰度(Clarity): 60/100
+2025-02-05 22:04:12,790 - INFO - 理解度(Understanding): 40/100
+2025-02-05 22:04:12,790 - INFO - 反馈: The student's answer lacks precision and depth in explaining the characteristics of non-linear optimization problems in optimal control. While they mention that the problem is about optimizing a value and refer to constraints, they fail to accurately describe the objective function and the specific types of constraints (equality and inequality) as required by the question. Additionally, the language is somewhat vague and does not reflect a clear understanding of the technical details involved, as outlined in the relevant context.
+2025-02-05 22:04:12,790 - INFO - 平均分: 50.00/100
+2025-02-05 22:04:12,790 - INFO - ==================================================
+
+2025-02-05 22:04:12,791 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.QUESTIONING
+2025-02-05 22:04:12,792 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='good_response/select_next_question' metadata=None
+2025-02-05 22:04:12,792 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 22:04:12,792 - INFO - Retrieved current question: ID=Q16, difficulty=1
+2025-02-05 22:04:12,793 - INFO - Answer processed - SessionID: 659ea70b-63b8-432d-b403-2bafc8106e66, State: ExamState.QUESTIONING
+2025-02-05 22:04:12,797 - INFO - Exam state requested - SessionID: 659ea70b-63b8-432d-b403-2bafc8106e66
+2025-02-05 22:04:12,797 - INFO - Exam state returned - SessionID: 659ea70b-63b8-432d-b403-2bafc8106e66, State: ExamState.QUESTIONING
+2025-02-05 22:04:12,797 - INFO - Retrieved current question: ID=Q21, difficulty=1
+2025-02-05 22:04:13,803 - INFO - Hint requested - SessionID: 659ea70b-63b8-432d-b403-2bafc8106e66
+2025-02-05 22:04:13,804 - INFO - Retrieved current question: ID=Q2, difficulty=2
+2025-02-05 22:04:15,107 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 22:04:15,114 - INFO - Hint provided - SessionID: 659ea70b-63b8-432d-b403-2bafc8106e66, Hints used: 1
+2025-02-05 22:04:16,117 - INFO - Answer submitted - SessionID: 659ea70b-63b8-432d-b403-2bafc8106e66
+2025-02-05 22:04:16,996 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 22:04:16,998 - INFO - Retrieved current question: ID=Q7, difficulty=2
+2025-02-05 22:04:16,999 - INFO -
+==================================================
+评估新的回答
+==================================================
+2025-02-05 22:04:16,999 - INFO - 问题ID: Q7
+2025-02-05 22:04:16,999 - INFO - 问题难度: 2
+2025-02-05 22:04:16,999 - INFO - 学生回答: I'm not sure about this one. Can I get a hint?...
+2025-02-05 22:04:17,000 - INFO - 使用提示次数: 1
+2025-02-05 22:04:17,000 - INFO - 回答用时: 4.21秒
+2025-02-05 22:04:23,303 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 22:04:23,320 - INFO -
+评分结果:
+2025-02-05 22:04:23,320 - INFO - 准确性(Accuracy): 0/100
+2025-02-05 22:04:23,320 - INFO - 清晰度(Clarity): 20/100
+2025-02-05 22:04:23,320 - INFO - 理解度(Understanding): 10/100
+2025-02-05 22:04:23,320 - INFO - 反馈: The student's response indicates a lack of knowledge regarding the topic of direct methods in reinforcement learning, as they were unable to provide any information relevant to the question. The expression 'I'm not sure about this one. Can I get a hint?' does not convey any understanding of the concept, resulting in a low score for both accuracy and understanding. Clarity is slightly higher simply due to the articulation of their uncertainty, but it does not compensate for the lack of relevant content.
+2025-02-05 22:04:23,320 - INFO - 平均分: 10.00/100
+2025-02-05 22:04:23,320 - INFO - ==================================================
+
+2025-02-05 22:04:23,321 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.QUESTIONING
+2025-02-05 22:04:23,321 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='good_response/select_next_question' metadata=None
+2025-02-05 22:04:23,321 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 22:04:23,321 - INFO - Retrieved current question: ID=Q12, difficulty=2
+2025-02-05 22:04:23,322 - INFO - Answer processed - SessionID: 659ea70b-63b8-432d-b403-2bafc8106e66, State: ExamState.QUESTIONING
+2025-02-05 22:04:23,325 - INFO - Exam state requested - SessionID: 659ea70b-63b8-432d-b403-2bafc8106e66
+2025-02-05 22:04:23,325 - INFO - Exam state returned - SessionID: 659ea70b-63b8-432d-b403-2bafc8106e66, State: ExamState.QUESTIONING
+2025-02-05 22:04:23,325 - INFO - Retrieved current question: ID=Q17, difficulty=2
+2025-02-05 22:04:24,330 - INFO - Answer submitted - SessionID: 659ea70b-63b8-432d-b403-2bafc8106e66
+2025-02-05 22:04:25,272 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 22:04:25,276 - INFO - Retrieved current question: ID=Q22, difficulty=2
+2025-02-05 22:04:25,280 - INFO -
+==================================================
+评估新的回答
+==================================================
+2025-02-05 22:04:25,281 - INFO - 问题ID: Q22
+2025-02-05 22:04:25,281 - INFO - 问题难度: 2
+2025-02-05 22:04:25,281 - INFO - 学生回答: The resulting nonlinear programming problem can be solved using sequential quadratic programming....
+2025-02-05 22:04:25,281 - INFO - 使用提示次数: 1
+2025-02-05 22:04:25,281 - INFO - 回答用时: 1.96秒
+2025-02-05 22:04:27,407 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 22:04:27,413 - INFO -
+评分结果:
+2025-02-05 22:04:27,413 - INFO - 准确性(Accuracy): 40/100
+2025-02-05 22:04:27,413 - INFO - 清晰度(Clarity): 60/100
+2025-02-05 22:04:27,413 - INFO - 理解度(Understanding): 50/100
+2025-02-05 22:04:27,413 - INFO - 反馈: The student identifies sequential quadratic programming (SQP) as a method for solving the resulting nonlinear programming problem, but this is not directly relevant to how direct collocation transforms the optimal control problem into a constrained optimization problem. The answer lacks the necessary details about discretization and the formulation of the optimization problem, which are crucial for demonstrating understanding of direct collocation. While the expression is somewhat clear, it fails to address the core components of the original question, indicating partial understanding of the concepts involved.
+2025-02-05 22:04:27,413 - INFO - 平均分: 50.00/100
+2025-02-05 22:04:27,413 - INFO - ==================================================
+
+2025-02-05 22:04:27,414 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.QUESTIONING
+2025-02-05 22:04:27,414 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='good_response/select_next_question' metadata=None
+2025-02-05 22:04:27,414 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-05 22:04:27,414 - INFO - Retrieved current question: ID=Q3, difficulty=3
+2025-02-05 22:04:27,414 - INFO - Answer processed - SessionID: 659ea70b-63b8-432d-b403-2bafc8106e66, State: ExamState.QUESTIONING
+2025-02-05 22:04:27,419 - INFO - Exam state requested - SessionID: 659ea70b-63b8-432d-b403-2bafc8106e66
+2025-02-05 22:04:27,420 - INFO - Exam state returned - SessionID: 659ea70b-63b8-432d-b403-2bafc8106e66, State: ExamState.QUESTIONING
+2025-02-05 22:04:27,420 - INFO - Retrieved current question: ID=Q8, difficulty=3
+2025-02-05 22:04:28,425 - INFO - Progress evaluation requested - SessionID: 659ea70b-63b8-432d-b403-2bafc8106e66
+2025-02-05 22:04:28,425 - INFO - Progress evaluation completed - SessionID: 659ea70b-63b8-432d-b403-2bafc8106e66, Questions Answered: 3
+2025-02-05 22:04:28,431 - INFO - Answer submitted - SessionID: 659ea70b-63b8-432d-b403-2bafc8106e66
+2025-02-05 22:04:29,296 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 22:04:29,298 - INFO - Retrieved current question: ID=Q13, difficulty=3
+2025-02-05 22:04:29,298 - INFO -
+==================================================
+评估新的回答
+==================================================
+2025-02-05 22:04:29,298 - INFO - 问题ID: Q13
+2025-02-05 22:04:29,298 - INFO - 问题难度: 3
+2025-02-05 22:04:29,299 - INFO - 学生回答: I believe I have answered all the questions thoroughly. Could we proceed to the evaluation?...
+2025-02-05 22:04:29,299 - INFO - 使用提示次数: 1
+2025-02-05 22:04:29,299 - INFO - 回答用时: 1.88秒
+2025-02-05 22:04:33,059 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 22:04:33,067 - INFO -
+评分结果:
+2025-02-05 22:04:33,068 - INFO - 准确性(Accuracy): 20/100
+2025-02-05 22:04:33,068 - INFO - 清晰度(Clarity): 30/100
+2025-02-05 22:04:33,068 - INFO - 理解度(Understanding): 25/100
+2025-02-05 22:04:33,068 - INFO - 反馈: The student's answer is mostly incorrect and does not address how open-loop control specifically relates to deterministic problems in optimal control. The answer lacks specific details mentioned in the relevant context, such as the relationship between deterministic models and optimization techniques, which are crucial for accuracy. Additionally, the expression is vague, making it difficult to assess their grasp of the material. Overall, the student demonstrates limited understanding of the topic and has not effectively connected the concepts.
+2025-02-05 22:04:33,068 - INFO - 平均分: 25.00/100
+2025-02-05 22:04:33,068 - INFO - ==================================================
+
+2025-02-05 22:04:33,068 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.EVALUATING
+2025-02-05 22:04:33,069 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.EVALUATING: 'EVALUATING'> condition='questions_completed' metadata=None
+2025-02-05 22:04:33,069 - INFO - Current state updated to: ExamState.EVALUATING
+2025-02-05 22:04:33,069 - INFO - Answer processed - SessionID: 659ea70b-63b8-432d-b403-2bafc8106e66, State: ExamState.EVALUATING
+2025-02-05 22:04:33,071 - INFO - Exam state requested - SessionID: 659ea70b-63b8-432d-b403-2bafc8106e66
+2025-02-05 22:04:33,071 - INFO - Exam state returned - SessionID: 659ea70b-63b8-432d-b403-2bafc8106e66, State: ExamState.EVALUATING
+2025-02-05 22:04:33,075 - INFO - Answer submitted - SessionID: 659ea70b-63b8-432d-b403-2bafc8106e66
+2025-02-05 22:04:34,442 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-05 22:04:34,443 - INFO - Attempting state transition: ExamState.EVALUATING -> ExamState.COMPLETED
+2025-02-05 22:04:34,443 - INFO - State transition successful: from_state=<ExamState.EVALUATING: 'EVALUATING'> to_state=<ExamState.COMPLETED: 'COMPLETED'> condition='generate_final_evaluation()' metadata=None
+2025-02-05 22:04:34,443 - INFO - Current state updated to: ExamState.COMPLETED
+2025-02-05 22:04:34,444 - INFO - Answer processed - SessionID: 659ea70b-63b8-432d-b403-2bafc8106e66, State: ExamState.COMPLETED
+2025-02-05 22:04:36,446 - INFO - Evaluation requested - SessionID: 659ea70b-63b8-432d-b403-2bafc8106e66
+2025-02-05 22:04:36,447 - INFO - Final evaluation generated - SessionID: 659ea70b-63b8-432d-b403-2bafc8106e66, Total Score: 4.75

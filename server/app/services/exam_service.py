@@ -391,24 +391,21 @@ Determine the appropriate action based on the response."""
                     time.time() - self.question_start_time if self.question_start_time else 0
                 )
 
-                # Create evaluation metrics
-                metrics = EvaluationMetrics(
-                    accuracy=result["answer_quality"] * 20,  # Convert 1-5 score to percentage
-                    clarity=result["answer_quality"] * 20,
-                    understanding=result["answer_quality"] * 20,
-                    hints_used=self.session_metrics["hints_requested"],  # Include actual hints used
+                # Use AI evaluation
+                evaluation = await self.evaluation_service.evaluate_response(
+                    question=current_question,
+                    student_response=answer,
+                    hints_used=self.session_metrics["hints_requested"],
+                    time_taken=time_taken,
                 )
 
-                # Update evaluation service
-                print(
-                    f"Adding question evaluation - ID: {current_question['question_id']}, Score: {metrics}, Hints used: {self.session_metrics['hints_requested']}"
-                )
+                # Update evaluation service with the AI evaluation result
                 self.evaluation_service.add_question_evaluation(
                     current_question["question_id"],
-                    metrics,
+                    evaluation.metrics,
                     time_taken,
                     current_question["difficulty"],
-                    "Answer evaluated based on quality score",
+                    evaluation.feedback,
                 )
 
         if current_state == ExamState.CHAT:

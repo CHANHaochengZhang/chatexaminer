@@ -71,7 +71,7 @@ async def test_exam_evaluation():
         # 2. Submit multiple answers to generate evaluation data
         print("\n2. Submitting test answers...")
         test_answers = [
-            "The direct methods in optimal control transform the continuous problem into a discrete optimization problem.",
+            "A nonlinear optimization problem is about optimizing something, like making a value as big or small as possible. There are some constraints, like how the system changes, limits on control variables, and some conditions to follow.",
             "I'm not sure about this one. Can I get a hint?",  # Request hint for second question
             "The resulting nonlinear programming problem can be solved using sequential quadratic programming.",
         ]

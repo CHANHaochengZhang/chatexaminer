@@ -1,8 +1,12 @@
 import json
+import logging
 from typing import Dict, List
 
 import openai
 from app.models.evaluation import EvaluationMetrics, ExamEvaluation, QuestionEvaluation
+
+# 配置日志
+logger = logging.getLogger(__name__)
 
 
 class EvaluationService:
@@ -13,6 +17,12 @@ class EvaluationService:
         self, question: Dict, student_response: str, hints_used: int, time_taken: float
     ) -> QuestionEvaluation:
         """Evaluate a single response"""
+        logger.info(f"\n{'='*50}\n评估新的回答\n{'='*50}")
+        logger.info(f"问题ID: {question['question_id']}")
+        logger.info(f"问题难度: {question['difficulty']}")
+        logger.info(f"学生回答: {student_response[:100]}...")  # 只记录前100个字符
+        logger.info(f"使用提示次数: {hints_used}")
+        logger.info(f"回答用时: {time_taken:.2f}秒")
 
         # Prepare prompt for GPT evaluation
         prompt = f"""Evaluate this student's answer based on the following criteria:
@@ -52,6 +62,20 @@ Format your response as JSON:
 
         # Parse response
         eval_result = json.loads(response.choices[0].message.content)
+
+        # 记录评分结果
+        logger.info("\n评分结果:")
+        logger.info(f"准确性(Accuracy): {eval_result['accuracy']}/100")
+        logger.info(f"清晰度(Clarity): {eval_result['clarity']}/100")
+        logger.info(f"理解度(Understanding): {eval_result['understanding']}/100")
+        logger.info(f"反馈: {eval_result['feedback']}")
+
+        # 计算平均分
+        avg_score = (
+            eval_result["accuracy"] + eval_result["clarity"] + eval_result["understanding"]
+        ) / 3
+        logger.info(f"平均分: {avg_score:.2f}/100")
+        logger.info(f"{'='*50}\n")
 
         # Create evaluation metrics
         metrics = EvaluationMetrics(

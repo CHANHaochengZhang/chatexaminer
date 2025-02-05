@@ -223,7 +223,7 @@ class ExamStateMachine:
             logger.warning("No exam session found")
             return None
 
-        question = session.get_current_question()
+        question = session.get_next_question()
         if question:
             logger.info(
                 f"Retrieved current question: ID={question.get('question_id')}, difficulty={question.get('difficulty')}"
