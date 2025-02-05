@@ -530,7 +530,7 @@ Determine the appropriate action based on the response."""
             "questions_answered": self.session_metrics["questions_answered"],
             "hints_requested": self.session_metrics["hints_requested"],
             "current_difficulty": self.state_machine.context.get("current_difficulty", 3),
-            "current_state": current_state.value,
+            "current_state": current_state,  # 直接使用状态字符串
         }
 
         # 计算当前得分

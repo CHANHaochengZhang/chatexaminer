@@ -74,8 +74,8 @@ async def start_exam(topic_request: TopicRequest) -> ExamResponse:
 
 @router.post("/{session_id}/answer")
 async def submit_answer(session_id: str, answer_request: AnswerRequest) -> ExamResponse:
-    """Submit an answer"""
-    logger.info(f"Answer submission received - SessionID: {session_id}")
+    """Submit answer for current question"""
+    logger.info(f"Answer submitted - SessionID: {session_id}")
 
     exam_service = exam_sessions.get(session_id)
     if not exam_service:
@@ -83,53 +83,15 @@ async def submit_answer(session_id: str, answer_request: AnswerRequest) -> ExamR
         raise HTTPException(status_code=404, detail="Session not found")
 
     try:
-        # Process answer and let GPT function calling handle state transitions
         result = await exam_service.process_answer(answer_request.answer)
-        progress_data = exam_service.get_progress_evaluation()
+        current_state = exam_service.state_machine.get_current_state()
+        logger.info(f"Answer processed - SessionID: {session_id}, State: {current_state}")
 
-        current_state = exam_service.state_machine.get_current_state().value
-        logger.info(
-            f"Answer processing completed - SessionID: {session_id}, State: {current_state}"
+        return ExamResponse(
+            state=current_state,  # 直接使用状态字符串
+            message=result.get("message", "Answer processed"),
+            data=result,
         )
-
-        # Handle different response types
-        if result.get("type") == "chat":
-            return ExamResponse(
-                state=current_state,
-                message=result["content"],  # Use the chat response as message
-                data={"type": "chat", "content": result["content"], "progress": progress_data},
-            )
-        elif result.get("type") == "question":
-            return ExamResponse(
-                state=current_state,
-                message=result["content"],  # Use the question content as message
-                data={
-                    "result": result,
-                    "current_question": exam_service.state_machine.get_current_question(),
-                    "progress": progress_data,
-                },
-            )
-        elif result.get("type") == "complete":
-            return ExamResponse(
-                state=current_state,
-                message=result["content"],  # Use completion message
-                data={
-                    "result": result,
-                    "evaluation": result.get("evaluation"),
-                    "progress": progress_data,
-                },
-            )
-        else:
-            # Default case
-            return ExamResponse(
-                state=current_state,
-                message=result.get("content", "Processing completed"),
-                data={
-                    "result": result,
-                    "current_question": exam_service.state_machine.get_current_question(),
-                    "progress": progress_data,
-                },
-            )
     except Exception as e:
         logger.error(f"Failed to process answer - SessionID: {session_id}, Error: {str(e)}")
         raise HTTPException(status_code=400, detail=str(e))
@@ -151,7 +113,7 @@ async def get_progress_evaluation(session_id: str) -> ExamResponse:
     )
 
     return ExamResponse(
-        state=exam_service.state_machine.get_current_state().value,
+        state=exam_service.state_machine.get_current_state(),  # 直接使用状态字符串
         message="Current progress evaluation",
         data=progress_data,
     )
@@ -167,7 +129,7 @@ async def get_exam_state(session_id: str) -> ExamResponse:
         logger.warning(f"Session not found - SessionID: {session_id}")
         raise HTTPException(status_code=404, detail="Session not found")
 
-    current_state = exam_service.state_machine.get_current_state().value
+    current_state = exam_service.state_machine.get_current_state()
     logger.info(f"Exam state returned - SessionID: {session_id}, State: {current_state}")
 
     return ExamResponse(
