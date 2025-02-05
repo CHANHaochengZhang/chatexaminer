@@ -22,13 +22,18 @@ async def interactive_exam_test():
         session_id = start_data["data"]["session_id"]
         print(f"考试会话ID: {session_id}")
 
+        # 检查是否成功获取到第一个问题
+        if not start_data["data"].get("current_question"):
+            print("错误：无法获取第一个问题")
+            return
+
         # 2. 进入答题循环
         question_count = 0
         while question_count < 5:  # 限制5个问题
             # 获取当前状态和问题
             state_response = requests.get(f"{BASE_URL}/{session_id}/state")
             state_data = state_response.json()
-            current_question = state_data["data"]["current_question"]
+            current_question = state_data["data"].get("current_question")
 
             if not current_question:
                 print("\n没有更多问题了")
@@ -66,7 +71,7 @@ async def interactive_exam_test():
                     print("无效的选择，请重试")
 
             # 获取用户答案
-            print("\n请输入你的答案 (完成后按 Ctrl+D (Unix) 或 Ctrl+Z (Windows) 提交):")
+            print("\n请输入你的答案 (完成后按 Ctrl+D (Unix) 提交):")
             answer_lines = []
             try:
                 while True:

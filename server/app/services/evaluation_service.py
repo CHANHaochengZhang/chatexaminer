@@ -19,12 +19,13 @@ class EvaluationService:
 
 Question: {question['question']}
 Expected Answer: {question['expected_answers']['correct']['example']}
+Relevant Context: {question['context']}
 Student's Answer: {student_response}
 
 Please evaluate on three metrics (0-100):
 1. Accuracy: How correct is the answer?
 2. Clarity: How well is it expressed?
-3. Understanding: How well does the student understand the concept?
+3. Understanding: How well does the student understand the concept? is it fit context?
 
 Provide brief feedback explaining the evaluation.
 

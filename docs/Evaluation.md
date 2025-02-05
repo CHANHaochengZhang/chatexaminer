@@ -245,3 +245,207 @@ Each component has a clear role:
 - `ExamService`: The core business logic coordinator
 - `StateMachine`: The state manager
 - `EvaluationService`: The answer evaluation and score calculation
+
+## Evaluation Models
+
+### 1. Core Metrics
+```python
+class EvaluationMetrics:
+    accuracy: float      # 0-100: Correctness of the answer
+    clarity: float      # 0-100: Clarity of expression
+    understanding: float # 0-100: Depth of concept understanding
+    hints_used: int     # Number of hints requested
+```
+
+### 2. Question Evaluation
+```python
+class QuestionEvaluation:
+    question_id: str
+    metrics: EvaluationMetrics
+    feedback: str
+    difficulty: int     # 1-5
+    time_taken: float   # in seconds
+    raw_response: str
+```
+
+### 3. Complete Exam Evaluation
+```python
+class ExamEvaluation:
+    total_score: float
+    question_evaluations: Dict[str, QuestionEvaluation]
+    topic_coverage: Dict[str, float]
+    behavior_score: float
+    final_feedback: str
+```
+
+## Evaluation Process
+
+### 1. Individual Question Assessment
+- **Timing**: Evaluated immediately after each answer submission
+- **Metrics Evaluated**:
+  - Accuracy (correctness of content)
+  - Clarity (expression quality)
+  - Understanding (concept comprehension)
+- **Adjustments**:
+  - Hint penalty: -10 points per hint used
+  - Difficulty weighting: Score weighted by question difficulty (1-5)
+
+### 2. Topic Coverage Assessment
+- Tracks knowledge points covered
+- Measures depth and breadth of topic understanding
+- Calculates percentage of topic points addressed
+
+### 3. Behavioral Assessment
+Evaluates student behavior during the exam:
+```python
+behavior_score = (
+    (1 - avg_hints_per_question * 0.1)    # Hint usage impact
+    * response_consistency                 # Answer consistency
+    * (1 - min(1, avg_time_per_question / 300))  # Time management
+) * 100
+```
+
+## Scoring Algorithm
+
+### Final Score Components
+1. **Question Performance (60%)**
+   ```python
+   question_score = (accuracy + clarity + understanding) / 3
+   question_score -= hints_used * 10
+   question_score *= difficulty / 5
+   ```
+
+2. **Topic Coverage (20%)**
+   - Based on percentage of topic points covered
+   - Weighted by importance of each topic
+
+3. **Behavioral Score (20%)**
+   - Hint usage efficiency
+   - Time management
+   - Response consistency
+
+### Score Calculation
+```python
+def calculate_total_score(self) -> float:
+    # Question component (60%)
+    question_scores = []
+    for eval in question_evaluations:
+        score = (eval.metrics.accuracy + eval.metrics.clarity +
+                eval.metrics.understanding) / 3
+        score -= eval.metrics.hints_used * 10
+        score *= eval.difficulty / 5
+        question_scores.append(score)
+
+    question_component = avg(question_scores) * 0.6
+
+    # Topic coverage (20%)
+    topic_component = avg(topic_coverage.values()) * 20
+
+    # Behavior component (20%)
+    behavior_component = behavior_score * 0.2
+
+    return question_component + topic_component + behavior_component
+```
+
+## GPT-Based Evaluation
+
+### Evaluation Prompt Template
+```
+Evaluate this student's answer based on the following criteria:
+
+Question: {question}
+Expected Answer: {expected_answer}
+Student's Answer: {student_response}
+
+Please evaluate on three metrics (0-100):
+1. Accuracy: How correct is the answer?
+2. Clarity: How well is it expressed?
+3. Understanding: How well does the student understand the concept?
+
+Provide brief feedback explaining the evaluation.
+```
+
+### Response Format
+```json
+{
+    "accuracy": 85,
+    "clarity": 90,
+    "understanding": 80,
+    "feedback": "Demonstrates good understanding but could provide more detailed examples..."
+}
+```
+
+## Evaluation Report
+
+### Report Components
+1. **Overall Score**
+   - Final weighted score
+   - Component breakdowns
+
+2. **Question-by-Question Analysis**
+   - Individual scores
+   - Specific feedback
+   - Time taken
+   - Hints used
+
+3. **Topic Coverage Analysis**
+   - Coverage percentage
+   - Strength/weakness areas
+   - Knowledge gaps
+
+4. **Behavioral Metrics**
+   - Total exam time
+   - Average time per question
+   - Hint usage patterns
+   - Response consistency
+
+## Implementation Notes
+
+### Key Features
+1. **Multi-dimensional Assessment**
+   - Beyond simple right/wrong evaluation
+   - Considers expression and understanding
+   - Behavioral analysis integration
+
+2. **Dynamic Weighting**
+   - Difficulty-based adjustment
+   - Progressive scoring system
+   - Behavioral impact consideration
+
+3. **Comprehensive Feedback**
+   - Detailed per-question feedback
+   - Overall performance analysis
+   - Improvement suggestions
+
+### Best Practices
+1. **Evaluation Timing**
+   - Immediate question evaluation
+   - Progressive score calculation
+   - Final review phase
+
+2. **Data Persistence**
+   - Secure evaluation storage
+   - Session state management
+   - Progress tracking
+
+3. **Error Handling**
+   - Incomplete answer handling
+   - Timeout management
+   - State transition validation
+
+## Future Improvements
+
+1. **Enhanced Metrics**
+   - More sophisticated hint penalty system
+   - Advanced behavioral analytics
+   - Machine learning-based evaluation
+
+2. **Reporting Enhancements**
+   - Interactive visualization
+   - Trend analysis
+   - Comparative assessment
+
+3. **System Integration**
+   - Real-time feedback
+   - Progress monitoring
+   - Learning path recommendations
