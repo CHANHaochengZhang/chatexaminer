@@ -44,8 +44,14 @@ class ExamSession(BaseModel):
 
         return cls(topic=topic, questions=topic_questions)
 
+    def get_current_question(self) -> Optional[Dict]:
+        """Get the current question without advancing the index"""
+        if self.current_question_index >= len(self.questions):
+            return None
+        return self.questions[self.current_question_index]
+
     def get_next_question(self) -> Optional[Dict]:
-        """Get the next question in sequence"""
+        """Get the next question and advance the index"""
         if self.current_question_index >= len(self.questions):
             return None
 
