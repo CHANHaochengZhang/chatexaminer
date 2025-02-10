@@ -108,7 +108,7 @@ async def test_exam_evaluation():
 
         # Transition to evaluation state
         print("\nTransitioning to evaluation state...")
-        eval_transition_answer = "I believe I have answered all the questions thoroughly. Could we proceed to the evaluation?"
+        eval_transition_answer = "END_EXAM - I would like to end the exam now as I have answered all questions to the best of my ability. Please proceed with the final evaluation"
         eval_response = requests.post(
             f"{BASE_URL}/{session_id}/answer", json={"answer": eval_transition_answer}
         )
@@ -133,7 +133,7 @@ async def test_exam_evaluation():
         # Ensure exam completion
         print("\nSubmitting completion confirmation...")
         final_answer = (
-            "Yes, I understand. I'm ready to complete the exam and receive my evaluation."
+            "END_EXAM Yes, I understand. I'm ready to complete the exam and receive my evaluation."
         )
         final_response = requests.post(
             f"{BASE_URL}/{session_id}/answer", json={"answer": final_answer}
