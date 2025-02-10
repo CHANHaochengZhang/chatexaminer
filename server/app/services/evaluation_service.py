@@ -124,14 +124,24 @@ Format your response as JSON:
         # Update total score
         total_score = 0
         for eval in self.current_evaluation.question_evaluations.values():
-            # Calculate question score (average of accuracy, clarity, and understanding)
-            question_score = (
+            # Calculate base question score (average of accuracy, clarity, and understanding)
+            base_score = (
                 eval.metrics.accuracy + eval.metrics.clarity + eval.metrics.understanding
             ) / 3
+
             # Apply difficulty weight
-            question_score *= eval.difficulty / 5
-            # Deduct points for hints used
-            question_score -= eval.metrics.hints_used * 10
+            difficulty_weights = {1: 0.7, 2: 0.85, 3: 1.0, 4: 1.2, 5: 1.5}
+
+            # 应用难度权重
+            question_score = base_score * difficulty_weights[eval.difficulty]
+
+            # Deduct points for hints used (每个提示扣除基础分数的5%)
+            hint_penalty = (base_score * 0.05) * eval.metrics.hints_used
+            question_score -= hint_penalty
+
+            # 确保分数不会低于0或超过100
+            question_score = max(0, min(100, question_score))
+
             total_score += question_score
 
         # Calculate average score

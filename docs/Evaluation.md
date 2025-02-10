@@ -26,11 +26,22 @@ The evaluation system implements a comprehensive assessment framework for oral e
 
 ### Final Score Composition
 
-| Component | Weight | Calculation |
-|-----------|--------|-------------|
-| Question Scores | 60% | Average of per-question metrics * difficulty weight |
-| Topic Coverage | 20% | Percentage of key points covered |
-| Behavior Score | 20% | Based on time, hints, and consistency |
+| Component | Calculation | Description |
+|-----------|-------------|-------------|
+| Question Score | `(accuracy + clarity + understanding) / 3 * difficulty_weight - hint_penalty` | Base score adjusted by difficulty and hints |
+| Difficulty Weight | Level 1: 0.7 (-30%)<br>Level 2: 0.85 (-15%)<br>Level 3: 1.0 (neutral)<br>Level 4: 1.2 (+20%)<br>Level 5: 1.5 (+50%) | Encourages tackling harder questions |
+| Hint Penalty | `base_score * 0.05 * hints_used` | 5% deduction per hint |
+
+The final score is calculated as the average of all question scores:
+```python
+final_score = sum(question_scores) / number_of_questions
+```
+
+Each question's score is:
+1. Base score: Average of accuracy, clarity, and understanding
+2. Weighted by difficulty level
+3. Reduced by hint penalties
+4. Capped between 0 and 100
 
 ## Implementation Details
 
@@ -330,10 +341,28 @@ def calculate_total_score(self) -> float:
     # Question component (60%)
     question_scores = []
     for eval in question_evaluations:
-        score = (eval.metrics.accuracy + eval.metrics.clarity +
-                eval.metrics.understanding) / 3
-        score -= eval.metrics.hints_used * 10
-        score *= eval.difficulty / 5
+        # Calculate base score
+        base_score = (eval.metrics.accuracy + eval.metrics.clarity +
+                     eval.metrics.understanding) / 3
+
+        # Apply difficulty weights
+        difficulty_weights = {
+            1: 0.7,   # Easy (-30%)
+            2: 0.85,  # Basic (-15%)
+            3: 1.0,   # Medium (neutral)
+            4: 1.2,   # Advanced (+20%)
+            5: 1.5    # Expert (+50%)
+        }
+
+        # Apply difficulty weight
+        weighted_score = base_score * difficulty_weights[eval.difficulty]
+
+        # Apply hint penalty (5% of base score per hint)
+        hint_penalty = (base_score * 0.05) * eval.metrics.hints_used
+        score = weighted_score - hint_penalty
+
+        # Ensure score stays within 0-100 range
+        score = max(0, min(100, score))
         question_scores.append(score)
 
     question_component = avg(question_scores) * 0.6
@@ -374,7 +403,6 @@ Provide brief feedback explaining the evaluation.
     "feedback": "Demonstrates good understanding but could provide more detailed examples..."
 }
 ```
-
 ## Evaluation Report
 
 ### Report Components

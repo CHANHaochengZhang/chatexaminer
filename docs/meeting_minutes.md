@@ -1,5 +1,78 @@
 # Meeting Minutes
 
+## February 6, 2025 - Evaluation System and Thesis Discussion
+
+### Attendees
+- Tue Herlau (Supervisor)
+- Haocheng Zhang (Student)
+
+### Progress Presented
+1. Evaluation System Status
+   - Single question evaluation works well
+   - Overall grading needs improvement (current test shows 4.75/100)
+   - Using GPT-4o-mini for answer verification
+   - Implemented context-aware evaluation
+
+### Discussion Points
+
+1. Evaluation System Approach
+   - Focus on distinguishing different levels of understanding rather than exact scores
+   - Create artificial students with defined behaviors:
+     - High-performing students (80% understanding)
+     - Topic-specific strength/weakness students
+     - Hint-dependent students
+     - Confused/nervous students
+   - Implement state machines for both examiner and students
+
+2. Testing Framework
+   - Create rigorous experiments to validate system
+   - Test examiner's ability to handle different student behaviors
+   - Focus on measuring:
+     - Response consistency
+     - Time taken per question
+     - Hint usage patterns
+     - Understanding progression
+
+3. Thesis Structure and Writing
+   - Use DTU thesis template
+   - Focus on research questions as backbone
+   - Write for technical audience but explain concepts clearly
+   - Include literature review of existing AI examiners
+   - Start with draft notes and figures
+   - First two pages crucial for setting expectations
+
+### Action Items
+1. Implement artificial student behaviors
+2. Create testing framework for examiner-student interactions
+3. Begin thesis draft within two weeks
+4. Research existing AI examiner systems
+
+### Key Solutions Proposed
+1. State Machine Testing:
+   - Create paired state machines (examiner and student)
+   - Test interactions between different student types and examiner
+   - Validate system robustness through varied scenarios
+
+2. Evaluation Framework:
+   - Focus on relative performance rather than absolute scores
+   - Track progression over time for different student types
+   - Measure examiner's ability to adapt to student needs
+
+3. Documentation Strategy:
+   - Focus on experimental validation
+   - Document system's ability to distinguish student types
+   - Emphasize robustness testing results
+
+### Next Meeting
+- Date: February 13, 2025
+- Focus: Review artificial student implementation and testing framework
+
+### Notes
+- Project deadline: March 25, 2025 (40 days remaining)
+- Consider including local LLM testing results
+- Focus on scientific rigor rather than machine learning aspects
+
+
 ## January 30, 2025 - GUI Progress and Evaluation System Discussion
 
 ### Attendees
