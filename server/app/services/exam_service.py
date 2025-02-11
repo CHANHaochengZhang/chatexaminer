@@ -582,11 +582,9 @@ For CHAT state:
                     "score": sum(data["scores"]) / len(data["scores"]) if data["scores"] else 0,
                 }
 
-        # 最近的问题评估
+        # 获取所有评估结果
         recent_evaluations = []
-        for qid, eval in list(
-            self.evaluation_service.current_evaluation.question_evaluations.items()
-        )[-3:]:
+        for qid, eval in self.evaluation_service.current_evaluation.question_evaluations.items():
             recent_evaluations.append(
                 {
                     "question_id": qid,
@@ -636,3 +634,23 @@ For CHAT state:
             return True
 
         return False
+
+    def get_question_evaluation(self, question_id: str) -> Dict:
+        """获取特定问题的评估结果"""
+        if not self.evaluation_service.current_evaluation.question_evaluations:
+            return {"error": "No evaluations found"}
+
+        eval = self.evaluation_service.current_evaluation.question_evaluations.get(question_id)
+        if not eval:
+            return {"error": f"No evaluation found for question {question_id}"}
+
+        return {
+            "question_id": question_id,
+            "score": {
+                "accuracy": eval.metrics.accuracy,
+                "clarity": eval.metrics.clarity,
+                "understanding": eval.metrics.understanding,
+            },
+            "feedback": eval.feedback,
+            "time_taken": eval.time_taken,
+        }

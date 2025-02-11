@@ -200,6 +200,31 @@ async def request_hint(session_id: str) -> ExamResponse:
         raise HTTPException(status_code=400, detail=str(e))
 
 
+@router.get("/{session_id}/question/{question_id}/evaluation")
+async def get_question_evaluation(session_id: str, question_id: str) -> ExamResponse:
+    """获取特定问题的评估结果"""
+    logger.info(
+        f"Question evaluation requested - SessionID: {session_id}, QuestionID: {question_id}"
+    )
+
+    exam_service = exam_sessions.get(session_id)
+    if not exam_service:
+        logger.warning(f"Session not found - SessionID: {session_id}")
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    evaluation = exam_service.get_question_evaluation(question_id)
+    if "error" in evaluation:
+        logger.warning(f"Evaluation not found - {evaluation['error']}")
+        raise HTTPException(status_code=404, detail=evaluation["error"])
+
+    logger.info(f"Question evaluation retrieved - QuestionID: {question_id}")
+    return ExamResponse(
+        state=exam_service.state_machine.get_current_state().value,
+        message="Question evaluation retrieved successfully",
+        data=evaluation,
+    )
+
+
 # WebSocket endpoint
 @router.websocket("/{session_id}/ws")
 async def websocket_endpoint(websocket: WebSocket, session_id: str):
