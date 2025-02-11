@@ -11,6 +11,8 @@ export interface Message {
   role: 'system' | 'assistant' | 'user'
   content: string
   timestamp?: number
+  state?: ExamState
+  questionId?: string
 }
 
 export interface ExamSession {

@@ -141,11 +141,25 @@ const handleSend = async (message: string) => {
     const response = await examService.submitAnswer(message)
     currentState.value = response.state
 
-    messages.value.push({
-      role: 'assistant',
-      content: response.message,
-      timestamp: Date.now()
-    })
+    if (response.data?.type === 'question' && response.data.content) {
+      messages.value.push({
+        role: 'assistant',
+        content: response.data.content,
+        timestamp: Date.now(),
+        state: 'QUESTIONING',
+        questionId: response.data.question_id
+      })
+    } else if (response.data?.content || response.message) {
+      const messageContent = response.data?.content || response.message
+      if (messageContent) {
+        messages.value.push({
+          role: 'system',
+          content: messageContent,
+          timestamp: Date.now(),
+          state: currentState.value
+        })
+      }
+    }
 
     if (response.state === 'COMPLETED') {
       const evalResult = await examService.getEvaluation()

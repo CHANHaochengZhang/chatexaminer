@@ -4,6 +4,17 @@ import type { Message, ExamState, EvaluationReport, ProgressReport } from '@/typ
 const BASE_URL = '/api/exam'
 const WS_BASE_URL = 'ws://localhost:8000/api/exam'
 
+export interface QuestionEvaluation {
+  question_id: string
+  score: {
+    accuracy: number
+    clarity: number
+    understanding: number
+  }
+  feedback: string
+  time_taken: number
+}
+
 export interface ExamAPI {
   startExam: (topic: string) => Promise<{
     state: ExamState;
@@ -13,7 +24,12 @@ export interface ExamAPI {
   submitAnswer: (answer: string) => Promise<{
     state: ExamState;
     message: string;
-    progress: any;
+    data?: {
+      type?: 'question';
+      content?: string;
+      question_id?: string;
+      difficulty?: number;
+    };
   }>;
   getExamState: () => Promise<{
     state: ExamState;
@@ -27,6 +43,7 @@ export interface ExamAPI {
   getEvaluation: () => Promise<EvaluationReport>;
   connectWebSocket: (onMessage: (data: any) => void) => WebSocket;
   clearSession: () => void;
+  getQuestionEvaluation: (sessionId: string, questionId: string) => Promise<ExamResponse<QuestionEvaluation>>;
 }
 
 interface ExamResponse<T> {
@@ -44,7 +61,10 @@ interface StartExamResponse {
 interface SubmitAnswerResponse {
   result: any;
   progress: any;
-  current_question?: any;
+  type?: 'question';
+  content?: string;
+  question_id?: string;
+  difficulty?: number;
 }
 
 interface StateResponse {
@@ -79,11 +99,14 @@ class ExamService implements ExamAPI {
     if (!this.sessionId) {
       throw new Error('No active exam session')
     }
-    const response = await axios.post<ExamResponse<SubmitAnswerResponse>>(`${BASE_URL}/${this.sessionId}/answer`, { answer })
+    const response = await axios.post<ExamResponse<SubmitAnswerResponse>>(
+      `${BASE_URL}/${this.sessionId}/answer`,
+      { answer }
+    )
     return {
       state: response.data.state as ExamState,
       message: response.data.message,
-      progress: response.data.data.progress
+      data: response.data.data
     }
   }
 
@@ -153,6 +176,13 @@ class ExamService implements ExamAPI {
 
   getSessionId(): string | null {
     return this.sessionId
+  }
+
+  async getQuestionEvaluation(sessionId: string, questionId: string): Promise<ExamResponse<QuestionEvaluation>> {
+    const response = await axios.get<ExamResponse<QuestionEvaluation>>(
+      `${BASE_URL}/${sessionId}/question/${questionId}/evaluation`
+    )
+    return response.data
   }
 }
 
