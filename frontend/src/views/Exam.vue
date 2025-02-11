@@ -111,8 +111,9 @@ const startExam = async () => {
     currentState.value = response.state
     messages.value.push({
       role: 'system',
-      content: response.message,
-      timestamp: Date.now()
+      content: `Welcome to your exam session!\n\nFirst question:\n${response.data.current_question.question}`,
+      timestamp: Date.now(),
+      state: currentState.value
     })
 
     if (response.sessionId) {

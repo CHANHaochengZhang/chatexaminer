@@ -20,6 +20,19 @@ export interface ExamAPI {
     state: ExamState;
     message: string;
     sessionId: string;
+    data: {
+      session_id: string;
+      result: {
+        type: string;
+        state: string;
+      };
+      current_question: {
+        question_id: string;
+        question: string;
+        difficulty: number;
+        topic: string;
+      };
+    };
   }>;
   submitAnswer: (answer: string) => Promise<{
     state: ExamState;
@@ -91,7 +104,12 @@ class ExamService implements ExamAPI {
     return {
       state: response.data.state as ExamState,
       message: response.data.message,
-      sessionId: response.data.data.session_id
+      sessionId: response.data.data.session_id,
+      data: {
+        session_id: response.data.data.session_id,
+        result: response.data.data.result,
+        current_question: response.data.data.current_question
+      }
     }
   }
 
