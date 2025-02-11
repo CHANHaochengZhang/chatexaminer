@@ -11,6 +11,9 @@ from app.models.exam import ExamSession
 from app.models.state_machine import ExamState, ExamStateMachine
 from app.services.evaluation_service import EvaluationService
 
+MAX_EXAM_DURATION = 400  # 1小时
+MAX_QUESTION_DURATION = 300  # 5分钟
+
 
 class ExamService:
     def __init__(self):
@@ -235,7 +238,8 @@ State Machine Rules:
 5. EXPLAINING -> QUESTIONING: Only after student confirms understanding
 6. EXPLAINING -> CHAT: When student is not engaging seriously
 7. QUESTIONING -> QUESTIONING: After normal response
-8. QUESTIONING -> EVALUATING: When completed
+8. QUESTIONING -> EVALUATING: Only when student explicitly requests to end the exam (e.g., "I want to end the exam", "I'm finished", "END_EXAM", "Let's proceed to evaluation"). Do NOT transition to EVALUATING state unless student clearly expresses desire to end exam.
+9. EVALUATING -> COMPLETED: Only after evaluation is complete
 
 Key indicators for CHAT state:
 - Meaningless responses (e.g."???", random characters)
@@ -246,7 +250,7 @@ Key indicators for CHAT state:
 
 For QUESTIONING state:
 - Move to CHAT if:
-  * Student gives meaningless answers (e.g., "hehe", "???", random letters)
+  * Student gives meaningless answers (e.g., "???", random letters)
   * Student is not engaging with the question
   * Response is completely off-topic
   * Response shows no attempt to answer academically
@@ -334,47 +338,13 @@ Generate a hint:"""
         print(f"Current state: {current_state}")
         print(f"Received answer: {answer}")
 
-        # Create a serializable version of session metrics
-        serializable_metrics = {
-            "questions_answered": self.session_metrics["questions_answered"],
-            "hints_requested": self.session_metrics["hints_requested"],
-            "response_consistency": self.session_metrics["response_consistency"],
-        }
+        # Analyze response using GPT
+        result = await self._analyze_response(answer, current_state)
 
-        # Get the function definition for current state
-        function_def = self.state_functions.get(current_state)
-        if not function_def:
-            print(f"Error: No handler found for state {current_state}")
-            return {"type": "error", "message": f"No handler for state {current_state}"}
-
-        system_prompt = f"""You are an AI exam state analyzer. Analyze the student's response in the current state.
-
-Current State: {current_state}
-Student Response: {answer}
-Context: {json.dumps(serializable_metrics)}
-
-For CHAT state:
-1. Determine if student wants to return to regular exam (by saying continue, ready, ok, understand, etc.)
-2. If yes, check context for previous_state to return to
-3. If no previous_state exists, default to QUESTIONING
-4. If student needs help, provide supportive response and stay in CHAT
-
-For other states:
-Determine the appropriate action based on the response."""
-
-        # Call GPT with the state-specific function
-        response = openai.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": answer},
-            ],
-            functions=[function_def],
-            function_call={"name": function_def["name"]},
-        )
-
-        result = json.loads(response.choices[0].message.function_call.arguments)
-        print(f"GPT response result: {result}")
+        # Handle exam end request
+        if current_state == ExamState.QUESTIONING and result.get("wants_to_end"):
+            self.state_machine.transition(ExamState.EVALUATING)
+            return {"type": "state_change", "content": "Proceeding to final evaluation..."}
 
         # Update questions_answered and evaluation when in QUESTIONING state
         if current_state == ExamState.QUESTIONING and result.get("answer_quality", 0) > 0:
@@ -419,7 +389,7 @@ Determine the appropriate action based on the response."""
                 self.state_machine.transition(return_state)
             return {"type": "chat", "content": result["chat_response"]}
 
-        # Handle other states as before
+        # Handle state transition
         next_state = ExamState(result["next_state"])
         print(f"准备转换到状态: {next_state}")
 
@@ -428,6 +398,65 @@ Determine the appropriate action based on the response."""
 
         self.state_machine.transition(next_state)
         return self.get_next_interaction()
+
+    async def _analyze_response(self, answer: str, current_state: ExamState) -> Dict:
+        """Analyze student's response"""
+        # Create a serializable version of session metrics
+        serializable_metrics = {
+            "questions_answered": self.session_metrics["questions_answered"],
+            "hints_requested": self.session_metrics["hints_requested"],
+            "response_consistency": self.session_metrics["response_consistency"],
+        }
+
+        # Get the function definition for current state
+        function_def = self.state_functions.get(current_state)
+        if not function_def:
+            print(f"Error: No handler found for state {current_state}")
+            return {"type": "error", "message": f"No handler for state {current_state}"}
+
+        system_prompt = f"""You are an AI exam state analyzer. Analyze the student's response in the current state.
+
+Current State: {current_state}
+Student Response: {answer}
+Context: {json.dumps(serializable_metrics)}
+
+State Machine Rules:
+1. INIT -> TOPIC_SELECTED: When student greets or shows readiness
+2. TOPIC_SELECTED -> QUESTIONING: When student indicates readiness to start exam
+3. QUESTIONING -> EXPLAINING: When student shows confusion
+4. QUESTIONING -> CHAT: When student gives meaningless/random answers
+5. EXPLAINING -> QUESTIONING: Only after student confirms understanding
+6. EXPLAINING -> CHAT: When student is not engaging seriously
+7. QUESTIONING -> QUESTIONING: After normal response
+8. QUESTIONING -> EVALUATING: Only when student explicitly requests to end the exam (e.g., "I want to end the exam", "I'm finished", "END_EXAM", "Let's proceed to evaluation"). Do NOT transition to EVALUATING state unless student clearly expresses desire to end exam.
+9. EVALUATING -> COMPLETED: Only after evaluation is complete
+
+For QUESTIONING state:
+- Stay in QUESTIONING if the answer is relevant and not requesting to end
+- Move to EXPLAINING if student shows confusion
+- Move to CHAT if student gives meaningless answers
+- Move to EVALUATING only if student explicitly requests to end exam
+
+For CHAT state:
+1. Determine if student wants to return to regular exam (by saying continue, ready, ok, understand, etc.)
+2. If yes, check context for previous_state to return to
+3. If no previous_state exists, default to QUESTIONING
+4. If student needs help, provide supportive response and stay in CHAT"""
+
+        # Call GPT with the state-specific function
+        response = openai.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": answer},
+            ],
+            functions=[function_def],
+            function_call={"name": function_def["name"]},
+        )
+
+        result = json.loads(response.choices[0].message.function_call.arguments)
+        print(f"GPT response result: {result}")
+        return result
 
     def _update_topic_progress(
         self, topic: str, understanding_score: float, covered_points: List[str]
@@ -587,3 +616,23 @@ Determine the appropriate action based on the response."""
                 "response_consistency": self._calculate_response_consistency(),
             },
         }
+
+    def should_end_exam(self) -> bool:
+        # 1. 时间限制
+        total_time = time.time() - self.exam_start_time
+        if total_time > MAX_EXAM_DURATION:
+            return True
+
+        # 2. 问题完成度
+        if not self.state_machine.get_current_question():
+            return True
+
+        # 3. 学生表现
+        evaluations = self.evaluation_service.get_final_evaluation()
+        avg_score = evaluations.total_score
+
+        # 如果学生表现特别好（比如平均分超过90），可以提前结束
+        if avg_score > 90 and self.session_metrics["questions_answered"] >= MIN_QUESTIONS:
+            return True
+
+        return False
