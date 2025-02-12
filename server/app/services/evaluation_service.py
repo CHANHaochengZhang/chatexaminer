@@ -19,6 +19,7 @@ class EvaluationService:
         """Evaluate a single response"""
         logger.info(f"\n{'='*50}\n评估新的回答\n{'='*50}")
         logger.info(f"问题ID: {question['question_id']}")
+        logger.info(f"问题: {question['question']}")
         logger.info(f"问题难度: {question['difficulty']}")
         logger.info(f"学生回答: {student_response[:100]}...")  # 只记录前100个字符
         logger.info(f"使用提示次数: {hints_used}")
@@ -32,15 +33,35 @@ Expected Answer: {question['expected_answers']['correct']['example']}
 Relevant Context: {question['context']}
 Student's Answer: {student_response}
 
-Please evaluate on three metrics (0-100):
-1. Accuracy: How correct is the answer?
-2. Clarity: How well is it expressed?
-3. Understanding: How well does the student understand the concept? is it fit context?
+First, determine if the answer directly addresses the question asked:
+1. Does the answer specifically address the question about "general form of a non-linear optimization problem"?
+2. Is the answer relevant to the specific question, not just the general topic?
+3. Does the answer contain the key mathematical or formal components expected?
 
-Provide brief feedback explaining the evaluation.
+Then evaluate on three metrics (0-100):
+1. Accuracy: How correctly does the answer address the specific question asked? (Not just general topic knowledge)
+2. Clarity: How well is the answer expressed and structured?
+3. Understanding: How well does the student demonstrate understanding of the specific concept asked in the question?
+
+Based on both relevance and quality, provide a single word to describe the overall quality:
+- "Excellent": Directly answers the question with comprehensive understanding (80-100)
+- "Good": Answers the question with solid understanding, minor gaps (65-79)
+- "Fair": Partially answers the question or shows tangential understanding (50-64)
+- "Poor": Does not answer the question or shows significant misunderstanding (0-49)
+
+Note: An answer that demonstrates good knowledge but does not address the specific question should receive a lower score.
+
+Provide brief feedback explaining:
+1. Whether the answer addresses the specific question
+2. What key elements are missing or incorrect
+3. Suggestions for improvement
+
+Question: {question['question']}
+Student's Answer: {student_response}
 
 Format your response as JSON:
 {{
+    "level": "<single_word_evaluation>",
     "accuracy": <score>,
     "clarity": <score>,
     "understanding": <score>,
@@ -68,6 +89,7 @@ Format your response as JSON:
         logger.info(f"准确性(Accuracy): {eval_result['accuracy']}/100")
         logger.info(f"清晰度(Clarity): {eval_result['clarity']}/100")
         logger.info(f"理解度(Understanding): {eval_result['understanding']}/100")
+        logger.info(f"总体评价(Level): {eval_result['level']}")
         logger.info(f"反馈: {eval_result['feedback']}")
 
         # 计算平均分
