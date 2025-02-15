@@ -211,7 +211,7 @@ class ExamStateMachine:
         logger.info("Transitioned to QUESTIONING state")
 
     def get_current_question(self) -> Optional[Dict]:
-        """Get current question"""
+        """Get current question without advancing index"""
         logger.debug(f"Attempting to get current question, state: {self.current_state}")
 
         if self.current_state != ExamState.QUESTIONING:
@@ -223,7 +223,8 @@ class ExamStateMachine:
             logger.warning("No exam session found")
             return None
 
-        question = session.get_next_question()
+        # 改用 get_current_question
+        question = session.get_current_question()
         if question:
             logger.info(
                 f"Retrieved current question: ID={question.get('question_id')}, difficulty={question.get('difficulty')}"

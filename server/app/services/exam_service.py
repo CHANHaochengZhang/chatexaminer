@@ -397,6 +397,19 @@ Generate a hint:"""
             self.state_machine.context["previous_state"] = current_state
 
         self.state_machine.transition(next_state)
+
+        # 评估完当前答案后，获取下一题
+        if current_state == ExamState.QUESTIONING:
+            session = self.state_machine.context.get("exam_session")
+            if session:
+                next_question = session.get_next_question()
+                if next_question:
+                    return {
+                        "type": "question",
+                        "content": next_question["question"],
+                        "question_id": next_question["question_id"],
+                    }
+
         return self.get_next_interaction()
 
     async def _analyze_response(self, answer: str, current_state: ExamState) -> Dict:
