@@ -28,6 +28,7 @@ class ExamSession(BaseModel):
     questions: List[Dict] = []
     student_answers: Dict[str, str] = {}
     evaluations: Dict[str, Dict] = {}
+    question_history: List[str] = []  # 记录所有问过的问题ID
 
     @classmethod
     def create_session(cls, topic: str, questions_file: Path) -> "ExamSession":
@@ -56,8 +57,25 @@ class ExamSession(BaseModel):
             return None
 
         question = self.questions[self.current_question_index]
+        # 记录问题ID到历史记录
+        if question and question["question_id"] not in self.question_history:
+            self.question_history.append(question["question_id"])
+
         self.current_question_index += 1
         return question
+
+    def get_prev_question(self) -> Optional[Dict]:
+        """Get the previous question for evaluation"""
+        if not self.question_history:
+            return None
+        # 获取最后一个问过的问题ID
+        last_question_id = self.question_history[-1] if self.question_history else None
+        if last_question_id:
+            # 在问题列表中查找这个ID对应的问题
+            for question in self.questions:
+                if question["question_id"] == last_question_id:
+                    return question
+        return None
 
     def record_answer(self, question_id: str, answer: str):
         """Record student's answer for a question"""

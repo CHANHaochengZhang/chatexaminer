@@ -332,51 +332,44 @@ Generate a hint:"""
         }
 
     async def process_answer(self, answer: str) -> Dict:
-        """Process student's answer and return next interaction"""
+        """Process student's answer"""
         current_state = self.state_machine.get_current_state()
         print(f"\n=== Processing answer ===")
         print(f"Current state: {current_state}")
         print(f"Received answer: {answer}")
 
-        # Analyze response using GPT
+        # 分析回答
         result = await self._analyze_response(answer, current_state)
 
-        # Handle exam end request
-        if current_state == ExamState.QUESTIONING and result.get("wants_to_end"):
-            self.state_machine.transition(ExamState.EVALUATING)
-            return {"type": "state_change", "content": "Proceeding to final evaluation..."}
-
-        # Update questions_answered and evaluation when in QUESTIONING state
-        if current_state == ExamState.QUESTIONING and result.get("answer_quality", 0) > 0:
+        if current_state == ExamState.QUESTIONING:
+            # Update questions answered count
+            old_count = self.session_metrics["questions_answered"]
+            self.session_metrics["questions_answered"] = old_count + 1
             print(
-                f"Updating questions answered: {self.session_metrics['questions_answered']} -> {self.session_metrics['questions_answered'] + 1}"
+                f"Updating questions answered: {old_count} -> {self.session_metrics['questions_answered']}"
             )
-            self.session_metrics["questions_answered"] += 1
 
-            # Get current question
-            current_question = self.state_machine.get_current_question()
-            if current_question:
-                # Calculate time taken
-                time_taken = (
-                    time.time() - self.question_start_time if self.question_start_time else 0
-                )
+            # 获取上一个问题用于评估
+            session = self.state_machine.context.get("exam_session")
+            if session:
+                question_to_evaluate = session.get_prev_question()
+                if question_to_evaluate:
+                    time_taken = time.time() - (self.question_start_time or time.time())
+                    evaluation = await self.evaluation_service.evaluate_response(
+                        question=question_to_evaluate,
+                        student_response=answer,
+                        hints_used=self.session_metrics["hints_requested"],
+                        time_taken=time_taken,
+                    )
 
-                # Use AI evaluation
-                evaluation = await self.evaluation_service.evaluate_response(
-                    question=current_question,
-                    student_response=answer,
-                    hints_used=self.session_metrics["hints_requested"],
-                    time_taken=time_taken,
-                )
-
-                # Update evaluation service with the AI evaluation result
-                self.evaluation_service.add_question_evaluation(
-                    current_question["question_id"],
-                    evaluation.metrics,
-                    time_taken,
-                    current_question["difficulty"],
-                    evaluation.feedback,
-                )
+                    # Update evaluation service with the AI evaluation result
+                    self.evaluation_service.add_question_evaluation(
+                        question_to_evaluate["question_id"],
+                        evaluation.metrics,
+                        time_taken,
+                        question_to_evaluate["difficulty"],
+                        evaluation.feedback,
+                    )
 
         if current_state == ExamState.CHAT:
             if result.get("wants_to_return"):
@@ -398,8 +391,8 @@ Generate a hint:"""
 
         self.state_machine.transition(next_state)
 
-        # 评估完当前答案后，获取下一题
-        if current_state == ExamState.QUESTIONING:
+        # 评估完当前答案后，只在非CHAT状态下获取下一题
+        if current_state == ExamState.QUESTIONING and next_state != ExamState.CHAT:
             session = self.state_machine.context.get("exam_session")
             if session:
                 next_question = session.get_next_question()
