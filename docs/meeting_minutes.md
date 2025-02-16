@@ -1,5 +1,97 @@
 # Meeting Minutes
 
+## February 13, 2025 - Student Simulation and Thesis Writing Discussion
+
+### Attendees
+- Tue Herlau (Supervisor)
+- Haocheng Zhang (Student)
+
+### Progress Presented
+1. Binary Student Model Implementation
+   - Implemented basic good/bad student simulation
+   - Demonstrated initial evaluation results
+   - Showed current scoring system limitations
+
+2. Current Features
+   - Basic student behavior simulation
+   - Evaluation metrics implementation
+   - Hint system integration
+   - Real-time difficulty adjustment
+
+### Discussion Points
+
+1. Student Simulation Improvements
+   - Current binary model (good/bad) too simplistic
+   - Need probabilistic response behavior
+   - Suggested improvements:
+     - Students with varying success rates
+     - More realistic hint usage patterns
+     - Topic-specific performance variations
+
+2. Evaluation Criteria Validation
+   - Need to validate different assessment dimensions:
+     - Accuracy measurement
+     - Clarity assessment
+     - Understanding evaluation
+   - Focus on demonstrating independence of criteria
+   - Start with easiest dimensions to validate
+
+3. Hint System Assessment
+   - Design experiments for hint system validation
+   - Consider different student types:
+     - Knowledgeable but nervous students
+     - Students who improve with hints
+     - Baseline poor performance students
+   - Need to show system can fairly assess hint-dependent students
+
+4. Thesis Writing Strategy
+   - Start with simple project description
+   - Focus on concrete achievements
+   - Structure recommendation:
+     - Introduction (keep it simple)
+     - Methods
+     - Simulation experiments
+     - Discussion
+   - Begin with figures and experimental results
+
+### Action Items
+1. Implement probabilistic student behavior
+2. Design experiments to validate assessment dimensions
+3. Create experiments for hint system evaluation
+4. Begin thesis introduction draft
+5. Prepare initial figures for results section
+
+### Key Solutions Proposed
+
+1. Student Simulation Enhancement:
+   - Implement probability-based response generation
+   - Create students with specific skill distributions
+   - Design realistic hint usage patterns
+   - Add topic-specific performance variations
+
+2. Evaluation Framework Validation:
+   - Focus on validating accuracy and clarity first
+   - Design experiments to show criteria independence
+   - Create test cases for different student types
+   - Document assessment limitations
+
+3. Thesis Structure:
+   - Start with simple project description
+   - Focus on what was achieved
+   - Include clear research questions
+   - Build narrative around experimental results
+
+### Next Meeting
+- Date: February 20, 2025
+- Focus: Review student simulation improvements and initial thesis draft
+
+### Notes
+- Supervisor suggested focusing on probabilistic student behavior
+- Discussion about handling hint system evaluation
+- Agreement to start thesis writing with simple introduction
+- Emphasis on experimental validation of system components
+
+
 ## February 6, 2025 - Evaluation System and Thesis Discussion
 
 ### Attendees
