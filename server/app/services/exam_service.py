@@ -1,5 +1,6 @@
 import json
 import time
+import uuid
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -8,6 +9,7 @@ import openai
 from app.core.config import settings
 from app.models.evaluation import EvaluationMetrics
 from app.models.exam import ExamSession
+from app.models.exam_record import ExamRecord
 from app.models.state_machine import ExamState, ExamStateMachine
 from app.services.evaluation_service import EvaluationService
 
@@ -17,20 +19,24 @@ MAX_QUESTION_DURATION = 300  # 5分钟
 
 class ExamService:
     def __init__(self):
+        """Initialize exam service"""
         self.state_machine = ExamStateMachine()
         self.questions_file = Path(settings.QUESTIONS_FILE)
         self.evaluation_service = EvaluationService()
-        self.exam_start_time = None
+        self.session_id = str(uuid.uuid4())
+        self.exam_start_time = time.time()
         self.question_start_time = None
         self.current_topic = None
         self.topic_key_points = {}  # Store key points for each topic
         self.session_metrics = {
             "questions_answered": 0,
             "hints_requested": 0,
+            "total_time": 0,
             "response_consistency": 1.0,
             "topic_progress": {},
         }
-        # Define function calling for each state
+
+        # Define state functions for OpenAI function calling
         self.state_functions = {
             ExamState.INIT: {
                 "name": "handle_init_state",
@@ -38,15 +44,14 @@ class ExamService:
                 "parameters": {
                     "type": "object",
                     "properties": {
-                        "is_greeting": {"type": "boolean"},
-                        "topic_mentioned": {"type": "boolean"},
-                        "topic": {"type": "string", "description": "Topic mentioned by student"},
+                        "has_topic": {"type": "boolean"},
+                        "topic": {"type": "string"},
                         "next_state": {
                             "type": "string",
                             "enum": [state.value for state in ExamState],
                         },
                     },
-                    "required": ["next_state"],
+                    "required": ["has_topic", "next_state"],
                 },
             },
             ExamState.TOPIC_SELECTED: {
@@ -100,14 +105,11 @@ class ExamService:
             },
             ExamState.CHAT: {
                 "name": "handle_chat_state",
-                "description": "Handle chat state interaction and determine if user wants to return to previous state",
+                "description": "Handle chat state interaction",
                 "parameters": {
                     "type": "object",
                     "properties": {
-                        "wants_to_return": {
-                            "type": "boolean",
-                            "description": "Whether user indicates readiness to return (e.g., by saying 'continue', 'ready', 'ok', 'understand')",
-                        },
+                        "wants_to_return": {"type": "boolean"},
                         "needs_explanation": {
                             "type": "boolean",
                             "description": "Whether user needs more explanation",
@@ -115,7 +117,6 @@ class ExamService:
                         "return_state": {
                             "type": "string",
                             "enum": [state.value for state in ExamState],
-                            "description": "State to return to if wants_to_return is true",
                         },
                         "chat_response": {
                             "type": "string",
@@ -137,7 +138,7 @@ class ExamService:
                             "enum": [state.value for state in ExamState],
                         },
                     },
-                    "required": ["next_state", "ready_for_evaluation"],
+                    "required": ["ready_for_evaluation", "next_state"],
                 },
             },
         }
@@ -443,11 +444,10 @@ For QUESTIONING state:
 - Move to CHAT if student gives meaningless answers
 - Move to EVALUATING only if student explicitly requests to end exam
 
-For CHAT state:
-1. Determine if student wants to return to regular exam (by saying continue, ready, ok, understand, etc.)
-2. If yes, check context for previous_state to return to
-3. If no previous_state exists, default to QUESTIONING
-4. If student needs help, provide supportive response and stay in CHAT"""
+For EVALUATING state:
+- Determine if ready for final evaluation
+- If ready, proceed with evaluation and move to COMPLETED
+- If not ready, stay in current state"""
 
         # Call GPT with the state-specific function
         response = openai.chat.completions.create(
@@ -457,11 +457,20 @@ For CHAT state:
                 {"role": "user", "content": answer},
             ],
             functions=[function_def],
-            function_call={"name": function_def["name"]},
+            function_call="auto",
         )
 
         result = json.loads(response.choices[0].message.function_call.arguments)
         print(f"GPT response result: {result}")
+
+        # 如果是 EVALUATING 状态且准备好进行评估
+        if current_state == ExamState.EVALUATING and result.get("ready_for_evaluation"):
+            evaluation_result = self.handle_evaluating_state()
+            if evaluation_result:
+                result["evaluation"] = evaluation_result.dict()
+                result["type"] = "evaluation"
+                result["content"] = "考试已结束，正在生成评估报告..."
+
         return result
 
     def _update_topic_progress(
@@ -660,3 +669,17 @@ For CHAT state:
             "feedback": eval.feedback,
             "time_taken": eval.time_taken,
         }
+
+    def handle_evaluating_state(self):
+        """处理评估状态"""
+        print(f"HANDLE EVALUATING STATE")
+        if self.state_machine.current_state in ["EVALUATING", "COMPLETED"]:
+            print("考试已结束，正在获取评估报告...")
+
+            # 生成并保存考试记录
+            exam_record = ExamRecord.create_from_exam_session(self)
+            exam_record.save_to_file()
+
+            # 获取最终评估报告
+            return self.evaluation_service.get_final_evaluation()
+        return None

@@ -9216,3 +9216,270 @@ Valid transitions: ['EXPLAINING (student_confused/need_clarification)', 'EVALUAT
 2025-02-15 20:20:27,663 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='good_response/select_next_question' metadata=None
 2025-02-15 20:20:27,663 - INFO - Current state updated to: ExamState.QUESTIONING
 2025-02-15 20:20:27,663 - INFO - Answer processed - SessionID: 32ed6cd7-b89b-4ead-b36c-d2c63335ba2a, State: ExamState.QUESTIONING
+2025-02-19 18:18:10,829 - INFO - New exam session started - SessionID: 00121dfb-2134-43ef-a278-fee2fd7c869c, Topic: Direct Methods for Optimal Control
+2025-02-19 18:18:10,829 - INFO - Initializing exam state machine
+2025-02-19 18:18:10,830 - INFO - Initial state: ExamState.INIT, context initialized
+2025-02-19 18:18:13,117 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-19 18:18:13,156 - INFO - Attempting state transition: ExamState.INIT -> ExamState.TOPIC_SELECTED
+2025-02-19 18:18:13,156 - INFO - State transition successful: from_state=<ExamState.INIT: 'INIT'> to_state=<ExamState.TOPIC_SELECTED: 'TOPIC_SELECTED'> condition='student_ready' metadata=None
+2025-02-19 18:18:13,157 - INFO - Current state updated to: ExamState.TOPIC_SELECTED
+2025-02-19 18:18:13,158 - INFO - Starting new exam with topic: Direct Methods for Optimal Control
+2025-02-19 18:18:13,159 - INFO - Exam session created successfully
+2025-02-19 18:18:13,159 - INFO - Attempting state transition: ExamState.TOPIC_SELECTED -> ExamState.QUESTIONING
+2025-02-19 18:18:13,160 - INFO - State transition successful: from_state=<ExamState.TOPIC_SELECTED: 'TOPIC_SELECTED'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='start_exam()' metadata=None
+2025-02-19 18:18:13,160 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-19 18:18:13,160 - INFO - Transitioned to QUESTIONING state
+2025-02-19 18:18:13,162 - INFO - Retrieved current question: ID=Q1, difficulty=1
+2025-02-19 18:18:13,162 - INFO - Exam successfully initiated - SessionID: 00121dfb-2134-43ef-a278-fee2fd7c869c
+2025-02-19 18:18:13,163 - INFO - Retrieved current question: ID=Q1, difficulty=1
+2025-02-19 18:18:40,081 - INFO - Answer submitted - SessionID: 00121dfb-2134-43ef-a278-fee2fd7c869c
+2025-02-19 18:18:44,547 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-19 18:18:44,553 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.QUESTIONING
+2025-02-19 18:18:44,554 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='good_response/select_next_question' metadata=None
+2025-02-19 18:18:44,554 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-19 18:18:44,554 - INFO - Answer processed - SessionID: 00121dfb-2134-43ef-a278-fee2fd7c869c, State: ExamState.QUESTIONING
+2025-02-19 18:18:47,743 - INFO - Answer submitted - SessionID: 00121dfb-2134-43ef-a278-fee2fd7c869c
+2025-02-19 18:18:48,775 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-19 18:18:48,783 - INFO -
+==================================================
+评估新的回答
+==================================================
+2025-02-19 18:18:48,783 - INFO - 问题ID: Q1
+2025-02-19 18:18:48,783 - INFO - 问题: What is the main advantage of using direct collocation in optimal control?
+2025-02-19 18:18:48,783 - INFO - 问题难度: 1
+2025-02-19 18:18:48,783 - INFO - 学生回答: Direct collocation is a very powerful nonlinear optimization technique in which we approximate state...
+2025-02-19 18:18:48,783 - INFO - 使用提示次数: 0
+2025-02-19 18:18:48,783 - INFO - 回答用时: 35.62秒
+2025-02-19 18:18:50,958 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-19 18:18:50,980 - INFO -
+评分结果:
+2025-02-19 18:18:50,980 - INFO - 准确性(Accuracy): 30/100
+2025-02-19 18:18:50,980 - INFO - 清晰度(Clarity): 50/100
+2025-02-19 18:18:50,980 - INFO - 理解度(Understanding): 35/100
+2025-02-19 18:18:50,980 - INFO - 总体评价(Level): Poor
+2025-02-19 18:18:50,980 - INFO - 反馈: The answer does not directly address the question about the main advantage of using direct collocation in optimal control. It only explains what direct collocation is without highlighting its advantages, such as the ability to handle non-linear constraints and cost functions. Key elements missing include specific advantages and examples of applications. To improve, the student should explicitly discuss the advantages of direct collocation in relation to optimal control problems and include relevant context from the given material.
+2025-02-19 18:18:50,980 - INFO - 平均分: 38.33/100
+2025-02-19 18:18:50,981 - INFO - ==================================================
+
+2025-02-19 18:18:50,981 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.QUESTIONING
+2025-02-19 18:18:50,981 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='good_response/select_next_question' metadata=None
+2025-02-19 18:18:50,982 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-19 18:18:50,982 - INFO - Answer processed - SessionID: 00121dfb-2134-43ef-a278-fee2fd7c869c, State: ExamState.QUESTIONING
+2025-02-19 18:19:16,882 - INFO - Answer submitted - SessionID: 00121dfb-2134-43ef-a278-fee2fd7c869c
+2025-02-19 18:19:17,777 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-19 18:19:17,796 - INFO -
+==================================================
+评估新的回答
+==================================================
+2025-02-19 18:19:17,796 - INFO - 问题ID: Q6
+2025-02-19 18:19:17,796 - INFO - 问题: What is the primary focus of direct methods in optimal control?
+2025-02-19 18:19:17,796 - INFO - 问题难度: 1
+2025-02-19 18:19:17,796 - INFO - 学生回答: The direct method discretizes or parameterizes the optimal control problem into an optimization prob...
+2025-02-19 18:19:17,796 - INFO - 使用提示次数: 0
+2025-02-19 18:19:17,796 - INFO - 回答用时: 64.63秒
+2025-02-19 18:19:19,678 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-19 18:19:19,684 - INFO -
+评分结果:
+2025-02-19 18:19:19,684 - INFO - 准确性(Accuracy): 75/100
+2025-02-19 18:19:19,684 - INFO - 清晰度(Clarity): 80/100
+2025-02-19 18:19:19,685 - INFO - 理解度(Understanding): 70/100
+2025-02-19 18:19:19,685 - INFO - 总体评价(Level): Good
+2025-02-19 18:19:19,685 - INFO - 反馈: The answer addresses the question by discussing the discretization and parameterization of the optimal control problem. However, it misses the emphasis on incorporating constraints and objectives directly into the optimization process, which is a key aspect of direct methods. To improve, the student could elaborate on how constraints and objectives are handled within this approach, providing a more comprehensive understanding of the primary focus of direct methods in optimal control.
+2025-02-19 18:19:19,685 - INFO - 平均分: 75.00/100
+2025-02-19 18:19:19,685 - INFO - ==================================================
+
+2025-02-19 18:19:19,686 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.QUESTIONING
+2025-02-19 18:19:19,686 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='good_response/select_next_question' metadata=None
+2025-02-19 18:19:19,686 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-19 18:19:19,686 - INFO - Answer processed - SessionID: 00121dfb-2134-43ef-a278-fee2fd7c869c, State: ExamState.QUESTIONING
+2025-02-19 18:19:29,289 - INFO - Answer submitted - SessionID: 00121dfb-2134-43ef-a278-fee2fd7c869c
+2025-02-19 18:19:32,259 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-19 18:19:32,266 - INFO -
+==================================================
+评估新的回答
+==================================================
+2025-02-19 18:19:32,266 - INFO - 问题ID: Q11
+2025-02-19 18:19:32,267 - INFO - 问题: What characterizes the general form of a non-linear optimization problem in optimal control?
+2025-02-19 18:19:32,267 - INFO - 问题难度: 1
+2025-02-19 18:19:32,267 - INFO - 学生回答: END_EXAM...
+2025-02-19 18:19:32,267 - INFO - 使用提示次数: 0
+2025-02-19 18:19:32,267 - INFO - 回答用时: 79.10秒
+2025-02-19 18:19:34,996 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-19 18:19:34,999 - INFO -
+评分结果:
+2025-02-19 18:19:35,000 - INFO - 准确性(Accuracy): 0/100
+2025-02-19 18:19:35,000 - INFO - 清晰度(Clarity): 0/100
+2025-02-19 18:19:35,000 - INFO - 理解度(Understanding): 0/100
+2025-02-19 18:19:35,000 - INFO - 总体评价(Level): Poor
+2025-02-19 18:19:35,000 - INFO - 反馈: The student's answer does not address the question at all and simply states 'END_EXAM,' indicating an inability to articulate a response. Key elements such as the structure of the non-linear optimization problem, including the objective function and constraints, are entirely missing. Suggestions for improvement include reviewing the characteristics of non-linear optimization problems and ensuring that answers are provided in full and relevant to the question.
+2025-02-19 18:19:35,000 - INFO - 平均分: 0.00/100
+2025-02-19 18:19:35,000 - INFO - ==================================================
+
+2025-02-19 18:19:35,000 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.EVALUATING
+2025-02-19 18:19:35,001 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.EVALUATING: 'EVALUATING'> condition='questions_completed' metadata=None
+2025-02-19 18:19:35,001 - INFO - Current state updated to: ExamState.EVALUATING
+2025-02-19 18:19:35,001 - INFO - Answer processed - SessionID: 00121dfb-2134-43ef-a278-fee2fd7c869c, State: ExamState.EVALUATING
+2025-02-19 18:35:49,932 - INFO - New exam session started - SessionID: 055a7350-1acd-49ff-9506-d3f4e217f790, Topic: Direct Methods for Optimal Control
+2025-02-19 18:35:49,932 - INFO - Initializing exam state machine
+2025-02-19 18:35:49,932 - INFO - Initial state: ExamState.INIT, context initialized
+2025-02-19 18:35:51,611 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-19 18:35:51,615 - INFO - Attempting state transition: ExamState.INIT -> ExamState.TOPIC_SELECTED
+2025-02-19 18:35:51,616 - INFO - State transition successful: from_state=<ExamState.INIT: 'INIT'> to_state=<ExamState.TOPIC_SELECTED: 'TOPIC_SELECTED'> condition='student_ready' metadata=None
+2025-02-19 18:35:51,616 - INFO - Current state updated to: ExamState.TOPIC_SELECTED
+2025-02-19 18:35:51,616 - INFO - Starting new exam with topic: Direct Methods for Optimal Control
+2025-02-19 18:35:51,617 - INFO - Exam session created successfully
+2025-02-19 18:35:51,618 - INFO - Attempting state transition: ExamState.TOPIC_SELECTED -> ExamState.QUESTIONING
+2025-02-19 18:35:51,618 - INFO - State transition successful: from_state=<ExamState.TOPIC_SELECTED: 'TOPIC_SELECTED'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='start_exam()' metadata=None
+2025-02-19 18:35:51,618 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-19 18:35:51,618 - INFO - Transitioned to QUESTIONING state
+2025-02-19 18:35:51,618 - INFO - Retrieved current question: ID=Q1, difficulty=1
+2025-02-19 18:35:51,619 - INFO - Exam successfully initiated - SessionID: 055a7350-1acd-49ff-9506-d3f4e217f790
+2025-02-19 18:35:51,619 - INFO - Retrieved current question: ID=Q1, difficulty=1
+2025-02-19 18:35:58,658 - INFO - Answer submitted - SessionID: 055a7350-1acd-49ff-9506-d3f4e217f790
+2025-02-19 18:35:59,397 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-19 18:35:59,406 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.QUESTIONING
+2025-02-19 18:35:59,407 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='good_response/select_next_question' metadata=None
+2025-02-19 18:35:59,407 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-19 18:35:59,407 - INFO - Answer processed - SessionID: 055a7350-1acd-49ff-9506-d3f4e217f790, State: ExamState.QUESTIONING
+2025-02-19 18:36:36,749 - INFO - Answer submitted - SessionID: 055a7350-1acd-49ff-9506-d3f4e217f790
+2025-02-19 18:36:37,384 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-19 18:36:37,390 - INFO -
+==================================================
+评估新的回答
+==================================================
+2025-02-19 18:36:37,391 - INFO - 问题ID: Q1
+2025-02-19 18:36:37,391 - INFO - 问题: What is the main advantage of using direct collocation in optimal control?
+2025-02-19 18:36:37,391 - INFO - 问题难度: 1
+2025-02-19 18:36:37,391 - INFO - 学生回答: The direct method discretizes or parameterizes the optimal control problem into an optimization prob...
+2025-02-19 18:36:37,392 - INFO - 使用提示次数: 0
+2025-02-19 18:36:37,392 - INFO - 回答用时: 45.77秒
+2025-02-19 18:36:41,737 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-19 18:36:41,743 - INFO -
+评分结果:
+2025-02-19 18:36:41,743 - INFO - 准确性(Accuracy): 50/100
+2025-02-19 18:36:41,743 - INFO - 清晰度(Clarity): 60/100
+2025-02-19 18:36:41,743 - INFO - 理解度(Understanding): 55/100
+2025-02-19 18:36:41,743 - INFO - 总体评价(Level): Fair
+2025-02-19 18:36:41,743 - INFO - 反馈: The answer only partially addresses the question about the main advantage of using direct collocation in optimal control. It mentions the process of discretization but fails to explain the specific advantages of this method, such as its capability to handle non-linear constraints and more complex cost functions. Key elements such as the effectiveness for trajectory optimization problems or numerical stability are missing. To improve, the student should clearly articulate the benefits of direct collocation and how it applies to specific scenarios in optimal control.
+2025-02-19 18:36:41,744 - INFO - 平均分: 55.00/100
+2025-02-19 18:36:41,744 - INFO - ==================================================
+
+2025-02-19 18:36:41,744 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.QUESTIONING
+2025-02-19 18:36:41,744 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='good_response/select_next_question' metadata=None
+2025-02-19 18:36:41,744 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-19 18:36:41,744 - INFO - Answer processed - SessionID: 055a7350-1acd-49ff-9506-d3f4e217f790, State: ExamState.QUESTIONING
+2025-02-19 18:36:53,883 - INFO - Answer submitted - SessionID: 055a7350-1acd-49ff-9506-d3f4e217f790
+2025-02-19 18:36:54,713 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-19 18:36:54,718 - INFO -
+==================================================
+评估新的回答
+==================================================
+2025-02-19 18:36:54,718 - INFO - 问题ID: Q6
+2025-02-19 18:36:54,718 - INFO - 问题: What is the primary focus of direct methods in optimal control?
+2025-02-19 18:36:54,718 - INFO - 问题难度: 1
+2025-02-19 18:36:54,718 - INFO - 学生回答: END_EXAM...
+2025-02-19 18:36:54,718 - INFO - 使用提示次数: 0
+2025-02-19 18:36:54,718 - INFO - 回答用时: 63.10秒
+2025-02-19 18:36:57,013 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-19 18:36:57,018 - INFO -
+评分结果:
+2025-02-19 18:36:57,018 - INFO - 准确性(Accuracy): 0/100
+2025-02-19 18:36:57,018 - INFO - 清晰度(Clarity): 0/100
+2025-02-19 18:36:57,018 - INFO - 理解度(Understanding): 0/100
+2025-02-19 18:36:57,018 - INFO - 总体评价(Level): Poor
+2025-02-19 18:36:57,018 - INFO - 反馈: The answer 'END_EXAM' does not address the specific question about the primary focus of direct methods in optimal control. Key elements such as parameterizing control trajectories and the optimization process are missing. To improve, the student should provide a detailed explanation focusing on how direct methods are applied within optimal control, including relevant constraints and objective considerations.
+2025-02-19 18:36:57,018 - INFO - 平均分: 0.00/100
+2025-02-19 18:36:57,019 - INFO - ==================================================
+
+2025-02-19 18:36:57,019 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.EVALUATING
+2025-02-19 18:36:57,020 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.EVALUATING: 'EVALUATING'> condition='questions_completed' metadata=None
+2025-02-19 18:36:57,020 - INFO - Current state updated to: ExamState.EVALUATING
+2025-02-19 18:36:57,020 - INFO - Answer processed - SessionID: 055a7350-1acd-49ff-9506-d3f4e217f790, State: ExamState.EVALUATING
+2025-02-19 18:41:03,854 - INFO - New exam session started - SessionID: e1af3e3d-e8f2-4a64-a15d-a857715152d8, Topic: Direct Methods for Optimal Control
+2025-02-19 18:41:03,854 - INFO - Initializing exam state machine
+2025-02-19 18:41:03,854 - INFO - Initial state: ExamState.INIT, context initialized
+2025-02-19 18:41:05,438 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-19 18:41:05,445 - INFO - Attempting state transition: ExamState.INIT -> ExamState.TOPIC_SELECTED
+2025-02-19 18:41:05,446 - INFO - State transition successful: from_state=<ExamState.INIT: 'INIT'> to_state=<ExamState.TOPIC_SELECTED: 'TOPIC_SELECTED'> condition='student_ready' metadata=None
+2025-02-19 18:41:05,446 - INFO - Current state updated to: ExamState.TOPIC_SELECTED
+2025-02-19 18:41:05,447 - INFO - Starting new exam with topic: Direct Methods for Optimal Control
+2025-02-19 18:41:05,447 - INFO - Exam session created successfully
+2025-02-19 18:41:05,447 - INFO - Attempting state transition: ExamState.TOPIC_SELECTED -> ExamState.QUESTIONING
+2025-02-19 18:41:05,448 - INFO - State transition successful: from_state=<ExamState.TOPIC_SELECTED: 'TOPIC_SELECTED'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='start_exam()' metadata=None
+2025-02-19 18:41:05,448 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-19 18:41:05,448 - INFO - Transitioned to QUESTIONING state
+2025-02-19 18:41:05,448 - INFO - Retrieved current question: ID=Q1, difficulty=1
+2025-02-19 18:41:05,448 - INFO - Exam successfully initiated - SessionID: e1af3e3d-e8f2-4a64-a15d-a857715152d8
+2025-02-19 18:41:05,449 - INFO - Retrieved current question: ID=Q1, difficulty=1
+2025-02-19 18:41:09,089 - INFO - Answer submitted - SessionID: e1af3e3d-e8f2-4a64-a15d-a857715152d8
+2025-02-19 18:41:10,195 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-19 18:41:10,208 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.CHAT
+2025-02-19 18:41:10,208 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.CHAT: 'CHAT'> condition='casual_conversation' metadata=None
+2025-02-19 18:41:10,208 - INFO - Current state updated to: ExamState.CHAT
+2025-02-19 18:41:10,209 - INFO - Answer processed - SessionID: e1af3e3d-e8f2-4a64-a15d-a857715152d8, State: ExamState.CHAT
+2025-02-19 18:41:18,845 - INFO - Answer submitted - SessionID: e1af3e3d-e8f2-4a64-a15d-a857715152d8
+2025-02-19 18:41:19,872 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-19 18:41:19,878 - INFO - Attempting state transition: ExamState.CHAT -> ExamState.QUESTIONING
+2025-02-19 18:41:19,878 - INFO - State transition successful: from_state=<ExamState.CHAT: 'CHAT'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='return_to_question' metadata=None
+2025-02-19 18:41:19,878 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-19 18:41:19,878 - INFO - Answer processed - SessionID: e1af3e3d-e8f2-4a64-a15d-a857715152d8, State: ExamState.QUESTIONING
+2025-02-19 18:41:26,772 - INFO - Answer submitted - SessionID: e1af3e3d-e8f2-4a64-a15d-a857715152d8
+2025-02-19 18:41:27,704 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-19 18:41:27,709 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.QUESTIONING
+2025-02-19 18:41:27,709 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='good_response/select_next_question' metadata=None
+2025-02-19 18:41:27,709 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-19 18:41:27,709 - INFO - Answer processed - SessionID: e1af3e3d-e8f2-4a64-a15d-a857715152d8, State: ExamState.QUESTIONING
+2025-02-19 18:41:41,540 - INFO - Answer submitted - SessionID: e1af3e3d-e8f2-4a64-a15d-a857715152d8
+2025-02-19 18:41:42,560 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-19 18:41:42,565 - INFO -
+==================================================
+评估新的回答
+==================================================
+2025-02-19 18:41:42,565 - INFO - 问题ID: Q1
+2025-02-19 18:41:42,565 - INFO - 问题: What is the main advantage of using direct collocation in optimal control?
+2025-02-19 18:41:42,566 - INFO - 问题难度: 1
+2025-02-19 18:41:42,566 - INFO - 学生回答: The direct method discretizes or parameterizes the optimal control problem into an optimization prob...
+2025-02-19 18:41:42,566 - INFO - 使用提示次数: 0
+2025-02-19 18:41:42,566 - INFO - 回答用时: 37.12秒
+2025-02-19 18:41:50,872 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-19 18:41:50,889 - INFO -
+评分结果:
+2025-02-19 18:41:50,889 - INFO - 准确性(Accuracy): 50/100
+2025-02-19 18:41:50,889 - INFO - 清晰度(Clarity): 60/100
+2025-02-19 18:41:50,889 - INFO - 理解度(Understanding): 55/100
+2025-02-19 18:41:50,889 - INFO - 总体评价(Level): Fair
+2025-02-19 18:41:50,889 - INFO - 反馈: The answer does not directly address the question about the main advantage of using direct collocation in optimal control. It explains the process but fails to specify the advantages, such as handling non-linear constraints and cost functions. Key elements missing include discussing specific applications where direct collocation excels or how it improves numerical stability. To improve, the student should focus on explicitly stating advantages and provide examples that illustrate the practical benefits of using direct collocation.
+2025-02-19 18:41:50,890 - INFO - 平均分: 55.00/100
+2025-02-19 18:41:50,890 - INFO - ==================================================
+
+2025-02-19 18:41:50,890 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.QUESTIONING
+2025-02-19 18:41:50,890 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.QUESTIONING: 'QUESTIONING'> condition='good_response/select_next_question' metadata=None
+2025-02-19 18:41:50,890 - INFO - Current state updated to: ExamState.QUESTIONING
+2025-02-19 18:41:50,891 - INFO - Answer processed - SessionID: e1af3e3d-e8f2-4a64-a15d-a857715152d8, State: ExamState.QUESTIONING
+2025-02-19 18:41:58,427 - INFO - Answer submitted - SessionID: e1af3e3d-e8f2-4a64-a15d-a857715152d8
+2025-02-19 18:41:59,469 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-19 18:41:59,477 - INFO -
+==================================================
+评估新的回答
+==================================================
+2025-02-19 18:41:59,477 - INFO - 问题ID: Q6
+2025-02-19 18:41:59,478 - INFO - 问题: What is the primary focus of direct methods in optimal control?
+2025-02-19 18:41:59,478 - INFO - 问题难度: 1
+2025-02-19 18:41:59,478 - INFO - 学生回答: EXIT_EXAM...
+2025-02-19 18:41:59,478 - INFO - 使用提示次数: 0
+2025-02-19 18:41:59,478 - INFO - 回答用时: 54.03秒
+2025-02-19 18:42:01,487 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-19 18:42:01,502 - INFO -
+评分结果:
+2025-02-19 18:42:01,502 - INFO - 准确性(Accuracy): 0/100
+2025-02-19 18:42:01,502 - INFO - 清晰度(Clarity): 0/100
+2025-02-19 18:42:01,503 - INFO - 理解度(Understanding): 0/100
+2025-02-19 18:42:01,503 - INFO - 总体评价(Level): Poor
+2025-02-19 18:42:01,503 - INFO - 反馈: The answer 'EXIT_EXAM' does not address the specific question about the primary focus of direct methods in optimal control. Key elements such as the parameterization of control trajectories and the optimization process are completely missing. To improve, the student should focus on understanding and clearly articulating the role of direct methods in optimal control problems, including how constraints and objectives are incorporated into the optimization.
+2025-02-19 18:42:01,503 - INFO - 平均分: 0.00/100
+2025-02-19 18:42:01,503 - INFO - ==================================================
+
+2025-02-19 18:42:01,503 - INFO - Attempting state transition: ExamState.QUESTIONING -> ExamState.EVALUATING
+2025-02-19 18:42:01,503 - INFO - State transition successful: from_state=<ExamState.QUESTIONING: 'QUESTIONING'> to_state=<ExamState.EVALUATING: 'EVALUATING'> condition='questions_completed' metadata=None
+2025-02-19 18:42:01,503 - INFO - Current state updated to: ExamState.EVALUATING
+2025-02-19 18:42:01,503 - INFO - Answer processed - SessionID: e1af3e3d-e8f2-4a64-a15d-a857715152d8, State: ExamState.EVALUATING

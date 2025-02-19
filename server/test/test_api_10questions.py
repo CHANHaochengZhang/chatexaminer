@@ -112,9 +112,7 @@ async def test_exam_evaluation():
                 print("\n已回答所有问题，发送结束考试请求...")
                 end_exam_response = requests.post(
                     f"{BASE_URL}/{session_id}/answer",
-                    json={
-                        "answer": "END_EXAM - I have completed all questions and would like to end the exam now."
-                    },
+                    json={"answer": "END_EXAM"},
                 )
                 print(
                     "结束考试请求响应:",
