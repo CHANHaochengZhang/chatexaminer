@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 from pydantic import BaseModel
 
@@ -9,7 +9,7 @@ class QuestionRecord(BaseModel):
 
     sequence: int
     question: Dict
-    student_response: Dict[str, str]
+    student_response: Dict[str, Union[str, int, float]]
     evaluation: Optional[Dict] = None
     hints: List[Dict] = []
     time_taken: float = 0.0
@@ -45,29 +45,38 @@ class ExamRecord(BaseModel):
     @classmethod
     def create_from_exam_session(cls, exam_service) -> "ExamRecord":
         """从考试会话创建记录"""
+        print(f"Creating exam record...")
+        print(f"Current topic: {exam_service.current_topic}")
+        print(f"State machine topic: {exam_service.state_machine.context.get('topic')}")
+
+        exam_session = exam_service.state_machine.context.get("exam_session")
+        if not exam_session:
+            raise ValueError("No exam session found in state machine context")
+
         # 创建元数据
         metadata = ExamMetadata(
             session_id=exam_service.session_id,
             timestamp=datetime.now().isoformat(),
             student_type=getattr(exam_service, "student_type", "unknown"),
-            topic=exam_service.state_machine.context.get("topic", ""),
+            topic=exam_service.current_topic
+            or exam_service.state_machine.context.get("topic", "unknown"),
             total_duration=exam_service.session_metrics.get("total_time", 0.0),
             state_history=exam_service.state_machine.state_history,
         )
 
         # 创建问题记录列表
         questions_and_answers = []
-        for idx, question in enumerate(exam_service.session.questions):
+        for idx, question in enumerate(exam_session.questions):
             q_id = question["question_id"]
             question_record = QuestionRecord(
                 sequence=idx + 1,
                 question=question,
                 student_response={
-                    "content": exam_service.session.student_answers.get(q_id, ""),
+                    "content": exam_session.student_answers.get(q_id, ""),
                     "timestamp": datetime.now().isoformat(),
                     "hints_requested": exam_service.session_metrics.get("hints_requested", 0),
                 },
-                evaluation=exam_service.session.evaluations.get(q_id),
+                evaluation=exam_session.evaluations.get(q_id),
                 time_taken=exam_service.session_metrics.get(f"time_taken_{q_id}", 0.0),
             )
             questions_and_answers.append(question_record)
@@ -78,26 +87,23 @@ class ExamRecord(BaseModel):
         # 计算统计指标
         statistical_metrics = StatisticalMetrics(
             difficulty_distribution={
-                "easy": len([q for q in exam_service.session.questions if q["difficulty"] <= 2]),
-                "medium": len(
-                    [q for q in exam_service.session.questions if 2 < q["difficulty"] <= 4]
-                ),
-                "hard": len([q for q in exam_service.session.questions if q["difficulty"] > 4]),
+                "easy": len([q for q in exam_session.questions if q["difficulty"] <= 2]),
+                "medium": len([q for q in exam_session.questions if 2 < q["difficulty"] <= 4]),
+                "hard": len([q for q in exam_session.questions if q["difficulty"] > 4]),
             },
             topic_distribution={
-                topic: len([q for q in exam_service.session.questions if q["topic"] == topic])
-                for topic in set(q["topic"] for q in exam_service.session.questions)
+                topic: len([q for q in exam_session.questions if q["topic"] == topic])
+                for topic in set(q["topic"] for q in exam_session.questions)
             },
             performance_trends={
                 "score_progression": [
-                    eval.get("score", 0.0) for eval in exam_service.session.evaluations.values()
+                    eval.get("score", 0.0) for eval in exam_session.evaluations.values()
                 ],
                 "time_progression": [
-                    eval.get("time_taken", 0.0)
-                    for eval in exam_service.session.evaluations.values()
+                    eval.get("time_taken", 0.0) for eval in exam_session.evaluations.values()
                 ],
                 "hints_progression": [
-                    eval.get("hints_used", 0) for eval in exam_service.session.evaluations.values()
+                    eval.get("hints_used", 0) for eval in exam_session.evaluations.values()
                 ],
             },
         )

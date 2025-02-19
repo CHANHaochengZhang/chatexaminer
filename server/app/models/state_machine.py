@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -49,6 +50,7 @@ class ExamStateMachine:
             "subtopic": None,
             "exam_session": None,
         }
+        self.state_history = []  # 添加状态历史记录列表
         logger.info(f"Initial state: {self.current_state}, context initialized")
 
         # Define allowed state transitions and conditions
@@ -124,14 +126,15 @@ class ExamStateMachine:
             logger.error(f"{error_msg}\nValid transitions: {self.get_valid_transitions()}")
             raise ValueError(error_msg)
 
-        # Record transition
-        transition = StateTransition(
-            from_state=self.current_state,
-            to_state=new_state,
-            condition=self._get_transition_condition(new_state),
-            metadata=metadata,
+        # Record state transition
+        self.state_history.append(
+            {
+                "from_state": self.current_state,
+                "to_state": new_state,
+                "timestamp": datetime.now().isoformat(),
+                "metadata": metadata,
+            }
         )
-        logger.info(f"State transition successful: {transition}")
 
         # Update state
         self.current_state = new_state
