@@ -342,6 +342,14 @@ Generate a hint:"""
         # 分析回答
         result = await self._analyze_response(answer, current_state)
 
+        # 如果学生要结束考试，直接处理状态转换
+        if current_state == ExamState.QUESTIONING and result.get("wants_to_end"):
+            print("学生请求结束考试，准备转换到评估状态...")
+            next_state = ExamState(result["next_state"])
+            self.state_machine.transition(next_state)
+            return self.get_next_interaction()
+
+        # 其他情况下继续正常处理答案
         if current_state == ExamState.QUESTIONING:
             # Update questions answered count
             old_count = self.session_metrics["questions_answered"]
@@ -673,6 +681,7 @@ For EVALUATING state:
     def handle_evaluating_state(self):
         """处理评估状态"""
         print(f"HANDLE EVALUATING STATE")
+        print(f"Current topic: {self.current_topic}")  # 添加日志
         if self.state_machine.current_state in ["EVALUATING", "COMPLETED"]:
             print("考试已结束，正在获取评估报告...")
 
