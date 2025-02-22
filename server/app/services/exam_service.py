@@ -1,3 +1,4 @@
+import asyncio
 import json
 import time
 import uuid
@@ -546,32 +547,32 @@ For EVALUATING state:
 
     def _generate_final_evaluation(self) -> Dict:
         """Generate final evaluation report"""
-        print("\n=== 生成最终评估报告 ===")
-        final_eval = self.evaluation_service.get_final_evaluation()
-        print(f"评估服务返回数据: {final_eval}")
+        # 生成最终评估
+        asyncio.run(self.evaluation_service.generate_final_evaluation())
 
-        # Add additional evaluation information
-        result = {
-            "total_score": final_eval.total_score,
-            "topic_coverage": final_eval.topic_coverage,
-            "behavior_score": final_eval.behavior_score,
+        # 获取评估结果
+        evaluation = self.evaluation_service.get_final_evaluation()
+
+        return {
+            "total_score": evaluation.total_score,
+            "final_score": evaluation.final_score,
+            "final_level": evaluation.final_level,
+            "final_feedback": evaluation.final_feedback,
             "question_evaluations": {
                 qid: {
-                    "score": eval.metrics.dict(),
+                    "question": eval.question,
+                    "metrics": eval.metrics.dict(),
                     "feedback": eval.feedback,
+                    "difficulty": eval.difficulty,
                     "time_taken": eval.time_taken,
+                    "level": eval.level,
+                    "raw_response": eval.raw_response,
                 }
-                for qid, eval in final_eval.question_evaluations.items()
+                for qid, eval in evaluation.question_evaluations.items()
             },
-            "session_metrics": {
-                "total_time": time.time() - self.exam_start_time if self.exam_start_time else 0,
-                "questions_answered": self.session_metrics["questions_answered"],
-                "hints_used": self.session_metrics["hints_requested"],
-                "response_consistency": self.session_metrics["response_consistency"],
-            },
+            "topic_coverage": evaluation.topic_coverage,
+            "behavior_score": evaluation.behavior_score,
         }
-        print(f"生成的评估报告: {result}")
-        return result
 
     def get_progress_evaluation(self) -> Dict:
         """获取当前进度评估"""

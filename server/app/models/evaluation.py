@@ -20,6 +20,7 @@ class QuestionEvaluation(BaseModel):
     difficulty: int
     time_taken: float  # in seconds
     raw_response: str
+    level: str = ""  # 添加总体评价字段，默认为 "Fair"
 
 
 class ExamEvaluation(BaseModel):
@@ -28,6 +29,8 @@ class ExamEvaluation(BaseModel):
     topic_coverage: Dict[str, float] = {}
     behavior_score: float = 0.0
     final_feedback: str = ""
+    final_score: float = 0.0  # 考官最终评分
+    final_level: str = ""  # 考官最终评价
 
     def calculate_total_score(self) -> float:
         """Calculate final score based on components"""

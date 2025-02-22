@@ -17,13 +17,15 @@ class EvaluationService:
         self, question: Dict, student_response: str, hints_used: int, time_taken: float
     ) -> QuestionEvaluation:
         """Evaluate a single response"""
-        logger.info(f"\n{'='*50}\n评估新的回答\n{'='*50}")
-        logger.info(f"问题ID: {question['question_id']}")
-        logger.info(f"问题: {question['question']}")
-        logger.info(f"问题难度: {question['difficulty']}")
-        logger.info(f"学生回答: {student_response[:100]}...")  # 只记录前100个字符
-        logger.info(f"使用提示次数: {hints_used}")
-        logger.info(f"回答用时: {time_taken:.2f}秒")
+        logger.info(f"\n{'='*50}\nEvaluate new answer\n{'='*50}")
+        logger.info(f"Question ID: {question['question_id']}")
+        logger.info(f"Question: {question['question']}")
+        logger.info(f"Question Difficulty: {question['difficulty']}")
+        logger.info(
+            f"Student's Answer: {student_response[:100]}..."
+        )  # Only record the first 100 characters
+        logger.info(f"Hints Used: {hints_used}")
+        logger.info(f"Answer Time: {time_taken:.2f} seconds")
 
         # Prepare prompt for GPT evaluation
         prompt = f"""Evaluate this student's answer based on the following criteria:
@@ -92,11 +94,11 @@ Format your response as JSON:
         logger.info(f"总体评价(Level): {eval_result['level']}")
         logger.info(f"反馈: {eval_result['feedback']}")
 
-        # 计算平均分
+        # Calculate average score
         avg_score = (
             eval_result["accuracy"] + eval_result["clarity"] + eval_result["understanding"]
         ) / 3
-        logger.info(f"平均分: {avg_score:.2f}/100")
+        logger.info(f"Average Score: {avg_score:.2f}/100")
         logger.info(f"{'='*50}\n")
 
         # Create evaluation metrics
@@ -117,6 +119,7 @@ Format your response as JSON:
             difficulty=question["difficulty"],
             time_taken=time_taken,
             raw_response=student_response,
+            level=eval_result["level"],
         )
 
         # Update exam evaluation
@@ -134,6 +137,7 @@ Format your response as JSON:
         raw_response: str = "",
         question: str = "",
         topic: str = "",
+        level: str = "",
     ):
         """Add question evaluation"""
         print(
@@ -148,6 +152,7 @@ Format your response as JSON:
             difficulty=difficulty,
             feedback=feedback,
             raw_response=raw_response,
+            level=level,
         )
 
         # Update total score
@@ -161,14 +166,14 @@ Format your response as JSON:
             # Apply difficulty weight
             difficulty_weights = {1: 0.7, 2: 0.85, 3: 1.0, 4: 1.2, 5: 1.5}
 
-            # 应用难度权重
+            # Apply difficulty weight
             question_score = base_score * difficulty_weights[eval.difficulty]
 
-            # Deduct points for hints used (每个提示扣除基础分数的5%)
+            # Deduct points for hints used (each hint deducts 5% of base score)
             hint_penalty = (base_score * 0.05) * eval.metrics.hints_used
             question_score -= hint_penalty
 
-            # 确保分数不会低于0或超过100
+            # Ensure score is not below 0 or above 100
             question_score = max(0, min(100, question_score))
 
             total_score += question_score
@@ -192,6 +197,93 @@ Format your response as JSON:
             * (1 - min(1, metrics["avg_time_per_question"] / 300))  # Time impact (max 300s)
         )
         self.current_evaluation.behavior_score = behavior_score * 100  # Convert to percentage
+
+    async def generate_final_evaluation(self) -> None:
+        """Generate final evaluation by reviewing all question evaluations"""
+        # Prepare evaluation data for all questions
+        evaluation_history = []
+        for q_eval in self.current_evaluation.question_evaluations.values():
+            evaluation_history.append(
+                {
+                    "question": q_eval.question,
+                    "student_response": q_eval.raw_response,
+                    "metrics": {
+                        "accuracy": q_eval.metrics.accuracy,
+                        "clarity": q_eval.metrics.clarity,
+                        "understanding": q_eval.metrics.understanding,
+                        "hints_used": q_eval.metrics.hints_used,
+                    },
+                    "feedback": q_eval.feedback,
+                    "level": q_eval.level,
+                    "difficulty": q_eval.difficulty,
+                }
+            )
+
+        # Prepare prompt
+        prompt = f"""As a professional oral examiner, please provide a comprehensive final evaluation based on the student's responses.
+
+Please analyze the following aspects:
+1. Overall Performance
+   - Evaluate the student's mastery of concepts
+   - Assess their ability to express ideas clearly
+   - Consider their depth of understanding
+   - Note any patterns in their responses
+
+2. Knowledge Assessment
+   - Accuracy of technical concepts
+   - Completeness of explanations
+   - Logical coherence of answers
+   - Use of appropriate terminology
+
+3. Response Quality
+   - Clarity and organization of thoughts
+   - Ability to handle questions of varying difficulty
+   - Consistency across different topics
+   - Response to hints when provided
+
+Based on the evaluation history below, please provide:
+1. A final score (0-100)
+2. An overall evaluation level (Excellent/Good/Fair/Poor)
+3. Detailed feedback including strengths and areas for improvement
+
+Evaluation History:
+{json.dumps(evaluation_history, indent=2)}
+
+Please format your response as JSON with the following structure:
+{{
+    "final_score": float,
+    "final_level": "string",
+    "final_feedback": "string"
+}}
+"""
+
+        # Get evaluation from GPT
+        response = openai.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are an expert oral examiner providing final evaluation.",
+                },
+                {"role": "user", "content": prompt},
+            ],
+            response_format={"type": "json_object"},
+        )
+
+        # Parse response
+        final_eval = json.loads(response.choices[0].message.content)
+
+        # Update evaluation result
+        self.current_evaluation.final_score = final_eval["final_score"]
+        self.current_evaluation.final_level = final_eval["final_level"]
+        self.current_evaluation.final_feedback = final_eval["final_feedback"]
+
+        # Record final evaluation result
+        logger.info("\nFinal Evaluation Results:")
+        logger.info(f"Final Score: {final_eval['final_score']}/100")
+        logger.info(f"Overall Level: {final_eval['final_level']}")
+        logger.info(f"Detailed Feedback: {final_eval['final_feedback']}")
+        logger.info(f"{'='*50}\n")
 
     def get_final_evaluation(self) -> ExamEvaluation:
         """Get final evaluation result"""
