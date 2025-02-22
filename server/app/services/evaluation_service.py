@@ -110,6 +110,8 @@ Format your response as JSON:
         # Create question evaluation
         evaluation = QuestionEvaluation(
             question_id=question["question_id"],
+            question=question["question"],
+            topic=question["topic"],
             metrics=metrics,
             feedback=eval_result["feedback"],
             difficulty=question["difficulty"],
@@ -129,6 +131,9 @@ Format your response as JSON:
         time_taken: float,
         difficulty: int,
         feedback: str = "",
+        raw_response: str = "",
+        question: str = "",
+        topic: str = "",
     ):
         """Add question evaluation"""
         print(
@@ -136,11 +141,13 @@ Format your response as JSON:
         )
         self.current_evaluation.question_evaluations[question_id] = QuestionEvaluation(
             question_id=question_id,
+            question=question,
+            topic=topic,
             metrics=metrics,
             time_taken=time_taken,
             difficulty=difficulty,
             feedback=feedback,
-            raw_response="",
+            raw_response=raw_response,
         )
 
         # Update total score

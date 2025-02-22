@@ -13,6 +13,8 @@ class EvaluationMetrics(BaseModel):
 
 class QuestionEvaluation(BaseModel):
     question_id: str
+    question: str
+    topic: str
     metrics: EvaluationMetrics
     feedback: str
     difficulty: int

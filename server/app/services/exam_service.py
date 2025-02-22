@@ -371,13 +371,16 @@ Generate a hint:"""
                         time_taken=time_taken,
                     )
 
-                    # Update evaluation service with the AI evaluation result
+                    # 记录评估结果
                     self.evaluation_service.add_question_evaluation(
-                        question_to_evaluate["question_id"],
-                        evaluation.metrics,
-                        time_taken,
-                        question_to_evaluate["difficulty"],
-                        evaluation.feedback,
+                        question_id=question_to_evaluate["question_id"],
+                        question=question_to_evaluate["question"],
+                        topic=question_to_evaluate["topic"],
+                        metrics=evaluation.metrics,
+                        time_taken=time_taken,
+                        difficulty=question_to_evaluate["difficulty"],
+                        feedback=evaluation.feedback,
+                        raw_response=answer,  # 添加学生的回答
                     )
 
         if current_state == ExamState.CHAT:
