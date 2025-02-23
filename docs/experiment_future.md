@@ -17,34 +17,135 @@
 每个 AI 学生模型包含以下核心特征：
 
 1. **知识覆盖特征**
-   - 优秀学生：90% 知识点覆盖率
-   - 中等学生：70% 知识点覆盖率
-   - 较差学生：40% 知识点覆盖率
+   ```mermaid
+   graph TD
+       subgraph 知识获取模式
+           A[优秀学生] --> A1[90%知识覆盖]
+           A --> A2[完全利用RAG上下文]
+           A --> A3[准确理解知识点]
 
-2. **表达特征**
-   - 优秀学生：专业术语运用准确，逻辑清晰，举例恰当
-   - 中等学生：基本概念正确，表达简单，例子不够精确
-   - 较差学生：概念模糊，逻辑混乱，例子不当或缺失
+           B[中等学生] --> B1[70%知识覆盖]
+           B --> B2[利用50%上下文]
+           B --> B3[部分理解知识点]
 
-3. **交互行为**
-   - 优秀学生：很少需要提示（10%），回答详尽
-   - 中等学生：偶尔需要提示（30%），回答基本完整
-   - 较差学生：经常需要提示（60%），回答不完整
+           C[较差学生] --> C1[40%知识覆盖]
+           C --> C2[40%正确上下文]
+           C --> C3[60%错误上下文]
 
-### 3.2 回答生成机制
+           style A1 fill:#9f9,stroke:#333
+           style B1 fill:#ff9,stroke:#333
+           style C1 fill:#f99,stroke:#333
+       end
+   ```
+
+2. **交互行为特征**
+   ```mermaid
+   graph TD
+       subgraph 提示使用模式
+           D[优秀学生] --> D1[10%提示需求]
+           D --> D2[完整回答]
+           D --> D3[深入解释]
+
+           E[中等学生] --> E1[30%提示需求]
+           E --> E2[基本完整回答]
+           E --> E3[简单解释]
+
+           F[较差学生] --> F1[60%提示需求]
+           F --> F2[不完整回答]
+           F --> F3[模糊解释]
+
+           style D1 fill:#9f9,stroke:#333
+           style E1 fill:#ff9,stroke:#333
+           style F1 fill:#f99,stroke:#333
+       end
+   ```
+
+### 3.2 学生模型实现
 
 ```python
 class AIStudent:
     def __init__(self, level: str):
         self.level = level
-        self.config = self._get_level_config()
+        self.config = {
+            "优秀": {
+                "knowledge_coverage": 0.9,
+                "context_usage": 1.0,
+                "hint_probability": 0.1,
+                "incorrect_context_ratio": 0.0
+            },
+            "中等": {
+                "knowledge_coverage": 0.7,
+                "context_usage": 0.5,
+                "hint_probability": 0.3,
+                "incorrect_context_ratio": 0.2
+            },
+            "较差": {
+                "knowledge_coverage": 0.4,
+                "context_usage": 0.4,
+                "hint_probability": 0.6,
+                "incorrect_context_ratio": 0.6
+            }
+        }[level]
 
-    def generate_answer(self, question: dict) -> str:
-        # 根据学生水平和问题特征生成回答
-        knowledge_coverage = self._apply_knowledge_coverage()
-        expression_quality = self._apply_expression_pattern()
-        return self._compose_answer(question, knowledge_coverage, expression_quality)
+    def generate_answer(self, question: dict, context: list) -> str:
+        # 根据知识覆盖率选择上下文
+        selected_context = self._select_context(context)
+        # 根据学生水平生成回答
+        return self._compose_answer(question, selected_context)
+
+    def _select_context(self, context: list) -> list:
+        # 根据配置选择和使用上下文
+        context_amount = int(len(context) * self.config["context_usage"])
+        selected = context[:context_amount]
+
+        # 对于较差学生，添加错误上下文
+        if self.config["incorrect_context_ratio"] > 0:
+            incorrect_amount = int(len(context) * self.config["incorrect_context_ratio"])
+            incorrect_context = generate_incorrect_context(incorrect_amount)
+            selected.extend(incorrect_context)
+
+        return selected
+
+    def needs_hint(self) -> bool:
+        return random.random() < self.config["hint_probability"]
 ```
+
+### 3.3 知识获取特征
+
+1. **优秀学生模型**
+   - 90% 知识点覆盖率
+   - 完全利用 RAG 系统提供的上下文
+   - 能准确理解和运用知识点
+   - 回答完整且逻辑清晰
+
+2. **中等学生模型**
+   - 70% 知识点覆盖率
+   - 利用 50% 的上下文信息
+   - 部分理解核心知识点
+   - 回答基本完整但可能存在疏漏
+
+3. **较差学生模型**
+   - 40% 知识点覆盖率
+   - 仅使用 40% 正确上下文
+   - 引入 60% 错误或不相关上下文
+   - 回答不完整且可能存在误解
+
+### 3.4 交互行为特征
+
+1. **提示使用频率**
+   - 优秀学生：10% 提示请求率
+   - 中等学生：30% 提示请求率
+   - 较差学生：60% 提示请求率
+
+2. **回答完整度**
+   - 优秀学生：完整回答，包含深入解释
+   - 中等学生：基本完整，简单解释
+   - 较差学生：不完整，解释模糊
+
+3. **知识应用**
+   - 优秀学生：能举一反三，联系实际
+   - 中等学生：基本应用，例子简单
+   - 较差学生：机械应用，例子不当
 
 ## 4. 实验流程
 
@@ -440,27 +541,49 @@ def visualize_results(results: Dict):
 ```mermaid
 graph TB
     subgraph 准备阶段
-        A[初始化实验环境] --> B[配置AI学生模型]
-        B --> C[加载问题库]
-        C --> D[设置评估指标]
+        A1[知识库准备] --> A2[AI学生配置]
+        A2 --> A3[评估指标设置]
+        A3 --> A4[实验参数初始化]
     end
 
     subgraph 执行阶段
-        E[开始考试会话] --> F[AI学生回答问题]
-        F --> G{评估回答}
-        G -->|继续| H[动态调整难度]
-        H --> F
-        G -->|完成| I[生成评估报告]
+        B1[启动考试会话] --> B2[AI学生回答]
+        B2 --> B3[系统评估]
+        B3 --> B4{继续考试?}
+        B4 -->|是| B2
+        B4 -->|否| B5[生成评估报告]
     end
 
     subgraph 分析阶段
-        J[收集实验数据] --> K[统计分析]
-        K --> L[生成实验报告]
-        L --> M[验证系统有效性]
+        C1[数据收集] --> C2[统计分析]
+        C2 --> C3[结果验证]
+        C3 --> C4[报告生成]
     end
 
-    D --> E
-    I --> J
+    A4 --> B1
+    B5 --> C1
+```
+
+### AI 学生模型构成
+
+```mermaid
+graph TD
+    subgraph AI学生模型
+        A[知识特征] --> A1[优秀生<br/>90%覆盖<br/>100%正确上下文]
+        A --> A2[中等生<br/>70%覆盖<br/>50%正确上下文]
+        A --> A3[较差生<br/>40%覆盖<br/>40%正确上下文]
+
+        B[交互特征] --> B1[优秀生<br/>10%提示<br/>完整回答]
+        B --> B2[中等生<br/>30%提示<br/>基本完整]
+        B --> B3[较差生<br/>60%提示<br/>不完整]
+
+        style A1 fill:#9f9,stroke:#333
+        style A2 fill:#ff9,stroke:#333
+        style A3 fill:#f99,stroke:#333
+        style B1 fill:#9f9,stroke:#333
+        style B2 fill:#ff9,stroke:#333
+        style B3 fill:#f99,stroke:#333
+    end
 ```
 
 ## 实验组成部分说明
