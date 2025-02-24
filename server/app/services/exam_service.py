@@ -545,10 +545,10 @@ For EVALUATING state:
         elif avg_performance < 60:
             self.state_machine.decrease_difficulty()
 
-    def _generate_final_evaluation(self) -> Dict:
+    async def _generate_final_evaluation(self) -> Dict:
         """Generate final evaluation report"""
         # 生成最终评估
-        asyncio.run(self.evaluation_service.generate_final_evaluation())
+        await self.evaluation_service.generate_final_evaluation()
 
         # 获取评估结果
         evaluation = self.evaluation_service.get_final_evaluation()

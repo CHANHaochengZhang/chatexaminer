@@ -123,8 +123,14 @@ class ExamRecord(BaseModel):
         # 确保目录存在
         os.makedirs(directory, exist_ok=True)
 
-        # 生成文件名
-        filename = f"{directory}/{self.exam_metadata.session_id}.json"
+        # 从元数据中获取时间戳并格式化
+        exam_time = datetime.fromisoformat(self.exam_metadata.timestamp).strftime("%m%d_%H%M%S")
+
+        # 获取 final level
+        final_level = self.final_evaluation.get("final_level", "unknown")
+
+        # 生成文件名：时间_等级_会话ID
+        filename = f"{directory}/{exam_time}_{final_level}_{self.exam_metadata.session_id}.json"
 
         # 保存为JSON文件
         with open(filename, "w", encoding="utf-8") as f:

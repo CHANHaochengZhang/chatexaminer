@@ -153,7 +153,7 @@ async def get_evaluation(session_id: str) -> ExamResponse:
         raise HTTPException(status_code=404, detail="Session not found")
 
     current_state = exam_service.state_machine.get_current_state()
-    if current_state != ExamState.COMPLETED or current_state != ExamState.EVALUATING:
+    if current_state != ExamState.COMPLETED:
         logger.info(
             f"Exam not completed, returning progress - SessionID: {session_id}, State: {current_state}"
         )
@@ -164,7 +164,7 @@ async def get_evaluation(session_id: str) -> ExamResponse:
             data=progress_data,
         )
 
-    evaluation = exam_service._generate_final_evaluation()
+    evaluation = await exam_service._generate_final_evaluation()
     logger.info(
         f"Final evaluation generated - SessionID: {session_id}, Total Score: {evaluation.get('total_score', 0)}"
     )
