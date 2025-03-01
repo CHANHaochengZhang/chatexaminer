@@ -536,6 +536,174 @@ def visualize_results(results: Dict):
    - 撰写分析报告
    - 提供改进建议
 
+## 10. 考试记录系统
+
+### 10.1 记录功能概述
+
+考试记录系统是实验设计中的核心组件，它负责详细记录AI学生与考试系统的全过程交互数据，为后续分析提供完整数据支持。主要功能包括：
+
+1. **考试元数据记录**
+   - 会话标识符（session_id）与时间戳
+   - 考试主题与学生类型
+   - 考试总时长与状态转换历史
+
+2. **问题与回答记录**
+   - 问题内容、难度与序列信息
+   - 学生回答内容与时间戳
+   - 提示使用情况与回答时间
+
+3. **评估结果记录**
+   - 每个问题的详细评估指标
+   - 最终总评分与等级
+   - 详细反馈内容
+
+4. **统计指标生成**
+   - 难度分布统计
+   - 主题覆盖分析
+   - 表现趋势数据
+
+### 10.2 技术实现
+
+记录系统基于`ExamRecord`模型实现，主要包含以下核心组件：
+
+```python
+class ExamRecord(BaseModel):
+    """完整的考试记录"""
+
+    exam_metadata: ExamMetadata  # 考试元数据
+    questions_and_answers: List[QuestionRecord]  # 问题与回答记录
+    final_evaluation: Dict  # 最终评估结果
+    statistical_metrics: StatisticalMetrics  # 统计指标
+
+    @classmethod
+    def create_from_exam_session(cls, exam_service) -> "ExamRecord":
+        """从考试会话创建完整记录"""
+        # 从考试服务中提取所有必要信息
+        # 创建元数据、问题记录、评估结果和统计指标
+        pass
+
+    def save_to_file(self, directory: str = "exam_records"):
+        """将记录保存为JSON文件"""
+        # 确保目录存在
+        # 格式化时间戳
+        # 获取评估等级
+        # 生成文件名：时间_等级_会话ID
+        # 保存为JSON格式
+        pass
+```
+
+记录系统的文件命名采用"时间_评估等级_会话ID"的格式，便于直观识别考试时间和结果等级。例如：`20240315_143022_Excellent_550e8400-e29b-41d4-a716-446655440000.json`。
+
+### 10.3 数据结构设计
+
+记录系统的核心数据结构如下：
+
+```mermaid
+classDiagram
+    ExamRecord *-- ExamMetadata
+    ExamRecord *-- QuestionRecord
+    ExamRecord *-- StatisticalMetrics
+
+    class ExamRecord {
+        +ExamMetadata exam_metadata
+        +List[QuestionRecord] questions_and_answers
+        +Dict final_evaluation
+        +StatisticalMetrics statistical_metrics
+        +create_from_exam_session()
+        +save_to_file()
+        +load_from_file()
+    }
+
+    class ExamMetadata {
+        +String session_id
+        +String timestamp
+        +String student_type
+        +String topic
+        +float total_duration
+        +List state_history
+    }
+
+    class QuestionRecord {
+        +int sequence
+        +Dict question
+        +Dict student_response
+        +Dict evaluation
+        +List hints
+        +float time_taken
+    }
+
+    class StatisticalMetrics {
+        +Dict difficulty_distribution
+        +Dict topic_distribution
+        +Dict performance_trends
+    }
+```
+
+### 10.4 实验应用
+
+记录系统在AI学生实验中的应用流程：
+
+1. **数据收集阶段**
+   - 在考试完成后自动生成记录
+   - 记录AI学生的各级行为特征
+   - 保存完整的交互历史
+
+2. **数据分析阶段**
+   - 从记录文件加载数据
+   - 对比不同类型AI学生的表现特征
+   - 生成统计图表和分析结果
+
+3. **模型验证阶段**
+   - 验证系统对不同类型学生的区分能力
+   - 分析评估一致性和准确性
+   - 优化评估算法和标准
+
+### 10.5 实现代码示例
+
+```python
+# 创建考试记录的实现示例
+def create_experiment_record(experiment_results):
+    records = []
+    for student_type, results in experiment_results.items():
+        for session in results:
+            # 从考试服务创建记录
+            record = ExamRecord.create_from_exam_session(session.exam_service)
+
+            # 保存到文件
+            filename = record.save_to_file(f"experiment_records/{student_type}")
+            records.append((student_type, filename))
+
+    return records
+
+# 加载并分析记录的示例
+def analyze_experiment_records(record_files):
+    results = {
+        "优秀": [],
+        "中等": [],
+        "较差": []
+    }
+
+    for student_type, files in record_files.items():
+        for file in files:
+            # 加载记录
+            record = ExamRecord.load_from_file(file)
+
+            # 提取分析数据
+            analysis = {
+                "总分": record.final_evaluation["total_score"],
+                "最终等级": record.final_evaluation["final_level"],
+                "回答时间": [q.time_taken for q in record.questions_and_answers],
+                "提示使用": sum(len(q.hints) for q in record.questions_and_answers),
+                "难度分布": record.statistical_metrics.difficulty_distribution
+            }
+
+            results[student_type].append(analysis)
+
+    return results
+```
+
+记录系统为实验提供了完整、结构化的数据支持，确保实验结果可重现、可验证，同时便于进行深入的统计分析和模式识别。通过文件名中包含时间和评估等级，研究人员可以快速筛选和组织实验数据。
+
 ## 实验流程概览
 
 ```mermaid
