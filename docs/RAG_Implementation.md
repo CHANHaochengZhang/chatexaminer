@@ -47,6 +47,155 @@ flowchart TD
     end
 ```
 
+## 知识库构建详解
+
+### 1. PDF文档处理与分块
+
+系统从PDF课程材料中提取文本，并进行智能分块以构建知识库：
+
+```python
+def clean_text(text: str) -> str:
+    """Clean text"""
+    # Only normalize whitespace, keep original content
+    text = re.sub(r"\s+", " ", text)  # Normalize whitespace
+    return text.strip()
+
+
+def extract_and_chunk_pdfs(
+    pdf_directory: Path = PDF_DIR,
+) -> List[tuple[DocumentMetadata, str]]:
+    """
+    Extract text from PDFs with intelligent chunking
+
+    Args:
+        pdf_directory: Directory containing PDF files
+
+    Returns:
+        List of tuples containing metadata and text chunks
+    """
+    documents = []
+
+    # Initialize text splitter with optimal parameters
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=1000,
+        chunk_overlap=200,
+        length_function=len,
+        separators=["\n\n", "\n", ".", "!", "?", ";", " ", ""],
+    )
+
+    pdf_directory.mkdir(parents=True, exist_ok=True)
+
+    for filename in os.listdir(pdf_directory):
+        if not filename.endswith(".pdf"):
+            continue
+
+        file_path = pdf_directory / filename
+        try:
+            # Process PDF using PyMuPDF (fitz)
+            with fitz.open(file_path) as doc:
+                for page_num, page in enumerate(doc):
+                    # Extract text from page
+                    text = page.get_text()
+
+                    # Clean and preprocess text
+                    cleaned_text = clean_text(text)
+                    if not cleaned_text.strip():
+                        continue
+
+                    # langchain text chunking
+                    chunks = text_splitter.split_text(cleaned_text)
+
+                    # Process each text chunk
+                    for chunk_idx, chunk in enumerate(chunks):
+                        # Skip chunks that are too short
+                        if len(chunk.split()) < 20:  # Minimum 20 words per chunk
+                            continue
+
+                        metadata = DocumentMetadata(
+                            filename=filename,
+                            page_number=page_num + 1,
+                            chunk_index=chunk_idx,
+                        )
+                        documents.append((metadata, chunk))
+
+        except Exception as e:
+            print(f"Error processing {filename}: {str(e)}")
+            continue
+
+    return documents
+```
+
+分块策略特点：
+1. **固定大小的块**：每块约1000字符，确保语义单元的完整性
+2. **块间重叠**：相邻块重叠200字符，避免关键信息被分割
+3. **自然边界分割**：优先在段落、句子等自然边界处分割文本
+4. **最小内容保证**：过滤少于20个词的短块，确保内容丰富性
+5. **元数据跟踪**：每个块都附带文件名、页码和块索引，便于溯源
+
+### 2. 文档向量化
+
+系统使用预训练的Sentence Transformer模型将文本转换为向量表示：
+
+```python
+def vectorize_documents(documents):
+    """Vectorize documents with metadata"""
+    vectors = []
+    for metadata, text in documents:
+        embedding = model.encode(text, show_progress_bar=True)
+        vectors.append((metadata, text, embedding))
+    return vectors
+
+# Load pre-trained embedding model (e.g., SBERT)
+model = SentenceTransformer("all-MiniLM-L6-v2")
+
+# Vectorize documents
+document_vectors = vectorize_documents(pdf_documents)
+
+# Create vector database
+db = InMemoryExactNNVectorDB[KnowledgeDoc](workspace="./vectorDB_workspace")
+
+# Create list of all documents
+doc_list = [
+    KnowledgeDoc(text=text, embedding=np.array(embedding), metadata=metadata)
+    for metadata, text, embedding in document_vectors
+]
+
+# Index documents into database
+db.index(inputs=DocList[KnowledgeDoc](doc_list))
+```
+
+向量化过程特点：
+1. **高效语义嵌入**：使用all-MiniLM-L6-v2模型，它平衡了性能和计算效率
+2. **元数据保留**：在向量化过程中保留文档的元数据信息
+3. **内存向量数据库**：使用InMemoryExactNNVectorDB存储向量，支持高效的最近邻搜索
+4. **结构化存储**：使用KnowledgeDoc结构体统一存储文本、向量和元数据
+
+### 3. 语义搜索实现
+
+系统提供了语义搜索功能，用于检索与查询语义相关的文档：
+
+```python
+def semantic_search(query_text: str, db, model, top_k=3):
+    """Perform semantic search with metadata in results"""
+    processed_query = clean_text(query_text)
+
+    query_embedding = model.encode(processed_query)
+    query_doc = KnowledgeDoc(
+        text=processed_query,
+        embedding=query_embedding,
+        metadata=DocumentMetadata(filename="query", page_number=0, chunk_index=0),
+    )
+
+    results = db.search(inputs=DocList[KnowledgeDoc]([query_doc]), limit=top_k)
+    return results
+```
+
+搜索特点：
+1. **查询向量化**：将查询文本转换为与文档相同空间的向量表示
+2. **语义匹配**：基于向量相似度而非关键词匹配进行检索
+3. **灵活的结果数量**：可自定义返回的top_k结果数量
+4. **元数据关联**：检索结果包含完整的元数据，便于溯源和后续处理
+
 ## ChatExaminer中的RAG架构
 
 ### 1. 核心组件
@@ -187,6 +336,294 @@ graph TD
     A4 -.-> B3
     A4 -.-> C3
 ```
+
+## RAG在问题生成中的实现细节
+
+### 1. 问题生成流程详解
+
+问题生成是ChatExaminer中RAG技术的核心应用，它通过多阶段处理实现高质量、与课程内容紧密对齐的考试问题：
+
+```mermaid
+flowchart TD
+    A[选择考试主题] --> B[广泛主题检索]
+    B --> C[选择子主题]
+    C --> D[聚焦内容检索]
+    D --> E[生成问题提示]
+    E --> F[LLM生成问题]
+    F --> G[生成参考答案]
+    G --> H[存储问题与答案]
+
+    subgraph 主题选择阶段
+    A --> B --> C
+    end
+
+    subgraph 内容增强阶段
+    C --> D
+    end
+
+    subgraph 问题生成阶段
+    D --> E --> F --> G --> H
+    end
+```
+
+#### 步骤1: 广泛主题检索
+
+首先，系统基于用户选择的主题进行广泛的知识库检索，为后续提问奠定知识基础：
+
+```python
+def get_broad_context(self, topic: str, top_k: int = 15) -> List[Dict[str, Any]]:
+    """First-round search: Get broad context related to the topic"""
+    # Vectorize the topic
+    topic_embedding = model.encode(topic)
+    query_doc = KnowledgeDoc(
+        text=topic,
+        embedding=topic_embedding,
+        metadata=DocumentMetadata(filename="query", page_number=0, chunk_index=0),
+    )
+
+    # Perform vector search
+    results = db.search(
+        inputs=DocList[KnowledgeDoc]([query_doc]),
+        limit=top_k,
+    )
+
+    # Extract result texts and metadata
+    broad_contexts = [
+        {"text": match.text, "metadata": match.metadata} for match in results[0].matches
+    ]
+
+    # Filter to ensure contexts are sufficiently different
+    filtered_contexts = []
+    used_texts = set()
+
+    for context in broad_contexts:
+        # Use first 100 characters as a unique identifier
+        text_key = context["text"][:100]
+        if text_key not in used_texts:
+            used_texts.add(text_key)
+            filtered_contexts.append(context)
+            # Stop when we have enough subtopics
+            if len(filtered_contexts) >= num_subtopics:
+                break
+
+    return filtered_contexts
+```
+
+#### 步骤2: 聚焦内容检索
+
+针对选定的子主题，系统进行更精确的检索，获取连续、相关的内容：
+
+```python
+def focused_search(self, selected_context: Dict[str, Any], top_k: int = 3) -> List[Dict[str, Any]]:
+    """Second-round search: Focused search based on selected content ensuring continuity"""
+    # Vectorize the selected context
+    context_embedding = model.encode(selected_context["text"])
+    query_doc = KnowledgeDoc(
+        text=selected_context["text"],
+        embedding=context_embedding,
+        metadata=DocumentMetadata(filename="query", page_number=0, chunk_index=0),
+    )
+
+    # Get initial results
+    results = db.search(
+        inputs=DocList[KnowledgeDoc]([query_doc]),
+        limit=top_k * 2,  # Get more initial results to find continuous blocks
+    )
+
+    # Group contexts by file and page
+    grouped_contexts = {}
+    for match in results[0].matches:
+        key = (match.metadata.filename, match.metadata.page_number)
+        if key not in grouped_contexts:
+            grouped_contexts[key] = []
+        grouped_contexts[key].append(
+            {
+                "text": match.text,
+                "metadata": match.metadata,
+                "chunk_index": match.metadata.chunk_index,
+            }
+        )
+
+    # Find continuous blocks
+    continuous_contexts = []
+    for contexts in grouped_contexts.values():
+        # Sort by chunk index
+        contexts.sort(key=lambda x: x["chunk_index"])
+
+        # Find continuous sequences
+        current_sequence = []
+        for context in contexts:
+            if not current_sequence:
+                current_sequence.append(context)
+            elif context["chunk_index"] == current_sequence[-1]["chunk_index"] + 1:
+                current_sequence.append(context)
+            # When sequence breaks, store existing sequence and start new one
+            else:
+                if len(current_sequence) > 1:  # Only keep sequences of length > 1
+                    continuous_contexts.append(current_sequence)
+                current_sequence = [context]
+
+    # Choose longest continuous sequence
+    if continuous_contexts:
+        longest_sequence = max(continuous_contexts, key=len)
+        return longest_sequence[:top_k]  # Limit returned amount
+
+    # If no continuous sequences, return original results
+    return [
+        {"text": match.text, "metadata": match.metadata}
+        for match in results[0].matches[:top_k]
+    ]
+```
+
+#### 步骤3: 问题生成
+
+基于检索到的内容，系统构建专用提示并调用LLM生成考试问题：
+
+```python
+def generate_question(
+    self, topic: str, subtopic: str, difficulty: int, context: Dict[str, Any]
+) -> ExamQuestion:
+    """Generate a single question"""
+    # Get existing questions for the same subtopic and different difficulty
+    existing_questions = [
+        q
+        for q in self.questions.values()
+        if q.subtopic == subtopic and q.difficulty != difficulty
+    ]
+
+    # Build prompt for existing questions
+    existing_questions_prompt = ""
+    if existing_questions:
+        existing_questions_prompt = "\nExisting questions for this subtopic:\n"
+        for q in existing_questions:
+            existing_questions_prompt += f"- Difficulty {q.difficulty}/5: {q.question}\n"
+
+    # Add filename and page number information
+    source_info = f"Source: {context['metadata'].filename}, Page {context['metadata'].page_number}"
+
+    # Retrieve focused contexts
+    focused_contexts = self.focused_search(context)
+    context_text = "\n".join(c["text"] for c in focused_contexts)
+
+    # Enhanced prompt for specific question generation
+    prompt = f"""Based on the following specific context, generate a precise and focused exam question related to the topic '{topic}'.
+
+Topic: {topic}
+Difficulty: {difficulty}/5
+Selected Content: {context['text'][:200]}...
+
+{existing_questions_prompt}
+Requirements:
+1. Focus on a single, specific concept, formula, or relationship related to the topic
+2. Question must be answerable using ONLY the provided context
+3. Maximum length: 15 words
+4. Question difficulty should be distinct from existing questions:
+   - Difficulty 1: Basic recall and simple understanding
+   - Difficulty 2: Application of concepts
+   - Difficulty 3: Analysis and relationships
+   - Difficulty 4: Evaluation and comparison
+   - Difficulty 5: Synthesis and deep understanding
+5. Instead of asking "What is X?", consider:
+   - Difficulty 1-2: Components, parameters, basic relationships
+   - Difficulty 3: Mathematical meanings, specific conditions
+   - Difficulty 4: Compare and contrast, advantages/disadvantages
+   - Difficulty 5: Complex relationships, theoretical implications
+
+Context for reference:
+{context_text}
+
+Generate a focused question that tests understanding at the appropriate difficulty level."""
+
+    # Generate question using GPT-4
+    response = client.chat.completions.create(
+        model="gpt-4o-mini-2024-07-18",
+        messages=[
+            {
+                "role": "system",
+                "content": "You are an expert at generating precise, focused exam questions. Avoid broad, open-ended questions."
+            },
+            {
+                "role": "user",
+                "content": prompt,
+            },
+        ],
+        temperature=0.7,
+    )
+
+    question_text = response.choices[0].message.content.strip()
+
+    # Generate reference answers... (omitted)
+
+    # Create question object and save
+    question = ExamQuestion(
+        question_id=f"Q{len(self.questions) + 1}",
+        question=question_text,
+        context=[c["text"] for c in focused_contexts],
+        difficulty=difficulty,
+        topic=topic,
+        subtopic=subtopic,
+        context_metadata=[
+            {
+                "filename": c["metadata"].filename,
+                "page_number": c["metadata"].page_number,
+                "chunk_index": c["metadata"].chunk_index,
+            }
+            for c in focused_contexts
+        ],
+        expected_answers=expected_answers,  # Contains reference answers
+    )
+
+    self.questions[question.question_id] = question
+    self.save_questions()
+
+    return question
+```
+
+### 2. 问题生成的创新特点
+
+ChatExaminer的RAG增强问题生成具有以下创新特点：
+
+#### 多难度分层生成
+
+系统能根据指定难度生成不同层次的问题，并在提示中明确定义难度级别：
+- **难度1**：基本概念回忆与简单理解
+- **难度2**：概念应用和基本解释
+- **难度3**：概念间关系分析和条件应用
+- **难度4**：不同概念的评估与比较
+- **难度5**：综合应用和深度理解
+
+#### 课程内容对齐保证
+
+系统通过多层检索策略确保问题紧密对齐课程内容：
+1. 广泛主题检索：确定相关文档
+2. 子主题选择：确保覆盖主题的不同方面
+3. 聚焦内容检索：获取连续、详细的内容块
+4. 上下文融合提示：确保问题基于实际教材生成
+
+#### 问题差异化保证
+
+系统采用多种策略确保生成的问题具有差异性：
+1. 记录已生成问题，避免重复
+2. 在提示中包含已有问题作为参考
+3. 对文本片段进行多样化筛选
+4. 通过文本特征提取引导不同问题形式
+
+#### 参考答案生成
+
+系统不仅生成问题，还通过RAG生成多级参考答案，用于后续评估：
+1. **正确答案**：包含所有关键点的完整回答
+2. **部分正确**：包含一些正确点但缺少关键细节的回答
+3. **错误答案**：展示常见误解的回答
+
+#### 可溯源性设计
+
+每个生成的问题都保留完整的溯源信息：
+1. 来源文档名称
+2. 页码和块索引
+3. 使用的完整上下文
+4. 问题生成提示
+
+这种设计使教师能够追踪问题的来源，确保质量和准确性。
 
 ## RAG在系统中的应用
 
