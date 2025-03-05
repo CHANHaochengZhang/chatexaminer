@@ -296,37 +296,49 @@ class RAGPipeline:
         context_text = "\n".join(c["text"] for c in focused_contexts)
 
         # Enhanced prompt for specific question generation
-        prompt = f"""Based on the following specific context, generate a precise and focused exam question related to the topic '{topic}'.
+        prompt = f"""Based on the following specific context, generate a precise and focused exam question related to the topic '{topic}', following Bloom's Revised Taxonomy.
 
 Topic: {topic}
+Subtopic: {subtopic}
 Difficulty: {difficulty}/5
 Selected Content: {context['text'][:200]}...
 
 {existing_questions_prompt}
+
 Requirements:
 1. Focus on a single, specific concept, formula, or relationship related to the topic
 2. Question must be answerable using ONLY the provided context
-3. Maximum length: 15 words
-4. Question difficulty should be distinct from existing questions:
-   - Difficulty 1: Basic recall and simple understanding
-   - Difficulty 2: Application of concepts
-   - Difficulty 3: Analysis and relationships
-   - Difficulty 4: Evaluation and comparison
-   - Difficulty 5: Synthesis and deep understanding
-5. Instead of asking "What is X?", consider:
-   - Difficulty 1-2: Components, parameters, basic relationships
-   - Difficulty 3: Mathematical meanings, specific conditions
-   - Difficulty 4: Compare and contrast, advantages/disadvantages
-   - Difficulty 5: Complex relationships, theoretical implications
+3. Maximum length: 15-20 words
+
+4. Carefully match the question's cognitive process dimension to the difficulty level:
+   - Difficulty 1: "Remember" level - Ask for recall of facts, terminology, definitions
+   - Difficulty 2: "Understand" level - Ask to explain, interpret, or summarize concepts
+   - Difficulty 3: "Apply" level - Ask to use information in new situations or solve problems
+   - Difficulty 4: "Analyze" or "Evaluate" level - Ask to examine relationships or make judgments
+   - Difficulty 5: "Create" level - Ask to propose new solutions or synthesize information
+
+5. Vary the knowledge dimension across questions:
+   - Factual Knowledge: Focus on terminology, specific details, elements
+   - Conceptual Knowledge: Focus on theories, models, principles, relationships
+   - Procedural Knowledge: Focus on methods, techniques, algorithms, criteria for procedures
+   - Metacognitive Knowledge: Focus on awareness of one's own cognition, strategic knowledge
+
+6. Instead of asking "What is X?", formulate questions aligned with the appropriate cognitive level:
+   - Remember: "Define...", "List...", "Identify...", "State..."
+   - Understand: "Explain...", "Describe...", "Summarize...", "Interpret..."
+   - Apply: "Calculate...", "Implement...", "Solve...", "Demonstrate..."
+   - Analyze: "Compare...", "Differentiate...", "Examine...", "Deconstruct..."
+   - Evaluate: "Assess...", "Critique...", "Justify...", "Recommend..."
+   - Create: "Design...", "Develop...", "Formulate...", "Propose..."
 
 Context for reference:
 {context_text}
 
-Generate a focused question that tests understanding at the appropriate difficulty level."""
+Generate a focused question that precisely matches the appropriate cognitive level for the specified difficulty."""
 
         # Generate question using GPT-4
         response = client.chat.completions.create(
-            model="gpt-4o-mini-2024-07-18",
+            model="gpt-4o",
             messages=[
                 {
                     "role": "system",
@@ -374,7 +386,7 @@ Format as JSON:
 
         # Generate answers
         answer_response = client.chat.completions.create(
-            model="gpt-4o-mini-2024-07-18",
+            model="gpt-4o",
             messages=[
                 {
                     "role": "system",
@@ -455,7 +467,7 @@ Please provide:
 4. Specific areas for improvement, with suggestions for better responses"""
 
         response = client.chat.completions.create(
-            model="gpt-4o-mini-2024-07-18",
+            model="gpt-4o",
             messages=[
                 {"role": "system", "content": "You are an expert exam evaluator."},
                 {"role": "user", "content": prompt},
