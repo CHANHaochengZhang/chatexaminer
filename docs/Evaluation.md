@@ -565,3 +565,237 @@ Provide brief feedback explaining the evaluation.
    - Real-time feedback
    - Progress monitoring
    - Learning path recommendations
+
+## 实现更新
+
+### 最新评估流程实现
+
+基于实际代码实现，系统评估流程包含以下关键组件和步骤：
+
+#### 评估服务实现
+
+评估服务(`EvaluationService`)是系统评估核心，负责单个问题评估和整体考试评估：
+
+```python
+class EvaluationService:
+    def __init__(self):
+        self.current_evaluation = ExamEvaluation()
+
+    async def evaluate_response(
+        self, question: Dict, student_response: str, hints_used: int, time_taken: float
+    ) -> QuestionEvaluation:
+        """评估单个答案"""
+        # 准备评估提示
+        prompt = f"""Evaluate this student's answer based on the following criteria:
+
+Question: {question['question']}
+Expected Answer: {question['expected_answers']['correct']['example']}
+Relevant Context: {question['context']}
+Student's Answer: {student_response}
+
+First, determine if the answer directly addresses the question asked:
+1. Does the answer specifically address the question?
+2. Is the answer relevant to the specific question, not just the general topic?
+3. Does the answer contain the key components expected?
+
+Then evaluate on three metrics (0-100):
+1. Accuracy: How correctly does the answer address the specific question asked?
+2. Clarity: How well is the answer expressed and structured?
+3. Understanding: How well does the student demonstrate understanding?
+
+Based on both relevance and quality, provide a single word to describe the overall quality:
+- "Excellent": Directly answers the question with comprehensive understanding (80-100)
+- "Good": Answers the question with solid understanding, minor gaps (65-79)
+- "Fair": Partially answers the question or shows tangential understanding (50-64)
+- "Poor": Does not answer the question or shows significant misunderstanding (0-49)
+
+Format your response as JSON:
+{
+    "level": "<single_word_evaluation>",
+    "accuracy": <score>,
+    "clarity": <score>,
+    "understanding": <score>,
+    "feedback": "<feedback>"
+}"""
+
+        # 获取GPT评估
+        response = openai.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are an expert evaluator for oral examinations.",
+                },
+                {"role": "user", "content": prompt},
+            ],
+            response_format={"type": "json_object"},
+        )
+
+        # 处理评估结果
+        # ...
+```
+
+#### 新增评估字段
+
+最新实现中的评估模型添加了以下关键字段：
+
+```python
+class QuestionEvaluation(BaseModel):
+    question_id: str
+    question: str        # 问题文本（新增）
+    topic: str           # 问题主题（新增）
+    metrics: EvaluationMetrics
+    feedback: str
+    difficulty: int
+    time_taken: float
+    raw_response: str    # 学生原始回答（新增）
+    level: str = ""      # 总体评价等级（新增）
+```
+
+```python
+class ExamEvaluation(BaseModel):
+    # 原有字段
+    total_score: float = 0.0
+    question_evaluations: Dict[str, QuestionEvaluation] = {}
+    topic_coverage: Dict[str, float] = {}
+    behavior_score: float = 0.0
+    final_feedback: str = ""
+    # 新增字段
+    final_score: float = 0.0  # 考官最终评分
+    final_level: str = ""     # 考官最终评价
+```
+
+### 与RAG模块集成
+
+#### RAG增强评估
+
+系统通过RAG(检索增强生成)模块从知识库中检索相关内容，增强评估质量：
+
+```python
+def evaluate_answer(
+    self, question: str, answer: str, exam_context: ExamContext
+) -> Dict[str, Any]:
+    """评估学生的回答"""
+    # 检索用于评估的相关文档
+    docs = self._retrieve_relevant_docs(
+        exam_context.current_topic, exam_context
+    )
+
+    # 创建评估提示
+    eval_prompt = self._create_evaluation_prompt(
+        question, answer, docs, exam_context
+    )
+
+    # 评估逻辑...
+```
+
+#### 评估上下文
+
+评估提示中融合了从知识库检索的相关文档作为参考依据：
+
+```python
+def _create_evaluation_prompt(
+    self,
+    question: str,
+    student_answer: str,
+    relevant_docs: List[str],
+    exam_context: ExamContext,
+) -> str:
+    """创建评估提示"""
+    prompt = (
+        "Please evaluate the student's answer:\n\n"
+        f"Question: {question}\n\n"
+        f"Student's Answer: {student_answer}\n\n"
+        f"Reference Knowledge:\n{chr(10).join(relevant_docs)}\n\n"
+        "Evaluation Requirements:\n"
+        "1. Accuracy: Does the answer align with knowledge base content\n"
+        "2. Completeness: Does it cover all aspects of the question\n"
+        "3. Depth of Understanding: Does it demonstrate deep concept comprehension\n"
+        "4. Clarity: Is the answer well-structured and clear\n\n"
+        "Please provide:\n"
+        "1. Score (0-100)\n"
+        "2. Detailed evaluation\n"
+        "3. Suggestions for improvement"
+    )
+    return prompt
+```
+
+### 最新评估流程
+
+考试服务(`ExamService`)协调评估流程，在学生回答后立即触发评估：
+
+```python
+async def process_answer(self, answer: str) -> Dict:
+    """处理学生的回答"""
+
+    # 获取上一个问题用于评估
+    session = self.state_machine.context.get("exam_session")
+    if session:
+        question_to_evaluate = session.get_prev_question()
+        if question_to_evaluate:
+            time_taken = time.time() - (self.question_start_time or time.time())
+            evaluation = await self.evaluation_service.evaluate_response(
+                question=question_to_evaluate,
+                student_response=answer,
+                hints_used=self.session_metrics["hints_requested"],
+                time_taken=time_taken,
+            )
+
+            # 记录评估结果
+            self.evaluation_service.add_question_evaluation(
+                question_id=question_to_evaluate["question_id"],
+                question=question_to_evaluate["question"],
+                topic=question_to_evaluate["topic"],
+                metrics=evaluation.metrics,
+                time_taken=time_taken,
+                difficulty=question_to_evaluate["difficulty"],
+                feedback=evaluation.feedback,
+                raw_response=answer,  # 添加学生的回答
+                level=evaluation.level  # 添加总体评价
+            )
+```
+
+### 评分等级系统
+
+最新实现增加了结构化的评分等级系统，根据得分提供直观的等级评价：
+
+| 等级 | 分数范围 | 描述 |
+|------|----------|------|
+| Excellent | 80-100 | 直接回答问题，展示全面理解 |
+| Good | 65-79 | 回答问题，体现扎实理解，有小缺口 |
+| Fair | 50-64 | 部分回答问题或展示相关理解 |
+| Poor | 0-49 | 未能回答问题或展示重大误解 |
+
+### 实现日志与监控
+
+系统实现了详细的日志记录，便于追踪评估过程：
+
+```python
+# 记录评分结果
+logger.info("\n评分结果:")
+logger.info(f"准确性(Accuracy): {eval_result['accuracy']}/100")
+logger.info(f"清晰度(Clarity): {eval_result['clarity']}/100")
+logger.info(f"理解度(Understanding): {eval_result['understanding']}/100")
+logger.info(f"总体评价(Level): {eval_result['level']}")
+logger.info(f"反馈: {eval_result['feedback']}")
+
+# 计算平均分
+avg_score = (
+    eval_result["accuracy"] + eval_result["clarity"] + eval_result["understanding"]
+) / 3
+logger.info(f"Average Score: {avg_score:.2f}/100")
+```
+
+### 模型优化
+
+1. **模型选择**：评估服务使用 `gpt-4o-mini` 模型，在性能和成本之间取得平衡
+2. **结构化输出**：强制使用 JSON 格式返回评估结果，确保一致性：
+   ```python
+   response_format={"type": "json_object"}
+   ```
+3. **特定角色提示**：使用系统消息设定评估者角色，提高评估质量：
+   ```python
+   {"role": "system", "content": "You are an expert evaluator for oral examinations."}
+   ```
+
+这些实现更新大大增强了系统的评估能力，通过RAG技术提高了评估的准确性和上下文相关性，同时添加了更直观的评分等级系统，使评估结果更加全面和易于理解。

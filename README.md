@@ -62,17 +62,29 @@ ChatExaminer is a proof-of-concept AI-powered oral examination system that aims 
 4. **As a student, I want to receive immediate feedback after submitting my answers so that I can understand my performance.**
    - The system should provide instant feedback and scoring after the student submits their answer.
 
-5. **As a teacher, I want to set time limits for the exam to control the pace of the examination.**
+5. **As an examiner, I want to set time limits for the exam to control the pace of the examination.**
    - The system should display a countdown timer when the exam starts.
 
 6. **As a student, I want to view my grades and feedback after the exam so that I can reflect on my performance.**
    - The system should provide a detailed report of grades and feedback after the exam concludes.
 
-7. **As a system administrator, I want to monitor the health status of the system to ensure service availability.**
-   - The administrator should be able to access the system's health check interface.
-
-8. **As a student, I want to use a hint function during the exam to receive help when needed.**
+7. **As a student, I want to use a hint function during the exam to receive help when needed.**
    - The system should provide a hint button that students can click when they require assistance.
+
+8. **As an examiner, I want to view multi-dimensional assessment data for students to comprehensively understand their abilities.**
+   - The system should provide comprehensive assessment metrics including knowledge accuracy, expression clarity, and depth of understanding.
+
+9. **As an examiner, I want to create and manage an exam question bank, and approve questions.**
+    - The system should provide functionality for creating, editing, and approving questions.
+
+10. **As an examiner, I want to ensure the system only uses approved questions during exams to maintain quality.**
+    - The system should only use questions with "approved" status, avoiding the use of unapproved questions.
+
+11. **As an examiner, I want to see quality assessment metrics for questions to optimize the question bank.**
+    - The system should provide quality indicators such as difficulty, discrimination, and Bloom's classification.
+
+12. **As a student, I want to understand my performance on different types of questions after the exam to improve in targeted areas.**
+    - The system should provide performance analysis categorized by knowledge points and cognitive levels.
 
 ## Technical Architecture
 

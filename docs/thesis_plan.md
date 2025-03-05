@@ -70,6 +70,8 @@ graph LR
    - 系统评估的一致性
    - 与教师标准的对齐
 
+3. How can artificial student models with varying knowledge levels and behavior patterns be designed and utilized to systematically evaluate the performance, fairness, and adaptability of an AI-based oral examination system, while providing insights comparable to those obtained from testing with real students?
+
 ### 1.5 论文结构与阅读指南
 
 本文的组织结构旨在系统地回答上述研究问题，各章节之间紧密关联，逐步展开论证：
