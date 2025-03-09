@@ -36,6 +36,46 @@ class ExamService:
             "response_consistency": 1.0,
             "topic_progress": {},
         }
+        self.conversation_history = []  # 存储对话历史
+        self.max_history_length = 10  # 存储的最大历史对话数量
+
+        # 添加状态检测函数定义
+        self.state_detection_functions = [
+            {
+                "name": "determine_state",
+                "description": "Determine the next state based on the student's response",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "next_state": {
+                            "type": "string",
+                            "enum": [state.value for state in ExamState],
+                            "description": "The next state to transition to",
+                        },
+                        "confidence": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 10,
+                            "description": "How confident the model is in this state determination (1-10)",
+                        },
+                        "reason": {
+                            "type": "string",
+                            "description": "Reason for the state determination",
+                        },
+                        "wants_to_return": {
+                            "type": "boolean",
+                            "description": "Whether the student wants to return to a previous state (only for CHAT state)",
+                        },
+                        "return_state": {
+                            "type": "string",
+                            "enum": [state.value for state in ExamState],
+                            "description": "The state to return to (only if wants_to_return is true)",
+                        },
+                    },
+                    "required": ["next_state", "confidence", "reason"],
+                },
+            }
+        ]
 
         # Define state functions for OpenAI function calling
         self.state_functions = {
@@ -188,6 +228,14 @@ class ExamService:
 
         self.topic_key_points[topic] = list(key_points)
 
+    def _add_to_conversation_history(self, role: str, content: str):
+        """添加消息到对话历史"""
+        self.conversation_history.append({"role": role, "content": content})
+        # 保持历史记录在限定数量内
+        if len(self.conversation_history) > self.max_history_length:
+            self.conversation_history = self.conversation_history[-self.max_history_length :]
+        print(f"对话历史已更新，当前历史记录数: {len(self.conversation_history)}")
+
     def get_next_interaction(self) -> Dict:
         """Get next interaction content"""
         state = self.state_machine.get_current_state()
@@ -196,6 +244,8 @@ class ExamService:
             question = self.state_machine.get_current_question()
             if question:
                 self.question_start_time = time.time()
+                # 将系统问题添加到对话历史
+                self._add_to_conversation_history("assistant", question["question"])
                 return {
                     "type": "question",
                     "content": question["question"],
@@ -217,12 +267,20 @@ class ExamService:
         return {"type": "state_change", "state": state.value}
 
     async def detect_state(self, response: str, current_state: ExamState) -> Dict:
-        """Detect next state based on student's response using AI"""
+        """检测学生回答对应的下一个状态"""
         print(f"\n=== 检测状态 ===")
         print(f"当前状态: {current_state}")
         print(f"学生回答: {response}")
 
-        # Create a serializable version of session metrics
+        # 记录用户消息到对话历史
+        if not hasattr(self, "conversation_history"):
+            self.conversation_history = []
+            self.max_history_length = 10
+
+        # 添加用户消息到对话历史
+        self._add_to_conversation_history("user", response)
+
+        # 创建可序列化的会话指标
         serializable_metrics = {
             "questions_answered": self.session_metrics["questions_answered"],
             "hints_requested": self.session_metrics["hints_requested"],
@@ -230,7 +288,47 @@ class ExamService:
         }
         print(f"会话指标: {serializable_metrics}")
 
-        system_prompt = """You are an AI exam state analyzer. Determine the next state based on the student's response.
+        # 根据当前状态选择不同的提示
+        if current_state == ExamState.CHAT:
+            system_prompt = """You are an AI exam state analyzer. Determine if the student wants to return to the exam based on their conversation history.
+
+Focus on identifying:
+1. If the student wants to return to regular questioning
+2. If they want to continue the chat
+3. If they need further explanation
+
+Use their message history to understand their intent in context."""
+
+            # 创建带对话历史的消息列表
+            messages = [{"role": "system", "content": system_prompt}]
+
+            # 添加部分历史记录
+            if len(self.conversation_history) > 1:
+                recent_history = self.conversation_history[
+                    -min(5, len(self.conversation_history)) :
+                ]
+                for msg in recent_history:
+                    if msg["role"] != "user" or msg["content"] != response:  # 避免重复添加当前消息
+                        messages.append(msg)
+
+            # 添加当前用户响应作为最后一条消息
+            messages.append(
+                {
+                    "role": "user",
+                    "content": f"""Current state: {current_state}
+Student response: "{response}"
+Context: {json.dumps(serializable_metrics)}
+
+Based on this interaction, determine:
+1. If the student wants to return to the regular exam (set wants_to_return to true)
+2. If they want to continue chatting (set wants_to_return to false)
+3. What state they should return to if they want to return
+""",
+                }
+            )
+        else:
+            # 标准状态检测提示
+            system_prompt = """You are an AI exam state analyzer. Determine the next state based on the student's response.
 
 State Machine Rules:
 1. INIT -> TOPIC_SELECTED: When student greets or shows readiness
@@ -240,45 +338,70 @@ State Machine Rules:
 5. EXPLAINING -> QUESTIONING: Only after student confirms understanding
 6. EXPLAINING -> CHAT: When student is not engaging seriously
 7. QUESTIONING -> QUESTIONING: After normal response
-8. QUESTIONING -> EVALUATING: Only when student explicitly requests to end the exam (e.g., "I want to end the exam", "I'm finished", "END_EXAM", "Let's proceed to evaluation"). Do NOT transition to EVALUATING state unless student clearly expresses desire to end exam.
-9. EVALUATING -> COMPLETED: Only after evaluation is complete
+8. QUESTIONING -> EVALUATING: Only when student explicitly requests to end the exam (e.g., "I want to end the exam", "I'm finished", "END_EXAM", "Let's proceed to evaluation")
+9. EVALUATING -> COMPLETED: Only after evaluation is complete"""
 
-Key indicators for CHAT state:
-- Meaningless responses (e.g."???", random characters)
-- Off-topic responses
-- Non-serious engagement
-- Random keyboard input
-- Repeated short/meaningless answers
-
-For QUESTIONING state:
-- Move to CHAT if:
-  * Student gives meaningless answers (e.g., "???", random letters)
-  * Student is not engaging with the question
-  * Response is completely off-topic
-  * Response shows no attempt to answer academically
-- Stay in QUESTIONING if the answer is relevant to the question
-- Move to EXPLAINING if student shows confusion"""
-
-        messages = [
-            {"role": "system", "content": system_prompt},
-            {
-                "role": "user",
-                "content": f"""Current state: {current_state}
+            messages = [
+                {"role": "system", "content": system_prompt},
+                {
+                    "role": "user",
+                    "content": f"""Current state: {current_state}
 Student response: "{response}"
 Context: {json.dumps(serializable_metrics)}
 
 Determine the next state based on this response.""",
-            },
+                },
+            ]
+
+        # 定义简化的状态检测函数
+        functions = [
+            {
+                "name": "determine_state",
+                "description": "Determine the next state based on the student's response",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "next_state": {
+                            "type": "string",
+                            "enum": [state.value for state in ExamState],
+                            "description": "The next state to transition to",
+                        },
+                        "confidence": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 10,
+                            "description": "Confidence level in this determination",
+                        },
+                        "reason": {
+                            "type": "string",
+                            "description": "Reasoning behind this state determination",
+                        },
+                        "wants_to_return": {
+                            "type": "boolean",
+                            "description": "Whether the student wants to return to regular exam (CHAT state only)",
+                        },
+                        "return_state": {
+                            "type": "string",
+                            "enum": [state.value for state in ExamState],
+                            "description": "State to return to if wants_to_return is true",
+                        },
+                    },
+                    "required": ["next_state", "confidence", "reason"],
+                },
+            }
         ]
 
+        # 调用API进行状态检测
         response = openai.chat.completions.create(
             model="gpt-4o-mini",
             messages=messages,
-            functions=self.state_detection_functions,
+            functions=functions,
             function_call={"name": "determine_state"},
         )
 
-        result = json.loads(response.choices[0].message.function_call.arguments)
+        # 解析结果
+        function_args = response.choices[0].message.function_call.arguments
+        result = json.loads(function_args)
         print(f"状态检测结果: {result}")
         return result
 
@@ -340,6 +463,9 @@ Generate a hint:"""
         print(f"Current state: {current_state}")
         print(f"Received answer: {answer}")
 
+        # 添加用户消息到对话历史（确保历史记录的完整性）
+        self._add_to_conversation_history("user", answer)
+
         # 分析回答
         result = await self._analyze_response(answer, current_state)
 
@@ -384,6 +510,7 @@ Generate a hint:"""
                         raw_response=answer,  # 添加学生的回答
                     )
 
+        # 处理CHAT状态
         if current_state == ExamState.CHAT:
             if result.get("wants_to_return"):
                 return_state = result.get("return_state")
@@ -392,7 +519,12 @@ Generate a hint:"""
                         "previous_state", ExamState.QUESTIONING
                     )
                 print(f"从CHAT状态返回到: {return_state}")
-                self.state_machine.transition(return_state)
+                self.state_machine.transition(ExamState(return_state))
+            else:
+                # 添加助手回复到对话历史
+                chat_response = result["chat_response"]
+                self._add_to_conversation_history("assistant", chat_response)
+
             return {"type": "chat", "content": result["chat_response"]}
 
         # Handle state transition
@@ -696,3 +828,100 @@ For EVALUATING state:
             # 获取最终评估报告
             return self.evaluation_service.get_final_evaluation()
         return None
+
+    async def _generate_chat_response(self, user_input: str) -> str:
+        """使用对话历史生成聊天响应"""
+        print(f"\n=== 生成聊天响应 ===")
+        print(f"用户输入: {user_input}")
+
+        # 构建包含对话历史的消息列表
+        system_prompt = """You are a professor conducting an oral exam, currently engaging in face-to-face communication with a student.
+
+Please adhere to the following guidelines:
+1. Maintain a professional and friendly demeanor, interacting with the student as a real professor would.
+2. If the student asks questions related to the exam topic, provide educational responses without directly giving away answers.
+3. If the student shows signs of fatigue or distraction (e.g., "I need water," "I want to sleep"), express understanding but appropriately encourage them to continue the exam.
+4. If the student wishes to resume the formal exam, inform them that you can return to exam mode at any time.
+5. Responses should be concise and direct, fitting the conversational style of an oral exam setting.
+6. Ensure continuity in the conversation by referencing previous exchanges.
+
+Your responses should resemble immediate reactions in an exam setting, combining the professionalism of a professor with appropriate human empathy.
+"""
+
+        # 创建消息列表，包含完整对话历史
+        messages = [{"role": "system", "content": system_prompt}]
+
+        # 添加最近的对话历史（确保对话上下文完整）
+        if self.conversation_history:
+            # 排除最后一条用户消息，因为我们会单独添加它
+            history_to_use = (
+                self.conversation_history[:-1]
+                if self.conversation_history[-1]["role"] == "user"
+                else self.conversation_history
+            )
+            messages.extend(history_to_use)
+
+        # 添加当前用户输入
+        messages.append({"role": "user", "content": user_input})
+
+        print(f"使用对话历史生成回复，历史记录数: {len(messages)-1}")
+
+        # 调用OpenAI API生成响应
+        response = openai.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=messages,
+            temperature=0.7,
+            max_tokens=1024,
+        )
+
+        chat_response = response.choices[0].message.content.strip()
+
+        # 将生成的回复添加到对话历史
+        self._add_to_conversation_history("assistant", chat_response)
+
+        return chat_response
+
+    async def process_chat_answer(self, answer: str) -> Dict:
+        """处理CHAT状态下的学生回答"""
+        print(f"\n=== 处理CHAT状态回答 ===")
+        current_state = self.state_machine.get_current_state()
+
+        # 安全检查：确保当前是CHAT状态
+        if current_state != ExamState.CHAT:
+            return {"error": "当前不是CHAT状态"}
+
+        # 添加用户消息到对话历史
+        self._add_to_conversation_history("user", answer)
+
+        try:
+            # 检测学生是否想要返回正常考试
+            state_result = await self.detect_state(answer, current_state)
+            print(f"状态检测结果: {state_result}")
+
+            # 如果学生想要返回到正常考试状态
+            if state_result.get("wants_to_return", False):
+                return_state = state_result.get("return_state")
+                if not return_state:
+                    return_state = self.state_machine.context.get(
+                        "previous_state", ExamState.QUESTIONING
+                    )
+                print(f"从CHAT状态返回到: {return_state}")
+                self.state_machine.transition(ExamState(return_state))
+                return self.get_next_interaction()
+
+            # 否则，生成一个聊天响应
+            chat_response = await self._generate_chat_response(answer)
+            return {"type": "chat", "content": chat_response}
+
+        except Exception as e:
+            print(f"处理CHAT回答时出错: {str(e)}")
+            # 出错时尝试直接生成聊天响应，不进行状态检测
+            try:
+                chat_response = await self._generate_chat_response(answer)
+                return {"type": "chat", "content": chat_response}
+            except:
+                # 如果仍然失败，返回一个通用回复
+                return {
+                    "type": "chat",
+                    "content": "抱歉，我现在无法处理您的请求。您可以尝试继续考试或者问一个不同的问题。",
+                }

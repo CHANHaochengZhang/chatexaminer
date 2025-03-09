@@ -33,7 +33,7 @@
 
     <!-- Exam Interface -->
     <template v-else>
-      <div class="exam-container">
+      <div class="exam-container" :class="{'completed-state': currentState === 'COMPLETED'}">
         <!-- Left Panel -->
         <div class="side-panel">
           <StatePanel
@@ -111,7 +111,7 @@ const startExam = async () => {
     currentState.value = response.state
     messages.value.push({
       role: 'system',
-      content: `Welcome to your exam session!\n\nFirst question:\n${response.data.current_question.question}`,
+      content: `Welcome to your exam session!\n\n Are you ready?`,
       timestamp: Date.now(),
       state: currentState.value
     })
@@ -204,16 +204,49 @@ onBeforeUnmount(() => {
     grid-template-columns: 300px 1fr;
     gap: var(--spacing-md);
     height: 100%;
+    transition: grid-template-columns 0.5s ease-in-out;
+
+    /* 当考试完成状态时，调整左右两栏的宽度比例 */
+    &.completed-state {
+      grid-template-columns: 1fr 1fr;
+
+      /* 确保评估报告区域可滚动，防止内容过多时溢出 */
+      .side-panel {
+        overflow-y: auto;
+        max-height: calc(100vh - 40px);
+      }
+
+      /* 聊天区域宽度减小，但保持可用性 */
+      .main-content {
+        min-width: 320px;
+      }
+
+      /* 在完成状态下高亮显示评估报告 */
+      .evaluation-section {
+        box-shadow: 0 0 10px rgba(64, 158, 255, 0.2);
+        animation: highlight-report 1s ease;
+      }
+    }
 
     .side-panel {
       display: flex;
       flex-direction: column;
       gap: var(--spacing-md);
+
+      .evaluation-section {
+        transition: all 0.3s ease;
+      }
     }
 
     .main-content {
       height: 100%;
     }
   }
+}
+
+/* 评估报告高亮动画 */
+@keyframes highlight-report {
+  0% { transform: translateY(10px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
 }
 </style>

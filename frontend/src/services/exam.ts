@@ -152,7 +152,62 @@ class ExamService implements ExamAPI {
       throw new Error('No active exam session')
     }
     const response = await axios.get<ExamResponse<any>>(`${BASE_URL}/${this.sessionId}/evaluation`)
-    return response.data.data
+
+    // 解析API返回的数据
+    const apiData = response.data.data;
+
+    // 从final_feedback中提取strengths, weaknesses, suggestions
+    let strengths: string[] = [];
+    let weaknesses: string[] = [];
+    let suggestions: string[] = [];
+
+    // 尝试从final_feedback提取信息
+    if (apiData.final_feedback) {
+      const feedbackText = apiData.final_feedback;
+
+      // 查找"Strengths include"部分
+      const strengthsMatch = feedbackText.match(/Strengths include(.*?)(?=Areas for improvement|$)/s);
+      if (strengthsMatch && strengthsMatch[1]) {
+        strengths = strengthsMatch[1].split(/\.\s+/)
+          .map((s: string) => s.trim())
+          .filter((s: string) => s.length > 0)
+          .map((s: string) => s + (s.endsWith('.') ? '' : '.'));
+      }
+
+      // 查找"Areas for improvement"部分
+      const weaknessesMatch = feedbackText.match(/Areas for improvement include(.*?)(?=Continuing to|$)/s);
+      if (weaknessesMatch && weaknessesMatch[1]) {
+        weaknesses = weaknessesMatch[1].split(/\.\s+/)
+          .map((s: string) => s.trim())
+          .filter((s: string) => s.length > 0)
+          .map((s: string) => s + (s.endsWith('.') ? '' : '.'));
+      }
+
+      // 从最后部分提取建议
+      const suggestionsMatch = feedbackText.match(/Continuing to(.*?)(?=$)/s);
+      if (suggestionsMatch && suggestionsMatch[1]) {
+        suggestions = [
+          'Continuing to' + suggestionsMatch[1].trim()
+        ];
+      }
+    }
+
+    // 提取主题覆盖信息
+    const topicCoverage = Object.keys(apiData.topic_coverage || {});
+
+    // 返回转换后的数据
+    return {
+      totalScore: apiData.total_score || 0,
+      finalScore: apiData.final_score || 0,
+      finalLevel: apiData.final_level || '',
+      finalFeedback: apiData.final_feedback || '',
+      topicCoverage: topicCoverage,
+      strengths: strengths.length > 0 ? strengths : ['Good understanding of core concepts'],
+      weaknesses: weaknesses.length > 0 ? weaknesses : ['Could improve depth of explanations'],
+      suggestions: suggestions.length > 0 ? suggestions : ['Continue practicing with different problem types'],
+      questionEvaluations: apiData.question_evaluations || {},
+      behaviorScore: apiData.behavior_score || 0
+    }
   }
 
   connectWebSocket(onMessage: (data: any) => void): WebSocket {

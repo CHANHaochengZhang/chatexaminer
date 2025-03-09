@@ -83,13 +83,56 @@ async def submit_answer(session_id: str, answer_request: AnswerRequest) -> ExamR
         raise HTTPException(status_code=404, detail="Session not found")
 
     try:
-        result = await exam_service.process_answer(answer_request.answer)
+        # 获取当前状态
+        current_state = exam_service.state_machine.get_current_state()
+
+        # 根据当前状态选择不同的处理方法
+        if current_state == "CHAT":
+            # 在CHAT状态下使用process_chat_answer方法
+            logger.info(f"Processing chat answer - SessionID: {session_id}")
+            try:
+                result = await exam_service.process_chat_answer(answer_request.answer)
+            except Exception as e:
+                logger.error(
+                    f"Error processing chat answer - SessionID: {session_id}, Error: {str(e)}"
+                )
+                # 如果处理失败，提供一个紧急回退响应
+                result = {
+                    "type": "chat",
+                    "content": "抱歉，处理您的消息时出现了问题。您可以尝试继续考试或提出一个不同的问题。",
+                }
+                # 记录错误但继续处理
+        else:
+            # 其他状态使用原有的process_answer方法
+            logger.info(f"Processing regular answer - SessionID: {session_id}")
+            result = await exam_service.process_answer(answer_request.answer)
+
+        # 获取处理后的状态（可能已经改变）
         current_state = exam_service.state_machine.get_current_state()
         logger.info(f"Answer processed - SessionID: {session_id}, State: {current_state}")
 
+        # 根据当前状态提供更有意义的默认消息
+        default_message = "Answer processed"
+        if current_state == "QUESTIONING":
+            default_message = "Okay, let's continue with the exam questions. Please think carefully before answering."
+        elif current_state == "CHAT":
+            default_message = "I understand you want to take a break. We can chat casually, just let me know when you're ready to continue the exam."
+        elif current_state == "EXPLAINING":
+            default_message = (
+                "This concept seems to need a more detailed explanation, let me clarify it for you."
+            )
+        elif current_state == "EVALUATING":
+            default_message = "The exam part has ended, I will evaluate your performance."
+        elif current_state == "COMPLETED":
+            default_message = "The exam is completed, you can view your evaluation report now."
+        elif current_state == "INIT":
+            default_message = "Please select a topic to start the exam."
+        elif current_state == "TOPIC_SELECTED":
+            default_message = "The topic has been selected, we are ready to start the exam."
+
         return ExamResponse(
             state=current_state,  # 直接使用状态字符串
-            message=result.get("message", "Answer processed"),
+            message=result.get("message", default_message),
             data=result,
         )
     except Exception as e:
@@ -244,13 +287,56 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
 
                 # Process message
                 if "answer" in data:
-                    result = await exam_service.process_answer(data["answer"])
+                    # 获取当前状态
+                    current_state = exam_service.state_machine.get_current_state()
+
+                    # 根据当前状态选择不同的处理方法
+                    if current_state == "CHAT":
+                        # 在CHAT状态下使用process_chat_answer方法
+                        logger.info(f"WS: Processing chat answer - SessionID: {session_id}")
+                        try:
+                            result = await exam_service.process_chat_answer(data["answer"])
+                        except Exception as e:
+                            logger.error(
+                                f"WS: Error processing chat answer - SessionID: {session_id}, Error: {str(e)}"
+                            )
+                            # 如果处理失败，提供一个紧急回退响应
+                            result = {
+                                "type": "chat",
+                                "content": "抱歉，处理您的消息时出现了问题。您可以尝试继续考试或提出一个不同的问题。",
+                            }
+                    else:
+                        # 其他状态使用原有的process_answer方法
+                        logger.info(f"WS: Processing regular answer - SessionID: {session_id}")
+                        result = await exam_service.process_answer(data["answer"])
+
+                    # If there is a state transition, provide more meaningful messages
+                    current_state = exam_service.state_machine.get_current_state().value
+                    if current_state == "QUESTIONING":
+                        message = "好的，让我们继续考试问题。请认真思考后回答。"
+                    elif current_state == "CHAT":
+                        message = (
+                            "我理解你想休息一下。我们可以简单聊聊，当你准备好继续考试时请告诉我。"
+                        )
+                    elif current_state == "EXPLAINING":
+                        message = "这个概念看起来需要更详细的解释，让我为你澄清一下。"
+                    elif current_state == "EVALUATING":
+                        message = "考试部分已结束，我将对你的表现进行评估。"
+                    elif current_state == "COMPLETED":
+                        message = "考试已完成，你可以查看你的评估报告了。"
+                    elif current_state == "INIT":
+                        message = "请选择一个考试主题开始。"
+                    elif current_state == "TOPIC_SELECTED":
+                        message = "主题已选择，我们准备开始考试。"
+                    else:
+                        message = f"当前状态: {current_state}"
 
                     # Send response
                     await websocket.send_json(
                         {
                             "type": "response",
                             "state": exam_service.state_machine.get_current_state().value,
+                            "message": message,
                             "data": {
                                 "result": result,
                                 "current_question": exam_service.state_machine.get_current_question(),

@@ -27,11 +27,29 @@ export interface ExamSession {
 
 export interface EvaluationReport {
   totalScore: number
-  questionsAnswered: number
+  finalScore: number
+  finalLevel: string
+  finalFeedback: string
+  questionsAnswered?: number
   topicCoverage: string[]
   strengths: string[]
   weaknesses: string[]
   suggestions: string[]
+  questionEvaluations: Record<string, {
+    question: string
+    metrics: {
+      accuracy: number
+      clarity: number
+      understanding: number
+      hints_used: number
+    }
+    feedback: string
+    difficulty: number
+    time_taken: number
+    level: string
+    raw_response: string
+  }>
+  behaviorScore?: number
 }
 
 export interface ProgressReport {

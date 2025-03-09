@@ -173,6 +173,42 @@ const setupWebSocket = (sessionId: string) => {
           newState: data.state
         })
         currentState.value = data.state
+      } else if (data.type === 'response') {
+        console.log('Response received:', {
+          state: data.state,
+          message: data.message,
+          hasResult: !!data.data?.result
+        })
+
+        // 处理服务器返回的message
+        if (data.message) {
+          // 添加系统消息，显示状态变化的信息
+          messages.value.push({
+            role: 'system',
+            content: data.message,
+            timestamp: Date.now(),
+            state: data.state
+          })
+        }
+
+        // 处理结果中的内容
+        if (data.data?.result?.type === 'chat' && data.data?.result?.content) {
+          messages.value.push({
+            role: 'assistant',
+            content: data.data.result.content,
+            timestamp: Date.now()
+          })
+        } else if (data.data?.result?.type === 'question' && data.data?.result?.content) {
+          messages.value.push({
+            role: 'assistant',
+            content: data.data.result.content,
+            timestamp: Date.now(),
+            questionId: data.data.result.question_id
+          })
+        }
+
+        // 更新当前状态
+        currentState.value = data.state
       }
       console.groupEnd()
     })
