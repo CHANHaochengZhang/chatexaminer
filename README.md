@@ -186,81 +186,88 @@ OPENAI_API_KEY=<your-openai-api-key>
 ```
 chatexaminer/
 ├── knowledge/                    # Knowledge base directory
-│   └── pdf/                     # Course material PDFs
-├── data/                        # Data directory
-│   ├── exam_questions.json      # Exam questions data
-│   ├── conversation_trees/      # Dialogue tree data
-│   ├── vectorDB_workspace/      # Vector database storage
-│   └── logs/                    # Application logs
-│       ├── rag_pipeline.log     # RAG operation logs
-│       ├── hint_usage.log       # Hint usage tracking
-│       └── state_machine.log    # State transition logs
-├── server/                      # Backend service
+│   └── pdf/                      # Course material PDFs
+├── data/                         # Data directory
+│   ├── exam_questions.json       # Current exam questions data
+│   ├── exam_questions-4o-bloom.json  # Questions generated with GPT-4o + Bloom taxonomy
+│   ├── exam_questions-4o.json    # Questions generated with GPT-4o
+│   ├── exam_questions-4o-mini.json  # Questions generated with GPT-4o-mini
+│   ├── exam_topics.json          # Topic definitions
+│   ├── logs/                     # Application logs
+│   └── question_graph.json       # Graph structure for questions
+├── server/                       # Backend service
 │   ├── app/
-│   │   ├── api/                # API layer
-│   │   │   ├── v1/
-│   │   │   │   ├── endpoints/  # API endpoints
-│   │   │   │   │   ├── exam.py        # Exam control
-│   │   │   │   │   ├── hint.py        # Hint functionality
-│   │   │   │   │   └── health.py      # Health checks
-│   │   │   │   └── api.py     # API route configuration
-│   │   ├── core/              # Core configuration
-│   │   │   ├── config.py      # Application settings
-│   │   │   └── security.py    # Authentication & authorization
-│   │   ├── models/            # Data models
-│   │   │   ├── exam.py        # Exam session model
-│   │   │   ├── hint.py        # Hint feature model
-│   │   │   ├── question.py    # Question structure
-│   │   │   └── evaluation.py  # Evaluation metrics
-│   │   ├── services/          # Business services
-│   │   │   ├── exam_service.py       # Exam service
-│   │   │   ├── hint_service.py       # Hint service
-│   │   │   ├── rag_service.py        # RAG service
-│   │   │   └── evaluation_service.py  # Evaluation service
-│   │   └── utils/             # Utility functions
-│   │       ├── openai_utils.py       # OpenAI utilities
-│   │       └── vector_utils.py       # Vector processing
-│   └── requirements.txt        # Dependency management
-├── frontend/                   # Frontend application
+│   │   ├── api/                  # API layer
+│   │   │   ├── v1/              # API version 1
+│   │   │   └── exam_api.py      # Exam API endpoints
+│   │   ├── core/                 # Core configuration
+│   │   │   └── config.py        # Application settings
+│   │   ├── models/               # Data models
+│   │   │   ├── document.py      # Document model
+│   │   │   ├── evaluation.py    # Evaluation metrics model
+│   │   │   ├── exam.py          # Exam model
+│   │   │   ├── exam_record.py   # Exam records model
+│   │   │   ├── question.py      # Question structure
+│   │   │   └── state_machine.py # State machine model
+│   │   ├── scripts/              # Scripts
+│   │   │   ├── pdf_load.py      # PDF processing
+│   │   │   ├── rag_pipeline_script.py  # Question generation pipeline
+│   │   │   ├── run_exam.py      # Exam runner POC
+│   │   │   ├── state_detection_poc.py  # State detection POC
+│   │   │   ├── conversation_tree_generator.py  # Conversation tree
+│   │   │   ├── question_graph_generator.py     # Question graph
+│   │   │   └── rag/            # RAG components
+│   │   ├── services/             # Business services
+│   │   │   ├── assistant.py     # Assistant service
+│   │   │   ├── exam_service.py  # Exam service
+│   │   │   ├── evaluation_service.py  # Evaluation service
+│   │   │   ├── rag_service.py   # RAG service
+│   │   │   └── state_machine.py # State machine service
+│   │   └── main.py              # Application entry point
+│   ├── exam_records/             # Stored exam records for AI Student
+│   ├── test/                     # Test directory
+│   ├── run.sh                    # Run script
+│   └── requirements.txt          # Backend dependencies
+├── frontend/                     # Frontend application
 │   ├── src/
-│   │   ├── components/        # UI components
-│   │   │   ├── ExamView/     # Exam interface
-│   │   │   │   ├── QuestionCard.vue
-│   │   │   │   └── HintButton.vue
-│   │   │   └── common/       # Shared components
-│   │   ├── stores/           # State management
-│   │   │   ├── exam.ts       # Exam state
-│   │   │   └── hint.ts       # Hint state
-│   │   ├── services/         # API services
-│   │   │   ├── api.ts        # Base API class
-│   │   │   ├── exam.ts       # Exam API
-│   │   │   └── hint.ts       # Hint API
-│   │   └── types/            # Type definitions
-│   │       ├── exam.ts       # Exam types
-│   │       └── hint.ts       # Hint types
-│   ├── tests/                 # Test files
-│   │   ├── unit/             # Unit tests
-│   │   └── e2e/              # End-to-end tests
-│   └── package.json          # Frontend dependencies
-├── tests/                    # Test directory
-│   ├── unit/                # Unit tests
-│   │   ├── test_exam.py     # Exam tests
-│   │   └── test_hint.py     # Hint tests
-│   └── integration/         # Integration tests
-├── docs/                    # Documentation
-│   ├── api.md              # API documentation
-│   ├── hint-design.md      # Hint design specs
-│   └── deployment.md       # Deployment guide
-├── scripts/                # Script directory
-│   ├── setup.sh           # Environment setup
-│   └── deploy.sh          # Deployment script
-├── docker/                 # Docker configuration
-│   ├── Dockerfile         # Application build
-│   └── docker-compose.yml # Service orchestration
-├── .env.example           # Environment template
-├── .gitignore            # Git ignore rules
-├── README.md             # Project documentation
-└── Makefile              # Build configuration
+│   │   ├── assets/              # Static assets
+│   │   ├── components/          # UI components
+│   │   │   ├── Exam.vue        # Main exam component
+│   │   │   ├── ExamChat/       # Exam chat components
+│   │   │   ├── EvalReport/     # Evaluation report components
+│   │   │   └── StatePanel/     # State panel components
+│   │   ├── router/              # Vue router
+│   │   ├── services/            # API services
+│   │   ├── stores/              # State management
+│   │   ├── types/               # Type definitions
+│   │   ├── views/               # Page views
+│   │   ├── App.vue              # Root component
+│   │   ├── main.ts              # Entry point
+│   │   └── style.css            # Global styles
+│   ├── public/                   # Public assets
+│   ├── index.html                # HTML template
+│   └── package.json              # Frontend dependencies
+├── docs/                         # Documentation
+│   ├── api.md                   # API documentation
+│   ├── DoMath.md                # Mathematical documentation
+│   ├── Evaluation.md            # Evaluation system documentation
+│   ├── experiment.md            # Experiment documentation
+│   ├── frontendDev.md           # Frontend development guidelines
+│   ├── hint-design.md           # Hint design specs
+│   ├── RAG_Implementation.md    # RAG implementation details
+│   └── StateMachine.md          # State machine documentation
+├── experiment/                   # Experiment code
+│   ├── QuestionExperiment.py    # Question generation experiments
+│   └── output/                  # Experiment output data
+├── output/                       # Output data
+│   ├── quality_metrics_radar.png   # Quality metrics visualization
+│   ├── cognitive_distribution.png  # Cognitive levels distribution
+│   └── question_quality_report.md  # Question quality report
+├── vectorDB_workspace/           # Vector database files
+├── .env                          # Environment variables
+├── requirements.txt              # Project dependencies
+├── Makefile                      # Build configuration
+└── README.md                     # Project documentation
 ```
 
 ### Proof of Concept Implementation

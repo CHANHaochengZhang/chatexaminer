@@ -309,32 +309,33 @@ Requirements:
 1. Focus on a single, specific concept, formula, or relationship related to the topic
 2. Question must be answerable using ONLY the provided context
 3. Maximum length: 15-20 words
+4. IMPORTANT: Format the question as an interrogative sentence that ends with a question mark (?)
 
-4. Carefully match the question's cognitive process dimension to the difficulty level:
+5. Carefully match the question's cognitive process dimension to the difficulty level:
    - Difficulty 1: "Remember" level - Ask for recall of facts, terminology, definitions
    - Difficulty 2: "Understand" level - Ask to explain, interpret, or summarize concepts
    - Difficulty 3: "Apply" level - Ask to use information in new situations or solve problems
    - Difficulty 4: "Analyze" or "Evaluate" level - Ask to examine relationships or make judgments
    - Difficulty 5: "Create" level - Ask to propose new solutions or synthesize information
 
-5. Vary the knowledge dimension across questions:
+6. Vary the knowledge dimension across questions:
    - Factual Knowledge: Focus on terminology, specific details, elements
    - Conceptual Knowledge: Focus on theories, models, principles, relationships
    - Procedural Knowledge: Focus on methods, techniques, algorithms, criteria for procedures
    - Metacognitive Knowledge: Focus on awareness of one's own cognition, strategic knowledge
 
-6. Instead of asking "What is X?", formulate questions aligned with the appropriate cognitive level:
-   - Remember: "Define...", "List...", "Identify...", "State..."
-   - Understand: "Explain...", "Describe...", "Summarize...", "Interpret..."
-   - Apply: "Calculate...", "Implement...", "Solve...", "Demonstrate..."
-   - Analyze: "Compare...", "Differentiate...", "Examine...", "Deconstruct..."
-   - Evaluate: "Assess...", "Critique...", "Justify...", "Recommend..."
-   - Create: "Design...", "Develop...", "Formulate...", "Propose..."
+7. Start your questions with appropriate interrogative words:
+   - Remember: "What is...?", "Who defined...?", "Which term describes...?"
+   - Understand: "How would you explain...?", "Why does...?", "What's the main idea of...?"
+   - Apply: "How would you use...?", "How can you solve...?", "What would happen if...?"
+   - Analyze: "How does... compare to...?", "What is the relationship between...?", "Why is... important?"
+   - Evaluate: "What criteria would you use to assess...?", "How effective is...?", "What is your opinion of...?"
+   - Create: "How would you design...?", "What would be an alternative solution for...?", "How might... be improved?"
 
 Context for reference:
 {context_text}
 
-Generate a focused question that precisely matches the appropriate cognitive level for the specified difficulty."""
+Generate a focused question that precisely matches the appropriate cognitive level for the specified difficulty. Ensure the question ends with a question mark."""
 
         # Generate question using GPT-4
         response = client.chat.completions.create(
