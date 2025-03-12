@@ -1,0 +1,1270 @@
+{
+  "exam_metadata": {
+    "session_id": "4d4ad8c4-ea07-48ba-a05b-e8e7a1e1f7c3",
+    "timestamp": "2025-03-12T22:30:42.231194",
+    "student_type": "unknown",
+    "topic": "Direct Methods for Optimal Control",
+    "total_duration": 0.0,
+    "state_history": [
+      {
+        "from_state": "INIT",
+        "to_state": "TOPIC_SELECTED",
+        "timestamp": "2025-03-12T22:30:03.219733",
+        "metadata": null
+      },
+      {
+        "from_state": "TOPIC_SELECTED",
+        "to_state": "QUESTIONING",
+        "timestamp": "2025-03-12T22:30:03.221059",
+        "metadata": null
+      },
+      {
+        "from_state": "QUESTIONING",
+        "to_state": "QUESTIONING",
+        "timestamp": "2025-03-12T22:30:04.279639",
+        "metadata": null
+      },
+      {
+        "from_state": "QUESTIONING",
+        "to_state": "QUESTIONING",
+        "timestamp": "2025-03-12T22:30:11.131505",
+        "metadata": null
+      },
+      {
+        "from_state": "QUESTIONING",
+        "to_state": "EXPLAINING",
+        "timestamp": "2025-03-12T22:30:17.798855",
+        "metadata": null
+      },
+      {
+        "from_state": "EXPLAINING",
+        "to_state": "QUESTIONING",
+        "timestamp": "2025-03-12T22:30:19.724891",
+        "metadata": null
+      },
+      {
+        "from_state": "QUESTIONING",
+        "to_state": "CHAT",
+        "timestamp": "2025-03-12T22:30:31.805686",
+        "metadata": null
+      },
+      {
+        "from_state": "CHAT",
+        "to_state": "QUESTIONING",
+        "timestamp": "2025-03-12T22:30:33.949381",
+        "metadata": null
+      },
+      {
+        "from_state": "QUESTIONING",
+        "to_state": "EVALUATING",
+        "timestamp": "2025-03-12T22:30:37.701918",
+        "metadata": null
+      }
+    ]
+  },
+  "questions_and_answers": [
+    {
+      "sequence": 1,
+      "question": {
+        "question_id": "Q1",
+        "question": "What is a key assumption made in the direct collocation method for optimal control?",
+        "context": [
+          "15.2.1 Transcription Methods The choice we made above, between optimizing just the action values (known as shoot- ing) or optimizing both state and action values (as we in fact did, known as colloca- shooting tion) is a fundamental choice in any numerical algorithm for optimizing a discretized collocation problem. The later method, collocation, produces more numerically stable algorithms and is therefore preferred in a variety of contexts. It also easier to implement, since modern optimization software for quadratic programs allows us to specify cost-functions and constraints on a per-variable basis as in eq. (15.5), rather than requiring us to figure out what the matrices Q and q are in eq. (15.2), it is easy to implement. 15.2.2 Comments about optimizing the discrete problem The disadvantage of optimizing the discrete control problem as in eq. (15"
+        ],
+        "difficulty": 1,
+        "topic": "Direct Methods for Optimal Control",
+        "subtopic": "Direct Methods for Optimal Control - Subtopic 1: .3. 15.3 Direct collocation In this section, we wi...",
+        "context_metadata": [
+          {
+            "filename": "02465_Notes.pdf",
+            "page_number": 189,
+            "chunk_index": 0
+          }
+        ],
+        "approved": false,
+        "teacher_notes": null,
+        "expected_answers": {
+          "correct": {
+            "example": "Default correct answer",
+            "source": "Source: 02465_Notes.pdf, Page 189"
+          },
+          "partial": {
+            "example": "Default partial answer",
+            "source": "Source: 02465_Notes.pdf, Page 189"
+          },
+          "incorrect": {
+            "example": "Default incorrect answer",
+            "source": "Source: 02465_Notes.pdf, Page 189"
+          }
+        }
+      },
+      "student_response": {
+        "content": "",
+        "timestamp": "2025-03-12T22:30:42.231260",
+        "hints_requested": 0
+      },
+      "evaluation": null,
+      "hints": [],
+      "time_taken": 0.0
+    },
+    {
+      "sequence": 2,
+      "question": {
+        "question_id": "Q6",
+        "question": "What is the main idea of direct methods in optimal control?",
+        "context": [
+          "02465: Introduction to reinforcement learning and control Direct methods and control by optimization Tue Herlau DTU Compute, Technical University of Denmark (DTU)"
+        ],
+        "difficulty": 1,
+        "topic": "Direct Methods for Optimal Control",
+        "subtopic": "Direct Methods for Optimal Control - Subtopic 2: 02465: Introduction to reinforcement learning and ...",
+        "context_metadata": [
+          {
+            "filename": "Lecture_5-handout.pdf",
+            "page_number": 1,
+            "chunk_index": 0
+          }
+        ],
+        "approved": false,
+        "teacher_notes": null,
+        "expected_answers": {
+          "correct": {
+            "example": "Default correct answer",
+            "source": "Source: Lecture_5-handout.pdf, Page 1"
+          },
+          "partial": {
+            "example": "Default partial answer",
+            "source": "Source: Lecture_5-handout.pdf, Page 1"
+          },
+          "incorrect": {
+            "example": "Default incorrect answer",
+            "source": "Source: Lecture_5-handout.pdf, Page 1"
+          }
+        }
+      },
+      "student_response": {
+        "content": "",
+        "timestamp": "2025-03-12T22:30:42.231352",
+        "hints_requested": 0
+      },
+      "evaluation": null,
+      "hints": [],
+      "time_taken": 0.0
+    },
+    {
+      "sequence": 3,
+      "question": {
+        "question_id": "Q11",
+        "question": "What is an open-loop control in the context of deterministic problems?",
+        "context": [
+          "Chapter 15 Direct methods As we in section 5.1.4, a deterministic problem can be solved using open-loop control. That is, an optimal policy is just a sequence of actions found by optimization. Since the models used in control, ˙x = f(x, u, t) is deterministic one should expect optimal control is intrinsically tied to simple optimization. We will therefore explore optimization-based methods to optimal control in this chapter. 15.1 Optimization Since this chapter will treat optimization, it is useful to discuss optimization from an abstract point of view before proceeding. 15.1.1 Non-linear optimization A general non-linear optimization problem, sometimes known as a non-linear pro- gram, typically take the following abstract definition for a minimization problem over non-linear pro- gram z ∈Rn: minz E(z) subject to h(z) = 0 g(z) ≤0 zlow ≤z ≤zupp (15.1) For some functions E, h and g. The goal is to find the optimal z∗which minimizes this expression",
+          ".1) For some functions E, h and g. The goal is to find the optimal z∗which minimizes this expression. There are no general ways to solve such a problem, however, assuming the problem is not too complicated methods such as sequential convex programming may yield sequential convex programming good results. We will therefore assume we have access to a way of solving such a problem in section 15.3 without understanding how it works. What is important is to note that for these methods to work well, we need an initial guess for the solution (and the performance depends on how good that guess is; for instance if it satisfy the constraints), and it is recommended we can compute gradient/Hessian of E as well as the Jacobians of g and h. 187"
+        ],
+        "difficulty": 1,
+        "topic": "Direct Methods for Optimal Control",
+        "subtopic": "Direct Methods for Optimal Control - Subtopic 3: Chapter 15 Direct methods As we in section 5.1.4, ...",
+        "context_metadata": [
+          {
+            "filename": "02465_Notes.pdf",
+            "page_number": 187,
+            "chunk_index": 0
+          },
+          {
+            "filename": "02465_Notes.pdf",
+            "page_number": 187,
+            "chunk_index": 1
+          }
+        ],
+        "approved": false,
+        "teacher_notes": null,
+        "expected_answers": {
+          "correct": {
+            "example": "Default correct answer",
+            "source": "Source: 02465_Notes.pdf, Page 187"
+          },
+          "partial": {
+            "example": "Default partial answer",
+            "source": "Source: 02465_Notes.pdf, Page 187"
+          },
+          "incorrect": {
+            "example": "Default incorrect answer",
+            "source": "Source: 02465_Notes.pdf, Page 187"
+          }
+        }
+      },
+      "student_response": {
+        "content": "",
+        "timestamp": "2025-03-12T22:30:42.231385",
+        "hints_requested": 0
+      },
+      "evaluation": null,
+      "hints": [],
+      "time_taken": 0.0
+    },
+    {
+      "sequence": 4,
+      "question": {
+        "question_id": "Q16",
+        "question": "What term describes the control approach where u∗= arg min u Ju(x0)?",
+        "context": [
+          "Recap from last week Approaches to control • Last week: Rule-based methods (build u(t) = π(x, t) directly) • Today: Optimization-based methods: u∗= arg min u Ju(x0) • Direct optimization of a discretized version of the problem • Next week: DP-inspired planning methods 12 DTU Compute Lecture 5 1 March, 2024"
+        ],
+        "difficulty": 1,
+        "topic": "Direct Methods for Optimal Control",
+        "subtopic": "Direct Methods for Optimal Control - Subtopic 4: Recap from last week Approaches to control • Last ...",
+        "context_metadata": [
+          {
+            "filename": "Lecture_5-handout.pdf",
+            "page_number": 12,
+            "chunk_index": 0
+          }
+        ],
+        "approved": false,
+        "teacher_notes": null,
+        "expected_answers": {
+          "correct": {
+            "example": "Default correct answer",
+            "source": "Source: Lecture_5-handout.pdf, Page 12"
+          },
+          "partial": {
+            "example": "Default partial answer",
+            "source": "Source: Lecture_5-handout.pdf, Page 12"
+          },
+          "incorrect": {
+            "example": "Default incorrect answer",
+            "source": "Source: Lecture_5-handout.pdf, Page 12"
+          }
+        }
+      },
+      "student_response": {
+        "content": "",
+        "timestamp": "2025-03-12T22:30:42.231427",
+        "hints_requested": 0
+      },
+      "evaluation": null,
+      "hints": [],
+      "time_taken": 0.0
+    },
+    {
+      "sequence": 5,
+      "question": {
+        "question_id": "Q21",
+        "question": "What is direct collocation in the context of optimization-based methods for optimal control?",
+        "context": [
+          "EXERCISE 5 Direct methods and control by optimization Tue Herlau tuhe@dtu.dk 1 March, 2024 Objective: In this exercise, we will look at optimization-based methods for optimal con- trol, specifically direct collocation. Direct collocation works by transforming the control problem into a single, large, non-linear constrained optimization problem which is then solved by a black-box solver. (33 lines of code) Exercise code: https://lab.compute.dtu.dk/02465material/02465students.git Online documentation: 02465material.pages.compute.dtu.dk/02465public/exercises/ex05.html Contents 1 Applying direct methods to the Kuromoto problem 2 2 Direct methods and trapezoid collocation 3 2.1 Constrained optimization . . . . . . . . . . . . . . . . . . . . . . . . . . 3 2.2 Overview . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 4 2.3 Creating the simple bounds (direct.py) . . . . . . . . . . . . . . . . . . 4 2.4 Symbolic collocation (direct.py) . . . . . . . . . . . . . . . . . ."
+        ],
+        "difficulty": 1,
+        "topic": "Direct Methods for Optimal Control",
+        "subtopic": "Direct Methods for Optimal Control - Subtopic 5: EXERCISE 5 Direct methods and control by optimizat...",
+        "context_metadata": [
+          {
+            "filename": "02465ex5_Python.pdf",
+            "page_number": 1,
+            "chunk_index": 0
+          }
+        ],
+        "approved": false,
+        "teacher_notes": null,
+        "expected_answers": {
+          "correct": {
+            "example": "Default correct answer",
+            "source": "Source: 02465ex5_Python.pdf, Page 1"
+          },
+          "partial": {
+            "example": "Default partial answer",
+            "source": "Source: 02465ex5_Python.pdf, Page 1"
+          },
+          "incorrect": {
+            "example": "Default incorrect answer",
+            "source": "Source: 02465ex5_Python.pdf, Page 1"
+          }
+        }
+      },
+      "student_response": {
+        "content": "",
+        "timestamp": "2025-03-12T22:30:42.231581",
+        "hints_requested": 0
+      },
+      "evaluation": null,
+      "hints": [],
+      "time_taken": 0.0
+    },
+    {
+      "sequence": 6,
+      "question": {
+        "question_id": "Q2",
+        "question": "How would you explain the main advantage of using direct collocation in optimal control methods?",
+        "context": [
+          "15.2.1 Transcription Methods The choice we made above, between optimizing just the action values (known as shoot- ing) or optimizing both state and action values (as we in fact did, known as colloca- shooting tion) is a fundamental choice in any numerical algorithm for optimizing a discretized collocation problem. The later method, collocation, produces more numerically stable algorithms and is therefore preferred in a variety of contexts. It also easier to implement, since modern optimization software for quadratic programs allows us to specify cost-functions and constraints on a per-variable basis as in eq. (15.5), rather than requiring us to figure out what the matrices Q and q are in eq. (15.2), it is easy to implement. 15.2.2 Comments about optimizing the discrete problem The disadvantage of optimizing the discrete control problem as in eq. (15"
+        ],
+        "difficulty": 2,
+        "topic": "Direct Methods for Optimal Control",
+        "subtopic": "Direct Methods for Optimal Control - Subtopic 1: .3. 15.3 Direct collocation In this section, we wi...",
+        "context_metadata": [
+          {
+            "filename": "02465_Notes.pdf",
+            "page_number": 189,
+            "chunk_index": 0
+          }
+        ],
+        "approved": false,
+        "teacher_notes": null,
+        "expected_answers": {
+          "correct": {
+            "example": "Default correct answer",
+            "source": "Source: 02465_Notes.pdf, Page 189"
+          },
+          "partial": {
+            "example": "Default partial answer",
+            "source": "Source: 02465_Notes.pdf, Page 189"
+          },
+          "incorrect": {
+            "example": "Default incorrect answer",
+            "source": "Source: 02465_Notes.pdf, Page 189"
+          }
+        }
+      },
+      "student_response": {
+        "content": "",
+        "timestamp": "2025-03-12T22:30:42.231616",
+        "hints_requested": 0
+      },
+      "evaluation": null,
+      "hints": [],
+      "time_taken": 0.0
+    },
+    {
+      "sequence": 7,
+      "question": {
+        "question_id": "Q7",
+        "question": "How would you explain the role of optimization in direct methods for control?",
+        "context": [
+          "02465: Introduction to reinforcement learning and control Direct methods and control by optimization Tue Herlau DTU Compute, Technical University of Denmark (DTU)"
+        ],
+        "difficulty": 2,
+        "topic": "Direct Methods for Optimal Control",
+        "subtopic": "Direct Methods for Optimal Control - Subtopic 2: 02465: Introduction to reinforcement learning and ...",
+        "context_metadata": [
+          {
+            "filename": "Lecture_5-handout.pdf",
+            "page_number": 1,
+            "chunk_index": 0
+          }
+        ],
+        "approved": false,
+        "teacher_notes": null,
+        "expected_answers": {
+          "correct": {
+            "example": "Default correct answer",
+            "source": "Source: Lecture_5-handout.pdf, Page 1"
+          },
+          "partial": {
+            "example": "Default partial answer",
+            "source": "Source: Lecture_5-handout.pdf, Page 1"
+          },
+          "incorrect": {
+            "example": "Default incorrect answer",
+            "source": "Source: Lecture_5-handout.pdf, Page 1"
+          }
+        }
+      },
+      "student_response": {
+        "content": "",
+        "timestamp": "2025-03-12T22:30:42.231651",
+        "hints_requested": 0
+      },
+      "evaluation": null,
+      "hints": [],
+      "time_taken": 0.0
+    },
+    {
+      "sequence": 8,
+      "question": {
+        "question_id": "Q12",
+        "question": "How would you explain the role of an initial guess in non-linear optimization?",
+        "context": [
+          "Chapter 15 Direct methods As we in section 5.1.4, a deterministic problem can be solved using open-loop control. That is, an optimal policy is just a sequence of actions found by optimization. Since the models used in control, ˙x = f(x, u, t) is deterministic one should expect optimal control is intrinsically tied to simple optimization. We will therefore explore optimization-based methods to optimal control in this chapter. 15.1 Optimization Since this chapter will treat optimization, it is useful to discuss optimization from an abstract point of view before proceeding. 15.1.1 Non-linear optimization A general non-linear optimization problem, sometimes known as a non-linear pro- gram, typically take the following abstract definition for a minimization problem over non-linear pro- gram z ∈Rn: minz E(z) subject to h(z) = 0 g(z) ≤0 zlow ≤z ≤zupp (15.1) For some functions E, h and g. The goal is to find the optimal z∗which minimizes this expression",
+          ".1) For some functions E, h and g. The goal is to find the optimal z∗which minimizes this expression. There are no general ways to solve such a problem, however, assuming the problem is not too complicated methods such as sequential convex programming may yield sequential convex programming good results. We will therefore assume we have access to a way of solving such a problem in section 15.3 without understanding how it works. What is important is to note that for these methods to work well, we need an initial guess for the solution (and the performance depends on how good that guess is; for instance if it satisfy the constraints), and it is recommended we can compute gradient/Hessian of E as well as the Jacobians of g and h. 187"
+        ],
+        "difficulty": 2,
+        "topic": "Direct Methods for Optimal Control",
+        "subtopic": "Direct Methods for Optimal Control - Subtopic 3: Chapter 15 Direct methods As we in section 5.1.4, ...",
+        "context_metadata": [
+          {
+            "filename": "02465_Notes.pdf",
+            "page_number": 187,
+            "chunk_index": 0
+          },
+          {
+            "filename": "02465_Notes.pdf",
+            "page_number": 187,
+            "chunk_index": 1
+          }
+        ],
+        "approved": false,
+        "teacher_notes": null,
+        "expected_answers": {
+          "correct": {
+            "example": "Default correct answer",
+            "source": "Source: 02465_Notes.pdf, Page 187"
+          },
+          "partial": {
+            "example": "Default partial answer",
+            "source": "Source: 02465_Notes.pdf, Page 187"
+          },
+          "incorrect": {
+            "example": "Default incorrect answer",
+            "source": "Source: 02465_Notes.pdf, Page 187"
+          }
+        }
+      },
+      "student_response": {
+        "content": "",
+        "timestamp": "2025-03-12T22:30:42.231682",
+        "hints_requested": 0
+      },
+      "evaluation": null,
+      "hints": [],
+      "time_taken": 0.0
+    },
+    {
+      "sequence": 9,
+      "question": {
+        "question_id": "Q17",
+        "question": "How would you explain the difference between rule-based and optimization-based control methods?",
+        "context": [
+          "Recap from last week Approaches to control • Last week: Rule-based methods (build u(t) = π(x, t) directly) • Today: Optimization-based methods: u∗= arg min u Ju(x0) • Direct optimization of a discretized version of the problem • Next week: DP-inspired planning methods 12 DTU Compute Lecture 5 1 March, 2024"
+        ],
+        "difficulty": 2,
+        "topic": "Direct Methods for Optimal Control",
+        "subtopic": "Direct Methods for Optimal Control - Subtopic 4: Recap from last week Approaches to control • Last ...",
+        "context_metadata": [
+          {
+            "filename": "Lecture_5-handout.pdf",
+            "page_number": 12,
+            "chunk_index": 0
+          }
+        ],
+        "approved": false,
+        "teacher_notes": null,
+        "expected_answers": {
+          "correct": {
+            "example": "Default correct answer",
+            "source": "Source: Lecture_5-handout.pdf, Page 12"
+          },
+          "partial": {
+            "example": "Default partial answer",
+            "source": "Source: Lecture_5-handout.pdf, Page 12"
+          },
+          "incorrect": {
+            "example": "Default incorrect answer",
+            "source": "Source: Lecture_5-handout.pdf, Page 12"
+          }
+        }
+      },
+      "student_response": {
+        "content": "",
+        "timestamp": "2025-03-12T22:30:42.231711",
+        "hints_requested": 0
+      },
+      "evaluation": null,
+      "hints": [],
+      "time_taken": 0.0
+    },
+    {
+      "sequence": 10,
+      "question": {
+        "question_id": "Q22",
+        "question": "How would you explain the role of a black-box solver in direct collocation?",
+        "context": [
+          "EXERCISE 5 Direct methods and control by optimization Tue Herlau tuhe@dtu.dk 1 March, 2024 Objective: In this exercise, we will look at optimization-based methods for optimal con- trol, specifically direct collocation. Direct collocation works by transforming the control problem into a single, large, non-linear constrained optimization problem which is then solved by a black-box solver. (33 lines of code) Exercise code: https://lab.compute.dtu.dk/02465material/02465students.git Online documentation: 02465material.pages.compute.dtu.dk/02465public/exercises/ex05.html Contents 1 Applying direct methods to the Kuromoto problem 2 2 Direct methods and trapezoid collocation 3 2.1 Constrained optimization . . . . . . . . . . . . . . . . . . . . . . . . . . 3 2.2 Overview . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 4 2.3 Creating the simple bounds (direct.py) . . . . . . . . . . . . . . . . . . 4 2.4 Symbolic collocation (direct.py) . . . . . . . . . . . . . . . . . ."
+        ],
+        "difficulty": 2,
+        "topic": "Direct Methods for Optimal Control",
+        "subtopic": "Direct Methods for Optimal Control - Subtopic 5: EXERCISE 5 Direct methods and control by optimizat...",
+        "context_metadata": [
+          {
+            "filename": "02465ex5_Python.pdf",
+            "page_number": 1,
+            "chunk_index": 0
+          }
+        ],
+        "approved": false,
+        "teacher_notes": null,
+        "expected_answers": {
+          "correct": {
+            "example": "Default correct answer",
+            "source": "Source: 02465ex5_Python.pdf, Page 1"
+          },
+          "partial": {
+            "example": "Default partial answer",
+            "source": "Source: 02465ex5_Python.pdf, Page 1"
+          },
+          "incorrect": {
+            "example": "Default incorrect answer",
+            "source": "Source: 02465ex5_Python.pdf, Page 1"
+          }
+        }
+      },
+      "student_response": {
+        "content": "",
+        "timestamp": "2025-03-12T22:30:42.231737",
+        "hints_requested": 0
+      },
+      "evaluation": null,
+      "hints": [],
+      "time_taken": 0.0
+    },
+    {
+      "sequence": 11,
+      "question": {
+        "question_id": "Q3",
+        "question": "How would you use direct collocation to approximate a given dynamical model in optimal control?",
+        "context": [
+          "15.2.1 Transcription Methods The choice we made above, between optimizing just the action values (known as shoot- ing) or optimizing both state and action values (as we in fact did, known as colloca- shooting tion) is a fundamental choice in any numerical algorithm for optimizing a discretized collocation problem. The later method, collocation, produces more numerically stable algorithms and is therefore preferred in a variety of contexts. It also easier to implement, since modern optimization software for quadratic programs allows us to specify cost-functions and constraints on a per-variable basis as in eq. (15.5), rather than requiring us to figure out what the matrices Q and q are in eq. (15.2), it is easy to implement. 15.2.2 Comments about optimizing the discrete problem The disadvantage of optimizing the discrete control problem as in eq. (15"
+        ],
+        "difficulty": 3,
+        "topic": "Direct Methods for Optimal Control",
+        "subtopic": "Direct Methods for Optimal Control - Subtopic 1: .3. 15.3 Direct collocation In this section, we wi...",
+        "context_metadata": [
+          {
+            "filename": "02465_Notes.pdf",
+            "page_number": 189,
+            "chunk_index": 0
+          }
+        ],
+        "approved": false,
+        "teacher_notes": null,
+        "expected_answers": {
+          "correct": {
+            "example": "Default correct answer",
+            "source": "Source: 02465_Notes.pdf, Page 189"
+          },
+          "partial": {
+            "example": "Default partial answer",
+            "source": "Source: 02465_Notes.pdf, Page 189"
+          },
+          "incorrect": {
+            "example": "Default incorrect answer",
+            "source": "Source: 02465_Notes.pdf, Page 189"
+          }
+        }
+      },
+      "student_response": {
+        "content": "",
+        "timestamp": "2025-03-12T22:30:42.231772",
+        "hints_requested": 0
+      },
+      "evaluation": null,
+      "hints": [],
+      "time_taken": 0.0
+    },
+    {
+      "sequence": 12,
+      "question": {
+        "question_id": "Q8",
+        "question": "How would you apply direct methods in optimizing reinforcement learning control problems?",
+        "context": [
+          "02465: Introduction to reinforcement learning and control Direct methods and control by optimization Tue Herlau DTU Compute, Technical University of Denmark (DTU)"
+        ],
+        "difficulty": 3,
+        "topic": "Direct Methods for Optimal Control",
+        "subtopic": "Direct Methods for Optimal Control - Subtopic 2: 02465: Introduction to reinforcement learning and ...",
+        "context_metadata": [
+          {
+            "filename": "Lecture_5-handout.pdf",
+            "page_number": 1,
+            "chunk_index": 0
+          }
+        ],
+        "approved": false,
+        "teacher_notes": null,
+        "expected_answers": {
+          "correct": {
+            "example": "Default correct answer",
+            "source": "Source: Lecture_5-handout.pdf, Page 1"
+          },
+          "partial": {
+            "example": "Default partial answer",
+            "source": "Source: Lecture_5-handout.pdf, Page 1"
+          },
+          "incorrect": {
+            "example": "Default incorrect answer",
+            "source": "Source: Lecture_5-handout.pdf, Page 1"
+          }
+        }
+      },
+      "student_response": {
+        "content": "",
+        "timestamp": "2025-03-12T22:30:42.231823",
+        "hints_requested": 0
+      },
+      "evaluation": null,
+      "hints": [],
+      "time_taken": 0.0
+    },
+    {
+      "sequence": 13,
+      "question": {
+        "question_id": "Q13",
+        "question": "How would you use open-loop control to solve a deterministic optimization problem?",
+        "context": [
+          "Chapter 15 Direct methods As we in section 5.1.4, a deterministic problem can be solved using open-loop control. That is, an optimal policy is just a sequence of actions found by optimization. Since the models used in control, ˙x = f(x, u, t) is deterministic one should expect optimal control is intrinsically tied to simple optimization. We will therefore explore optimization-based methods to optimal control in this chapter. 15.1 Optimization Since this chapter will treat optimization, it is useful to discuss optimization from an abstract point of view before proceeding. 15.1.1 Non-linear optimization A general non-linear optimization problem, sometimes known as a non-linear pro- gram, typically take the following abstract definition for a minimization problem over non-linear pro- gram z ∈Rn: minz E(z) subject to h(z) = 0 g(z) ≤0 zlow ≤z ≤zupp (15.1) For some functions E, h and g. The goal is to find the optimal z∗which minimizes this expression",
+          ".1) For some functions E, h and g. The goal is to find the optimal z∗which minimizes this expression. There are no general ways to solve such a problem, however, assuming the problem is not too complicated methods such as sequential convex programming may yield sequential convex programming good results. We will therefore assume we have access to a way of solving such a problem in section 15.3 without understanding how it works. What is important is to note that for these methods to work well, we need an initial guess for the solution (and the performance depends on how good that guess is; for instance if it satisfy the constraints), and it is recommended we can compute gradient/Hessian of E as well as the Jacobians of g and h. 187"
+        ],
+        "difficulty": 3,
+        "topic": "Direct Methods for Optimal Control",
+        "subtopic": "Direct Methods for Optimal Control - Subtopic 3: Chapter 15 Direct methods As we in section 5.1.4, ...",
+        "context_metadata": [
+          {
+            "filename": "02465_Notes.pdf",
+            "page_number": 187,
+            "chunk_index": 0
+          },
+          {
+            "filename": "02465_Notes.pdf",
+            "page_number": 187,
+            "chunk_index": 1
+          }
+        ],
+        "approved": false,
+        "teacher_notes": null,
+        "expected_answers": {
+          "correct": {
+            "example": "Default correct answer",
+            "source": "Source: 02465_Notes.pdf, Page 187"
+          },
+          "partial": {
+            "example": "Default partial answer",
+            "source": "Source: 02465_Notes.pdf, Page 187"
+          },
+          "incorrect": {
+            "example": "Default incorrect answer",
+            "source": "Source: 02465_Notes.pdf, Page 187"
+          }
+        }
+      },
+      "student_response": {
+        "content": "",
+        "timestamp": "2025-03-12T22:30:42.231862",
+        "hints_requested": 0
+      },
+      "evaluation": null,
+      "hints": [],
+      "time_taken": 0.0
+    },
+    {
+      "sequence": 14,
+      "question": {
+        "question_id": "Q18",
+        "question": "How would you apply optimization-based methods to directly optimize a discretized control problem?",
+        "context": [
+          "Recap from last week Approaches to control • Last week: Rule-based methods (build u(t) = π(x, t) directly) • Today: Optimization-based methods: u∗= arg min u Ju(x0) • Direct optimization of a discretized version of the problem • Next week: DP-inspired planning methods 12 DTU Compute Lecture 5 1 March, 2024"
+        ],
+        "difficulty": 3,
+        "topic": "Direct Methods for Optimal Control",
+        "subtopic": "Direct Methods for Optimal Control - Subtopic 4: Recap from last week Approaches to control • Last ...",
+        "context_metadata": [
+          {
+            "filename": "Lecture_5-handout.pdf",
+            "page_number": 12,
+            "chunk_index": 0
+          }
+        ],
+        "approved": false,
+        "teacher_notes": null,
+        "expected_answers": {
+          "correct": {
+            "example": "Default correct answer",
+            "source": "Source: Lecture_5-handout.pdf, Page 12"
+          },
+          "partial": {
+            "example": "Default partial answer",
+            "source": "Source: Lecture_5-handout.pdf, Page 12"
+          },
+          "incorrect": {
+            "example": "Default incorrect answer",
+            "source": "Source: Lecture_5-handout.pdf, Page 12"
+          }
+        }
+      },
+      "student_response": {
+        "content": "",
+        "timestamp": "2025-03-12T22:30:42.231892",
+        "hints_requested": 0
+      },
+      "evaluation": null,
+      "hints": [],
+      "time_taken": 0.0
+    },
+    {
+      "sequence": 15,
+      "question": {
+        "question_id": "Q23",
+        "question": "How would you apply direct collocation to solve a constrained optimization problem?",
+        "context": [
+          "EXERCISE 5 Direct methods and control by optimization Tue Herlau tuhe@dtu.dk 1 March, 2024 Objective: In this exercise, we will look at optimization-based methods for optimal con- trol, specifically direct collocation. Direct collocation works by transforming the control problem into a single, large, non-linear constrained optimization problem which is then solved by a black-box solver. (33 lines of code) Exercise code: https://lab.compute.dtu.dk/02465material/02465students.git Online documentation: 02465material.pages.compute.dtu.dk/02465public/exercises/ex05.html Contents 1 Applying direct methods to the Kuromoto problem 2 2 Direct methods and trapezoid collocation 3 2.1 Constrained optimization . . . . . . . . . . . . . . . . . . . . . . . . . . 3 2.2 Overview . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 4 2.3 Creating the simple bounds (direct.py) . . . . . . . . . . . . . . . . . . 4 2.4 Symbolic collocation (direct.py) . . . . . . . . . . . . . . . . . ."
+        ],
+        "difficulty": 3,
+        "topic": "Direct Methods for Optimal Control",
+        "subtopic": "Direct Methods for Optimal Control - Subtopic 5: EXERCISE 5 Direct methods and control by optimizat...",
+        "context_metadata": [
+          {
+            "filename": "02465ex5_Python.pdf",
+            "page_number": 1,
+            "chunk_index": 0
+          }
+        ],
+        "approved": false,
+        "teacher_notes": null,
+        "expected_answers": {
+          "correct": {
+            "example": "Default correct answer",
+            "source": "Source: 02465ex5_Python.pdf, Page 1"
+          },
+          "partial": {
+            "example": "Default partial answer",
+            "source": "Source: 02465ex5_Python.pdf, Page 1"
+          },
+          "incorrect": {
+            "example": "Default incorrect answer",
+            "source": "Source: 02465ex5_Python.pdf, Page 1"
+          }
+        }
+      },
+      "student_response": {
+        "content": "",
+        "timestamp": "2025-03-12T22:30:42.231920",
+        "hints_requested": 0
+      },
+      "evaluation": null,
+      "hints": [],
+      "time_taken": 0.0
+    },
+    {
+      "sequence": 16,
+      "question": {
+        "question_id": "Q4",
+        "question": "What is the relationship between direct collocation assumptions and the approximation quality of the dynamical model?",
+        "context": [
+          "15.2.1 Transcription Methods The choice we made above, between optimizing just the action values (known as shoot- ing) or optimizing both state and action values (as we in fact did, known as colloca- shooting tion) is a fundamental choice in any numerical algorithm for optimizing a discretized collocation problem. The later method, collocation, produces more numerically stable algorithms and is therefore preferred in a variety of contexts. It also easier to implement, since modern optimization software for quadratic programs allows us to specify cost-functions and constraints on a per-variable basis as in eq. (15.5), rather than requiring us to figure out what the matrices Q and q are in eq. (15.2), it is easy to implement. 15.2.2 Comments about optimizing the discrete problem The disadvantage of optimizing the discrete control problem as in eq. (15"
+        ],
+        "difficulty": 4,
+        "topic": "Direct Methods for Optimal Control",
+        "subtopic": "Direct Methods for Optimal Control - Subtopic 1: .3. 15.3 Direct collocation In this section, we wi...",
+        "context_metadata": [
+          {
+            "filename": "02465_Notes.pdf",
+            "page_number": 189,
+            "chunk_index": 0
+          }
+        ],
+        "approved": false,
+        "teacher_notes": null,
+        "expected_answers": {
+          "correct": {
+            "example": "Default correct answer",
+            "source": "Source: 02465_Notes.pdf, Page 189"
+          },
+          "partial": {
+            "example": "Default partial answer",
+            "source": "Source: 02465_Notes.pdf, Page 189"
+          },
+          "incorrect": {
+            "example": "Default incorrect answer",
+            "source": "Source: 02465_Notes.pdf, Page 189"
+          }
+        }
+      },
+      "student_response": {
+        "content": "",
+        "timestamp": "2025-03-12T22:30:42.231946",
+        "hints_requested": 0
+      },
+      "evaluation": null,
+      "hints": [],
+      "time_taken": 0.0
+    },
+    {
+      "sequence": 17,
+      "question": {
+        "question_id": "Q9",
+        "question": "How does direct methods' optimization approach compare to traditional reinforcement learning techniques for control?",
+        "context": [
+          "02465: Introduction to reinforcement learning and control Direct methods and control by optimization Tue Herlau DTU Compute, Technical University of Denmark (DTU)"
+        ],
+        "difficulty": 4,
+        "topic": "Direct Methods for Optimal Control",
+        "subtopic": "Direct Methods for Optimal Control - Subtopic 2: 02465: Introduction to reinforcement learning and ...",
+        "context_metadata": [
+          {
+            "filename": "Lecture_5-handout.pdf",
+            "page_number": 1,
+            "chunk_index": 0
+          }
+        ],
+        "approved": false,
+        "teacher_notes": null,
+        "expected_answers": {
+          "correct": {
+            "example": "Default correct answer",
+            "source": "Source: Lecture_5-handout.pdf, Page 1"
+          },
+          "partial": {
+            "example": "Default partial answer",
+            "source": "Source: Lecture_5-handout.pdf, Page 1"
+          },
+          "incorrect": {
+            "example": "Default incorrect answer",
+            "source": "Source: Lecture_5-handout.pdf, Page 1"
+          }
+        }
+      },
+      "student_response": {
+        "content": "",
+        "timestamp": "2025-03-12T22:30:42.231973",
+        "hints_requested": 0
+      },
+      "evaluation": null,
+      "hints": [],
+      "time_taken": 0.0
+    },
+    {
+      "sequence": 18,
+      "question": {
+        "question_id": "Q14",
+        "question": "How does open-loop control compare to feedback control in deterministic optimization problems?",
+        "context": [
+          "Chapter 15 Direct methods As we in section 5.1.4, a deterministic problem can be solved using open-loop control. That is, an optimal policy is just a sequence of actions found by optimization. Since the models used in control, ˙x = f(x, u, t) is deterministic one should expect optimal control is intrinsically tied to simple optimization. We will therefore explore optimization-based methods to optimal control in this chapter. 15.1 Optimization Since this chapter will treat optimization, it is useful to discuss optimization from an abstract point of view before proceeding. 15.1.1 Non-linear optimization A general non-linear optimization problem, sometimes known as a non-linear pro- gram, typically take the following abstract definition for a minimization problem over non-linear pro- gram z ∈Rn: minz E(z) subject to h(z) = 0 g(z) ≤0 zlow ≤z ≤zupp (15.1) For some functions E, h and g. The goal is to find the optimal z∗which minimizes this expression",
+          ".1) For some functions E, h and g. The goal is to find the optimal z∗which minimizes this expression. There are no general ways to solve such a problem, however, assuming the problem is not too complicated methods such as sequential convex programming may yield sequential convex programming good results. We will therefore assume we have access to a way of solving such a problem in section 15.3 without understanding how it works. What is important is to note that for these methods to work well, we need an initial guess for the solution (and the performance depends on how good that guess is; for instance if it satisfy the constraints), and it is recommended we can compute gradient/Hessian of E as well as the Jacobians of g and h. 187"
+        ],
+        "difficulty": 4,
+        "topic": "Direct Methods for Optimal Control",
+        "subtopic": "Direct Methods for Optimal Control - Subtopic 3: Chapter 15 Direct methods As we in section 5.1.4, ...",
+        "context_metadata": [
+          {
+            "filename": "02465_Notes.pdf",
+            "page_number": 187,
+            "chunk_index": 0
+          },
+          {
+            "filename": "02465_Notes.pdf",
+            "page_number": 187,
+            "chunk_index": 1
+          }
+        ],
+        "approved": false,
+        "teacher_notes": null,
+        "expected_answers": {
+          "correct": {
+            "example": "Default correct answer",
+            "source": "Source: 02465_Notes.pdf, Page 187"
+          },
+          "partial": {
+            "example": "Default partial answer",
+            "source": "Source: 02465_Notes.pdf, Page 187"
+          },
+          "incorrect": {
+            "example": "Default incorrect answer",
+            "source": "Source: 02465_Notes.pdf, Page 187"
+          }
+        }
+      },
+      "student_response": {
+        "content": "",
+        "timestamp": "2025-03-12T22:30:42.231999",
+        "hints_requested": 0
+      },
+      "evaluation": null,
+      "hints": [],
+      "time_taken": 0.0
+    },
+    {
+      "sequence": 19,
+      "question": {
+        "question_id": "Q19",
+        "question": "How does direct optimization differ fundamentally from rule-based methods in control approaches?",
+        "context": [
+          "Recap from last week Approaches to control • Last week: Rule-based methods (build u(t) = π(x, t) directly) • Today: Optimization-based methods: u∗= arg min u Ju(x0) • Direct optimization of a discretized version of the problem • Next week: DP-inspired planning methods 12 DTU Compute Lecture 5 1 March, 2024"
+        ],
+        "difficulty": 4,
+        "topic": "Direct Methods for Optimal Control",
+        "subtopic": "Direct Methods for Optimal Control - Subtopic 4: Recap from last week Approaches to control • Last ...",
+        "context_metadata": [
+          {
+            "filename": "Lecture_5-handout.pdf",
+            "page_number": 12,
+            "chunk_index": 0
+          }
+        ],
+        "approved": false,
+        "teacher_notes": null,
+        "expected_answers": {
+          "correct": {
+            "example": "Default correct answer",
+            "source": "Source: Lecture_5-handout.pdf, Page 12"
+          },
+          "partial": {
+            "example": "Default partial answer",
+            "source": "Source: Lecture_5-handout.pdf, Page 12"
+          },
+          "incorrect": {
+            "example": "Default incorrect answer",
+            "source": "Source: Lecture_5-handout.pdf, Page 12"
+          }
+        }
+      },
+      "student_response": {
+        "content": "",
+        "timestamp": "2025-03-12T22:30:42.232025",
+        "hints_requested": 0
+      },
+      "evaluation": null,
+      "hints": [],
+      "time_taken": 0.0
+    },
+    {
+      "sequence": 20,
+      "question": {
+        "question_id": "Q24",
+        "question": "What is the relationship between direct collocation and constrained optimization in direct methods for optimal control?",
+        "context": [
+          "EXERCISE 5 Direct methods and control by optimization Tue Herlau tuhe@dtu.dk 1 March, 2024 Objective: In this exercise, we will look at optimization-based methods for optimal con- trol, specifically direct collocation. Direct collocation works by transforming the control problem into a single, large, non-linear constrained optimization problem which is then solved by a black-box solver. (33 lines of code) Exercise code: https://lab.compute.dtu.dk/02465material/02465students.git Online documentation: 02465material.pages.compute.dtu.dk/02465public/exercises/ex05.html Contents 1 Applying direct methods to the Kuromoto problem 2 2 Direct methods and trapezoid collocation 3 2.1 Constrained optimization . . . . . . . . . . . . . . . . . . . . . . . . . . 3 2.2 Overview . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 4 2.3 Creating the simple bounds (direct.py) . . . . . . . . . . . . . . . . . . 4 2.4 Symbolic collocation (direct.py) . . . . . . . . . . . . . . . . . ."
+        ],
+        "difficulty": 4,
+        "topic": "Direct Methods for Optimal Control",
+        "subtopic": "Direct Methods for Optimal Control - Subtopic 5: EXERCISE 5 Direct methods and control by optimizat...",
+        "context_metadata": [
+          {
+            "filename": "02465ex5_Python.pdf",
+            "page_number": 1,
+            "chunk_index": 0
+          }
+        ],
+        "approved": false,
+        "teacher_notes": null,
+        "expected_answers": {
+          "correct": {
+            "example": "Default correct answer",
+            "source": "Source: 02465ex5_Python.pdf, Page 1"
+          },
+          "partial": {
+            "example": "Default partial answer",
+            "source": "Source: 02465ex5_Python.pdf, Page 1"
+          },
+          "incorrect": {
+            "example": "Default incorrect answer",
+            "source": "Source: 02465ex5_Python.pdf, Page 1"
+          }
+        }
+      },
+      "student_response": {
+        "content": "",
+        "timestamp": "2025-03-12T22:30:42.232452",
+        "hints_requested": 0
+      },
+      "evaluation": null,
+      "hints": [],
+      "time_taken": 0.0
+    },
+    {
+      "sequence": 21,
+      "question": {
+        "question_id": "Q5",
+        "question": "How would you design a direct collocation method for an optimal control problem with a given dynamical model?",
+        "context": [
+          "15.2.1 Transcription Methods The choice we made above, between optimizing just the action values (known as shoot- ing) or optimizing both state and action values (as we in fact did, known as colloca- shooting tion) is a fundamental choice in any numerical algorithm for optimizing a discretized collocation problem. The later method, collocation, produces more numerically stable algorithms and is therefore preferred in a variety of contexts. It also easier to implement, since modern optimization software for quadratic programs allows us to specify cost-functions and constraints on a per-variable basis as in eq. (15.5), rather than requiring us to figure out what the matrices Q and q are in eq. (15.2), it is easy to implement. 15.2.2 Comments about optimizing the discrete problem The disadvantage of optimizing the discrete control problem as in eq. (15"
+        ],
+        "difficulty": 5,
+        "topic": "Direct Methods for Optimal Control",
+        "subtopic": "Direct Methods for Optimal Control - Subtopic 1: .3. 15.3 Direct collocation In this section, we wi...",
+        "context_metadata": [
+          {
+            "filename": "02465_Notes.pdf",
+            "page_number": 189,
+            "chunk_index": 0
+          }
+        ],
+        "approved": false,
+        "teacher_notes": null,
+        "expected_answers": {
+          "correct": {
+            "example": "Default correct answer",
+            "source": "Source: 02465_Notes.pdf, Page 189"
+          },
+          "partial": {
+            "example": "Default partial answer",
+            "source": "Source: 02465_Notes.pdf, Page 189"
+          },
+          "incorrect": {
+            "example": "Default incorrect answer",
+            "source": "Source: 02465_Notes.pdf, Page 189"
+          }
+        }
+      },
+      "student_response": {
+        "content": "",
+        "timestamp": "2025-03-12T22:30:42.232506",
+        "hints_requested": 0
+      },
+      "evaluation": null,
+      "hints": [],
+      "time_taken": 0.0
+    },
+    {
+      "sequence": 22,
+      "question": {
+        "question_id": "Q10",
+        "question": "How would you design a novel direct method for optimizing reinforcement learning control problems?",
+        "context": [
+          "02465: Introduction to reinforcement learning and control Direct methods and control by optimization Tue Herlau DTU Compute, Technical University of Denmark (DTU)"
+        ],
+        "difficulty": 5,
+        "topic": "Direct Methods for Optimal Control",
+        "subtopic": "Direct Methods for Optimal Control - Subtopic 2: 02465: Introduction to reinforcement learning and ...",
+        "context_metadata": [
+          {
+            "filename": "Lecture_5-handout.pdf",
+            "page_number": 1,
+            "chunk_index": 0
+          }
+        ],
+        "approved": false,
+        "teacher_notes": null,
+        "expected_answers": {
+          "correct": {
+            "example": "Default correct answer",
+            "source": "Source: Lecture_5-handout.pdf, Page 1"
+          },
+          "partial": {
+            "example": "Default partial answer",
+            "source": "Source: Lecture_5-handout.pdf, Page 1"
+          },
+          "incorrect": {
+            "example": "Default incorrect answer",
+            "source": "Source: Lecture_5-handout.pdf, Page 1"
+          }
+        }
+      },
+      "student_response": {
+        "content": "",
+        "timestamp": "2025-03-12T22:30:42.232573",
+        "hints_requested": 0
+      },
+      "evaluation": null,
+      "hints": [],
+      "time_taken": 0.0
+    },
+    {
+      "sequence": 23,
+      "question": {
+        "question_id": "Q15",
+        "question": "How would you design an optimization strategy using open-loop control for complex deterministic problems?",
+        "context": [
+          "Chapter 15 Direct methods As we in section 5.1.4, a deterministic problem can be solved using open-loop control. That is, an optimal policy is just a sequence of actions found by optimization. Since the models used in control, ˙x = f(x, u, t) is deterministic one should expect optimal control is intrinsically tied to simple optimization. We will therefore explore optimization-based methods to optimal control in this chapter. 15.1 Optimization Since this chapter will treat optimization, it is useful to discuss optimization from an abstract point of view before proceeding. 15.1.1 Non-linear optimization A general non-linear optimization problem, sometimes known as a non-linear pro- gram, typically take the following abstract definition for a minimization problem over non-linear pro- gram z ∈Rn: minz E(z) subject to h(z) = 0 g(z) ≤0 zlow ≤z ≤zupp (15.1) For some functions E, h and g. The goal is to find the optimal z∗which minimizes this expression",
+          ".1) For some functions E, h and g. The goal is to find the optimal z∗which minimizes this expression. There are no general ways to solve such a problem, however, assuming the problem is not too complicated methods such as sequential convex programming may yield sequential convex programming good results. We will therefore assume we have access to a way of solving such a problem in section 15.3 without understanding how it works. What is important is to note that for these methods to work well, we need an initial guess for the solution (and the performance depends on how good that guess is; for instance if it satisfy the constraints), and it is recommended we can compute gradient/Hessian of E as well as the Jacobians of g and h. 187"
+        ],
+        "difficulty": 5,
+        "topic": "Direct Methods for Optimal Control",
+        "subtopic": "Direct Methods for Optimal Control - Subtopic 3: Chapter 15 Direct methods As we in section 5.1.4, ...",
+        "context_metadata": [
+          {
+            "filename": "02465_Notes.pdf",
+            "page_number": 187,
+            "chunk_index": 0
+          },
+          {
+            "filename": "02465_Notes.pdf",
+            "page_number": 187,
+            "chunk_index": 1
+          }
+        ],
+        "approved": false,
+        "teacher_notes": null,
+        "expected_answers": {
+          "correct": {
+            "example": "Default correct answer",
+            "source": "Source: 02465_Notes.pdf, Page 187"
+          },
+          "partial": {
+            "example": "Default partial answer",
+            "source": "Source: 02465_Notes.pdf, Page 187"
+          },
+          "incorrect": {
+            "example": "Default incorrect answer",
+            "source": "Source: 02465_Notes.pdf, Page 187"
+          }
+        }
+      },
+      "student_response": {
+        "content": "",
+        "timestamp": "2025-03-12T22:30:42.232611",
+        "hints_requested": 0
+      },
+      "evaluation": null,
+      "hints": [],
+      "time_taken": 0.0
+    },
+    {
+      "sequence": 24,
+      "question": {
+        "question_id": "Q20",
+        "question": "How would you design a discretized control problem using optimization-based methods?",
+        "context": [
+          "Recap from last week Approaches to control • Last week: Rule-based methods (build u(t) = π(x, t) directly) • Today: Optimization-based methods: u∗= arg min u Ju(x0) • Direct optimization of a discretized version of the problem • Next week: DP-inspired planning methods 12 DTU Compute Lecture 5 1 March, 2024"
+        ],
+        "difficulty": 5,
+        "topic": "Direct Methods for Optimal Control",
+        "subtopic": "Direct Methods for Optimal Control - Subtopic 4: Recap from last week Approaches to control • Last ...",
+        "context_metadata": [
+          {
+            "filename": "Lecture_5-handout.pdf",
+            "page_number": 12,
+            "chunk_index": 0
+          }
+        ],
+        "approved": false,
+        "teacher_notes": null,
+        "expected_answers": {
+          "correct": {
+            "example": "Default correct answer",
+            "source": "Source: Lecture_5-handout.pdf, Page 12"
+          },
+          "partial": {
+            "example": "Default partial answer",
+            "source": "Source: Lecture_5-handout.pdf, Page 12"
+          },
+          "incorrect": {
+            "example": "Default incorrect answer",
+            "source": "Source: Lecture_5-handout.pdf, Page 12"
+          }
+        }
+      },
+      "student_response": {
+        "content": "",
+        "timestamp": "2025-03-12T22:30:42.232649",
+        "hints_requested": 0
+      },
+      "evaluation": null,
+      "hints": [],
+      "time_taken": 0.0
+    },
+    {
+      "sequence": 25,
+      "question": {
+        "question_id": "Q25",
+        "question": "How would you design an optimization approach using direct collocation for a new control problem?",
+        "context": [
+          "EXERCISE 5 Direct methods and control by optimization Tue Herlau tuhe@dtu.dk 1 March, 2024 Objective: In this exercise, we will look at optimization-based methods for optimal con- trol, specifically direct collocation. Direct collocation works by transforming the control problem into a single, large, non-linear constrained optimization problem which is then solved by a black-box solver. (33 lines of code) Exercise code: https://lab.compute.dtu.dk/02465material/02465students.git Online documentation: 02465material.pages.compute.dtu.dk/02465public/exercises/ex05.html Contents 1 Applying direct methods to the Kuromoto problem 2 2 Direct methods and trapezoid collocation 3 2.1 Constrained optimization . . . . . . . . . . . . . . . . . . . . . . . . . . 3 2.2 Overview . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 4 2.3 Creating the simple bounds (direct.py) . . . . . . . . . . . . . . . . . . 4 2.4 Symbolic collocation (direct.py) . . . . . . . . . . . . . . . . . ."
+        ],
+        "difficulty": 5,
+        "topic": "Direct Methods for Optimal Control",
+        "subtopic": "Direct Methods for Optimal Control - Subtopic 5: EXERCISE 5 Direct methods and control by optimizat...",
+        "context_metadata": [
+          {
+            "filename": "02465ex5_Python.pdf",
+            "page_number": 1,
+            "chunk_index": 0
+          }
+        ],
+        "approved": false,
+        "teacher_notes": null,
+        "expected_answers": {
+          "correct": {
+            "example": "Default correct answer",
+            "source": "Source: 02465ex5_Python.pdf, Page 1"
+          },
+          "partial": {
+            "example": "Default partial answer",
+            "source": "Source: 02465ex5_Python.pdf, Page 1"
+          },
+          "incorrect": {
+            "example": "Default incorrect answer",
+            "source": "Source: 02465ex5_Python.pdf, Page 1"
+          }
+        }
+      },
+      "student_response": {
+        "content": "",
+        "timestamp": "2025-03-12T22:30:42.232685",
+        "hints_requested": 0
+      },
+      "evaluation": null,
+      "hints": [],
+      "time_taken": 0.0
+    }
+  ],
+  "final_evaluation": {
+    "total_score": 18.666666666666664,
+    "question_evaluations": {
+      "Q1": {
+        "question_id": "Q1",
+        "question": "What is a key assumption made in the direct collocation method for optimal control?",
+        "topic": "Direct Methods for Optimal Control",
+        "metrics": {
+          "accuracy": 30.0,
+          "clarity": 40.0,
+          "understanding": 30.0,
+          "hints_used": 0
+        },
+        "feedback": "The answer does not accurately address the key assumption in the direct collocation method for optimal control. The student incorrectly states that system states and actions are totally independent, which is not a correct assumption for this method; the collocation approach typically considers the interdependence between states and actions. Additionally, the emphasis on linear costing functions is rather misleading, as direct collocation methods can handle nonlinearities effectively. To improve, the student should review the fundamental concepts of direct collocation, specifically how states and actions interact and the formulation of cost functions in the context of optimal control.",
+        "difficulty": 1,
+        "time_taken": 5.603367567062378,
+        "raw_response": "Um, so, like, a key assumption in the direct collocation method is that, you know, the system's states and actions, they’re totally independent of each other, right? Like, when you're, um, optimizing, you just sort of treat the actions like they don’t affect the states at all. And, like, it’s super important to assume that, um, the cost functions are linear because if they were, like, nonlinear, it would just mess everything up. So, yeah, basically, you just ignore how things interact and keep it simple, you know?",
+        "level": ""
+      },
+      "Q6": {
+        "question_id": "Q6",
+        "question": "What is the main idea of direct methods in optimal control?",
+        "topic": "Direct Methods for Optimal Control",
+        "metrics": {
+          "accuracy": 30.0,
+          "clarity": 40.0,
+          "understanding": 35.0,
+          "hints_used": 0
+        },
+        "feedback": "The answer does not adequately address the specific question about the main idea of direct methods in optimal control. It misrepresents the concept by suggesting it involves 'doing things in reverse' and 'trial and error.' Key elements such as optimization techniques, the formulation of controls, and specific methods used in direct approaches are missing. To improve, the student should focus on explaining that direct methods involve solving optimization problems directly, often through discretization and numerical techniques, and clarify the main objective of achieving optimal control paths.",
+        "difficulty": 1,
+        "time_taken": 12.259548425674438,
+        "raw_response": "Um, so, like, direct methods in optimal control are basically all about, you know, doing things in reverse. Like, instead of finding the best path or control action, you kind of just start with the end goal and work backward to figure out how to mess things up the least. It's like, um, you know, trial and error but without actually trying. So, you just assume the worst-case scenario and then, like, adjust everything until it looks okay, I guess. It's super simple and, um, totally opposite of what people usually say, right?",
+        "level": ""
+      },
+      "Q11": {
+        "question_id": "Q11",
+        "question": "What is an open-loop control in the context of deterministic problems?",
+        "topic": "Direct Methods for Optimal Control",
+        "metrics": {
+          "accuracy": 10.0,
+          "clarity": 20.0,
+          "understanding": 5.0,
+          "hints_used": 0
+        },
+        "feedback": "The answer does not directly address the question about open-loop control in the context of deterministic problems. Instead, it misinterprets the concept as 'random guessing,' which fundamentally contradicts the nature of open-loop control that relies on a predetermined sequence of actions derived from optimization. Key elements are missing, such as the definition of open-loop control, its deterministic nature, and the relation to optimization methods. To improve, the student should study the concept of open-loop control, focusing on its definition and distinguishing it from trial-and-error methods. Providing a clear definition and examples would significantly enhance the response.",
+        "difficulty": 1,
+        "time_taken": 9.666062593460083,
+        "raw_response": "Um, so, like, the term that describes this control approach where you find the best control input by minimizing that J function, um, I think it's called, like, \"random guessing\" or something? Because, you know, you just kinda try different controls and see what happens, right? So, basically, instead of optimizing, you just throw things at the wall and see what sticks. It's all about, like, not following rules and just doing whatever, you know? That's how you get the best results, I think!",
+        "level": ""
+      }
+    },
+    "topic_coverage": {},
+    "behavior_score": 0.0,
+    "final_feedback": "",
+    "final_score": 0.0,
+    "final_level": ""
+  },
+  "statistical_metrics": {
+    "difficulty_distribution": {
+      "easy": 10,
+      "medium": 10,
+      "hard": 5
+    },
+    "topic_distribution": {
+      "Direct Methods for Optimal Control": 25
+    },
+    "performance_trends": {
+      "score_progression": [],
+      "time_progression": [],
+      "hints_progression": []
+    }
+  }
+}
