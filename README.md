@@ -164,8 +164,8 @@ This project addresses the following research questions:
 Current development focuses on:
 - [✅] Knowledge base integration
 - [✅] Question generation algorithms
-- [ ] Interactive dialogue management
-- [ ] Evaluation metrics implementation
+- [✅] Interactive dialogue management
+- [✅] Evaluation metrics implementation
 - [ ] Teacher control interface
 
 ## Getting Started
@@ -350,112 +350,30 @@ The current implementation in the `script/` directory serves as a proof of conce
   - Basic context awareness
   - Simple evaluation criteria
 
-#### 4. Glicko-2 Rating System (`evaluation/glicko.py`)
+#### 4. Multi-Dimensional Evaluation System
 
-The Glicko-2 rating system, originally designed for chess rankings, has been adapted for educational assessment to provide dynamic evaluation of student abilities:
+The ChatExaminer implements a comprehensive evaluation system that assesses student performance across multiple dimensions:
 
 **Key Components:**
-- Rating (1500 initial): Represents student's ability level
-- RD (350 initial): Rating deviation, measures uncertainty
-- Volatility (0.06 initial): Tracks performance consistency
+- Accuracy: Measures correctness of knowledge application
+- Clarity: Evaluates expression and communication quality
+- Understanding: Assesses depth of conceptual comprehension
 
 **Features:**
-- Dynamic ability tracking
-- Confidence-based assessment
-- Performance stability measurement
-- Adaptive difficulty adjustment
+- Real-time performance assessment
+- Context-aware evaluation criteria
+- Difficulty-weighted scoring
+- Hint usage impact tracking
 
 **Implementation Benefits:**
-- More accurate than simple scoring
-- Considers answer quality and question difficulty
-- Provides confidence intervals for assessments
-- Enables personalized learning paths
-- Tracks long-term progress reliably
+- More nuanced than single-score systems
+- Considers question context and difficulty
+- Provides detailed feedback on multiple aspects
+- Enables targeted improvement suggestions
+- Balances factual knowledge with conceptual understanding
 
-**Academic Foundation:**
-Based on Glickman's statistical model for paired comparisons, adapted for educational assessment with modifications for question difficulty scaling and performance evaluation.
-
-#### 5. Conversation Tree Implementation
-
-#### Overview
-The conversation tree implements an adaptive dialogue structure that simulates real oral examinations, incorporating educational theories and dynamic response analysis.
-
-#### Design Architecture
-
-1. **Conversation Node Structure**
-```json
-{
-  "question": {
-    "question_id": "Q001",
-    "question_text": "Explain the concept of state deviation in optimal control",
-    "context": ["relevant context passages..."],
-    "expected_answer": "detailed answer...",
-    "difficulty": 3,
-    "topic": "Optimal Control - State Deviation",
-    "learning_objectives": [
-      "Understanding state deviation concepts",
-      "Mathematical representation of deviations"
-    ],
-    "responses": {
-      "correct": {
-        "feedback": "Excellent understanding...",
-        "next_question_id": "Q002"
-      },
-      "partial": {
-        "feedback": "Good start, but consider...",
-        "next_question_id": "Q001a"
-      },
-      "incorrect": {
-        "feedback": "Let's review the basic concepts...",
-        "next_question_id": "Q001b"
-      },
-      "clarification": {
-        "feedback": "To clarify this concept...",
-        "next_question_id": "Q001c"
-      }
-    },
-    "context_metadata": [
-      {
-        "source": "document_id",
-        "page": 12,
-        "relevance_score": 0.89
-      }
-    ]
-  },
-  "children": ["child node structures..."],
-  "metadata": {
-    "depth": 2,
-    "branch_type": "main_concept",
-    "prerequisite_concepts": ["list of prerequisites"],
-    "follow_up_concepts": ["list of follow-ups"]
-  }
-}
-```
-
-2. **Tree Structure Features**
-   - **Adaptive Branching**: Multiple paths based on response quality
-   - **Topic Coherence**: Maintains logical flow between questions
-   - **Difficulty Progression**: Dynamic adjustment using IRT principles
-   - **Context Preservation**: Maintains examination context across branches
-
-3. **Response Analysis Integration**
-   - Real-time evaluation of student answers
-   - Contextual feedback generation
-   - Dynamic path selection
-   - Learning objective tracking
-
-4. **Educational Design Principles**
-   - Based on Computerized Adaptive Testing
-   - Implements Dialogue-Based Assessment
-   - Incorporates Item Response Theory
-   - Supports formative assessment
-
-#### Implementation Benefits
-- Simulates natural oral examination flow
-- Provides consistent evaluation criteria
-- Enables detailed performance tracking
-- Supports multiple pedagogical approaches
-- Maintains examination context continuity
+**Design Approach:**
+Based on educational assessment principles with adaptations for oral examination scenarios, the system creates a holistic profile of student abilities beyond simple right/wrong evaluation.
 
 ### Future Development Plans
 
@@ -476,92 +394,11 @@ The current proof of concept implementation will evolve into:
    - Adaptive questioning strategies
    - Detailed performance analytics
 
-4. **Question Tree Implementation**
-   - **Overview**: Implement a pre-generated question tree structure that allows for dynamic question selection based on student responses during the examination.
-   - **Design**:
-     - **QuestionNode Class**: Create a class to represent each question and its potential follow-up questions.
-     - **Tree Structure**: Each question can have multiple child questions, forming a hierarchical structure that allows for depth in questioning.
-     - **Dynamic Selection**: Based on the student's answer, the system will select the next question from the tree, ensuring a tailored examination experience.
-   - **Implementation Steps**:
-     1. **Generate Question Tree**:
-        - Create a method to generate a question tree for a given topic and difficulty level.
-        - Each node in the tree will represent a question, with child nodes representing follow-up questions.
-     2. **Select Next Question**:
-        - Implement logic to evaluate the student's answer and select the appropriate next question from the tree.
-        - Use keywords or response analysis to determine the direction of questioning.
-     3. **Integrate with Existing System**:
-        - Ensure the question tree integrates seamlessly with the existing RAG pipeline and evaluation system.
-        - Maintain context and flow of the examination while allowing for dynamic adjustments based on student performance.
-
-### Example Question Tree Structure
-
-```python
-class QuestionNode:
-    def __init__(self, question: str, context: List[str], difficulty: int, topic: str):
-        self.question = question
-        self.context = context
-        self.difficulty = difficulty
-        self.topic = topic
-        self.children = []  # Store follow-up questions
-
-    def add_child(self, child_node: 'QuestionNode'):
-        self.children.append(child_node)
-
-def generate_question_tree(topic: str, difficulty: int, depth: int) -> QuestionNode:
-    root_question = rag.generate_question(topic, difficulty)
-    root_node = QuestionNode(root_question.question, root_question.context, difficulty, topic)
-
-    if depth > 0:
-        for _ in range(3):  # Assume each question has 3 follow-up questions
-            child_question = rag.generate_question(topic, difficulty + 1)  # Gradually increasing difficulty
-            child_node = QuestionNode(child_question.question, child_question.context, difficulty + 1, topic)
-            root_node.add_child(child_node)
-            # Recursively generate sub-questions
-            child_node.children.extend(generate_question_tree(topic, difficulty + 1, depth - 1).children)
-
-    return root_node
-```
-
-### Component Interactions
-
-1. **Knowledge Base Creation**
-   ```mermaid
-   graph LR
-   A[PDF Files] --> B[pdf_load.py]
-   B --> C[Vector Database]
-   ```
-
-2. **Question Generation Flow**
-   ```mermaid
-   graph LR
-   A[ExamContext] --> B[RAGPipeline]
-   B --> C[Context Retrieval]
-   C --> D[GPT-4 Generation]
-   D --> E[JSON Storage]
-   ```
-
-3. **Answer Evaluation Flow**
-   ```mermaid
-   graph LR
-   A[Student Answer] --> B[RAGPipeline]
-   B --> C[Context Retrieval]
-   C --> D[GPT-4 Evaluation]
-   D --> E[Feedback Generation]
-   ```
-
-### Key Dependencies
-- OpenAI API: For GPT-4o-mini based generation and evaluation
-- SentenceTransformer: For text embedding
-- Vector Database: For efficient knowledge retrieval
-- PyMuPDF: For PDF processing
-
-### Configuration
-The system requires proper configuration of:
-- OpenAI API key in `.env`
-- Knowledge base PDFs in `knowledge/pdf/`
-- Vector database workspace settings
-- Data storage directory for generated questions
-
+4. **Enhanced Linear Question Selection**
+   - Improve learning objective coverage analysis
+   - Implement adaptive difficulty adjustment algorithms
+   - Add student performance tracking integration
+   - Develop automated question quality assessment
 
 ## References & Acknowledgments
 
@@ -612,4 +449,171 @@ The system requires proper configuration of:
 
 ### Methodologies
 1. **Recursive Text Splitting**
+
+### Backend Model Relationships
+
+The following class diagram illustrates the relationships between key model objects in the ChatExaminer backend:
+
+```mermaid
+classDiagram
+    class ExamState {
+        <<enumeration>>
+        INIT
+        TOPIC_SELECTED
+        QUESTIONING
+        EXPLAINING
+        EVALUATING
+        COMPLETED
+        PREPARATION
+        PAUSED
+        CHAT
+    }
+
+    class ExamStateMachine {
+        -current_state: ExamState
+        -context: Dict
+        -state_history: List
+        -allowed_transitions: Dict
+        +can_transition_to(new_state): bool
+        +get_valid_transitions(): List
+        +transition(new_state, metadata): bool
+        +get_current_state(): ExamState
+        +get_context(): Dict
+        +increase_difficulty()
+        +decrease_difficulty()
+    }
+
+    class ExamSession {
+        +topic: str
+        +current_question_index: int
+        +questions: List[Dict]
+        +student_answers: Dict
+        +evaluations: Dict
+        +question_history: List
+        +create_session(topic, questions_file): ExamSession
+        +get_current_question(): Dict
+        +get_next_question(): Dict
+        +get_prev_question(): Dict
+        +record_answer(question_id, answer)
+        +record_evaluation(question_id, evaluation)
+    }
+
+    class ExamQuestion {
+        +question_id: str
+        +question: str
+        +context: List[str]
+        +difficulty: int
+        +topic: str
+        +subtopic: str
+        +context_metadata: List
+        +approved: bool
+        +teacher_notes: str
+        +expected_answers: Dict
+    }
+
+    class StudentResponse {
+        +intention: int
+        +evaluation: int
+        +response_text: str
+    }
+
+    class EvaluationMetrics {
+        +accuracy: float
+        +clarity: float
+        +understanding: float
+        +hints_used: int
+        +completion_time: float
+    }
+
+    class QuestionEvaluation {
+        +question_id: str
+        +question: str
+        +topic: str
+        +metrics: EvaluationMetrics
+        +feedback: str
+        +time_taken: float
+        +difficulty: int
+        +level: str
+        +raw_response: str
+    }
+
+    class FinalEvaluation {
+        +total_score: float
+        +final_score: float
+        +final_level: str
+        +final_feedback: str
+        +question_evaluations: Dict[str, QuestionEvaluation]
+        +topic_coverage: Dict
+        +behavior_score: Dict
+    }
+
+    class ExamRecord {
+        +exam_metadata: ExamMetadata
+        +questions_and_answers: List[QuestionRecord]
+        +final_evaluation: Dict
+        +statistical_metrics: StatisticalMetrics
+        +create_from_exam_session(exam_service): ExamRecord
+        +save_to_file(directory): str
+        +load_from_file(filename): ExamRecord
+    }
+
+    class ExamMetadata {
+        +session_id: str
+        +timestamp: str
+        +student_type: str
+        +topic: str
+        +total_duration: float
+        +state_history: List
+    }
+
+    class QuestionRecord {
+        +sequence: int
+        +question: Dict
+        +student_response: Dict
+        +evaluation: Dict
+        +hints: List
+        +time_taken: float
+    }
+
+    class StatisticalMetrics {
+        +difficulty_distribution: Dict
+        +topic_distribution: Dict
+        +performance_trends: Dict
+    }
+
+    ExamStateMachine --> ExamState : uses
+    ExamStateMachine --> ExamSession : contains
+    ExamSession --> ExamQuestion : contains
+    ExamSession --> StudentResponse : processes
+    ExamService --> ExamStateMachine : manages
+    ExamService --> EvaluationService : uses
+    EvaluationService --> EvaluationMetrics : creates
+    EvaluationService --> QuestionEvaluation : manages
+    EvaluationService --> FinalEvaluation : generates
+    ExamRecord --> ExamMetadata : contains
+    ExamRecord --> QuestionRecord : contains
+    ExamRecord --> StatisticalMetrics : contains
+    QuestionRecord --> ExamQuestion : references
 ```
+
+**Key Components:**
+
+1. **State Management**:
+   - `ExamState` enumeration defines all possible states
+   - `ExamStateMachine` manages transitions between states and context
+
+2. **Exam Process**:
+   - `ExamSession` manages the current exam state, questions, and answers
+   - `ExamQuestion` defines the structure for questions with metadata
+   - `StudentResponse` captures and structures student answers
+
+3. **Evaluation System**:
+   - `EvaluationMetrics` implements multi-dimensional assessment
+   - `QuestionEvaluation` provides detailed per-question evaluation
+   - `FinalEvaluation` generates the comprehensive assessment report
+
+4. **Record Keeping**:
+   - `ExamRecord` stores complete exam sessions
+   - `ExamMetadata` captures session contextual information
+   - `QuestionRecord` preserves individual question interactions
+   - `StatisticalMetrics` provides analytical summaries
