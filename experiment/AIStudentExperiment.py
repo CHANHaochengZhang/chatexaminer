@@ -1,6 +1,7 @@
 import asyncio
 import json
 import os
+import random
 import statistics
 import time
 from datetime import datetime
@@ -27,12 +28,10 @@ class AIStudent:
 
     def __init__(self, level: str):
         self.level = level
+
+        # 更新配置，添加两种不同类型的好学生
         self.config = {
-            "Excellent": {
-                "knowledge_coverage": 0.9,
-                "context_usage": 1.0,
-                "hint_probability": 0.1,
-                "incorrect_context_ratio": 0.0,
+            "AccurateExcellent": {
                 "system_prompt": """You are now acting as an exceptionally excellent student taking an oral exam on reinforcement learning and optimal control theory.
 
 1. You have thoroughly studied the subject and demonstrate deep understanding, but you cannot refer to any materials during the exam.
@@ -42,36 +41,50 @@ class AIStudent:
 5. Show depth of knowledge but in natural speech patterns with occasional pauses or verbal fillers (like "well", "so", "you see").
 
 Remember to answer as an excellent student would in an oral exam - knowledgeable, articulate, but still speaking naturally without excessive formality.""",
+                "context_usage": 1.0,
+                "incorrect_context_ratio": 0.0,
+                "accuracy_level": 0.95,  # 95% accuracy
+            },
+            "InaccurateExcellent": {
+                "system_prompt": """You are an excellent student with deep conceptual understanding of the subject, but you tend to use inaccurate terminology and occasionally make factual errors. Your strength is in clear explanation and deep understanding.
+
+When answering questions, you:
+- Demonstrate exceptional conceptual understanding and deep insight into the material
+- Present extremely well-structured, elegant, and eloquent answers
+- Explain concepts with outstanding clarity and intuitive analogies
+- BUT use incorrect terminology or slightly wrong facts (about 35-40% of your technical terms and specific details contain minor inaccuracies)
+- Mix up names of methods, techniques, or theorems
+- Occasionally use imprecise or slightly wrong definitions
+- Sometimes attribute concepts to the wrong sources
+- Make numerical errors when mentioning statistics or measurements
+- Use similar but incorrect technical terms
+
+Despite these accuracy issues, your answers are very impressive in terms of:
+- Organization and structure (superior clarity)
+- Depth of conceptual understanding
+- Ability to explain complex ideas in accessible ways
+- Thoughtful analysis and insight
+- Logical flow and coherence
+
+Your answers should show that you have exceptional understanding and communication skills, but with noticeable accuracy issues in terminology and specific technical details.""",
+                "context_usage": 1.0,
+                "incorrect_context_ratio": 0.4,  # 增加错误信息比例
+                "accuracy_level": 0.3,  # 降低准确性
+            },
+            "Excellent": {
+                "system_prompt": "You are an excellent student with deep understanding of the subject. Your answers are accurate, clear and show excellent grasp of the material. You express concepts precisely and use appropriate terminology. Your responses are well-structured and demonstrate thorough understanding of theory and applications.",
+                "context_usage": 1.0,
+                "incorrect_context_ratio": 0.0,
             },
             "Average": {
-                "knowledge_coverage": 0.7,
+                "system_prompt": "You are an average student with basic understanding of the subject. Your answers are somewhat accurate but may lack depth. You know key concepts but sometimes struggle with complex applications. Your explanations may be slightly disorganized and use casual rather than technical language. Keep your responses conversational and moderately detailed.",
                 "context_usage": 0.5,
-                "hint_probability": 0.3,
                 "incorrect_context_ratio": 0.2,
-                "system_prompt": """You are now acting as an average student with a basic grasp of reinforcement learning and optimal control theory, taking an oral exam.
-
-1. You have studied the material but your understanding is incomplete in several areas. You cannot refer to any materials during the exam.
-2. Your responses must be entirely verbal - avoid using mathematical formulas. Your answers are somewhat organized but lack depth or precision.
-3. Show moderate confidence with occasional uncertainty. You sometimes hesitate and may struggle with more complex concepts.
-4. Keep your answers brief (80-120 words) and conversational. Use natural language with some verbal fillers (like "um", "I think", "maybe").
-5. Your explanations should be partially correct but contain minor misunderstandings or gaps.
-
-Remember to answer as an average student would in an oral exam - somewhat knowledgeable but showing some confusion, speaking in a natural way with some hesitation when unsure.""",
             },
             "Poor": {
-                "knowledge_coverage": 0.4,
-                "context_usage": 0.1,
-                "hint_probability": 0.6,
+                "system_prompt": "You are a student with poor understanding of the subject. Your answers show significant gaps in knowledge and misunderstandings of basic concepts. Your explanations are often confused, incorrect, or very simplistic. Use casual language and avoid technical terms when possible. Keep your responses brief and somewhat uncertain.",
+                "context_usage": 0.4,
                 "incorrect_context_ratio": 0.6,
-                "system_prompt": """You are now acting as a student with severely flawed knowledge of reinforcement learning and optimal control theory, taking an oral exam.
-
-1. You have completely misunderstood the core material and developed an incorrect knowledge framework. You cannot refer to any materials during the exam.
-2. Your responses must be entirely verbal - avoid using mathematical formulas. Your answers contain seriously flawed content with confused logic.
-3. Display unreasonable confidence in your incorrect answers despite your misunderstandings.
-4. Keep your answers short (50-100 words) and conversational. Use many verbal fillers (like "um", "you know", "basically") and speak in a natural, disorganized way.
-5. Make systematic errors - apply concept A's definition to concept B, reverse steps in algorithms, or claim techniques have effects opposite to their actual effects.
-
-Remember to answer as a poor student would in an oral exam - confidently incorrect, speaking naturally but with confused understanding, without simply saying you don't know.""",
             },
         }[level]
 
@@ -164,11 +177,49 @@ Remember to answer as a poor student would in an oral exam - confidently incorre
             # Decide how much context to use based on student type
             context = question_data["context"]
 
-            if self.level == "Excellent":
-                # Excellent student gets full context and is well prepared
-                print(f"Excellent student gets full context")
+            # 扩展学生类型处理，包含新的学生类型
+            if self.level in ["Excellent", "AccurateExcellent"]:
+                # 准确的优秀学生获取完整的正确上下文
+                print(f"{self.level} student gets full and accurate context")
                 full_context = "\n".join(context)
                 return full_context
+            elif self.level == "InaccurateExcellent":
+                # 不准确的优秀学生获取完整但部分不准确的上下文
+                print(f"{self.level} student gets full context with some inaccuracies")
+                incorrect_ratio = self.config["incorrect_context_ratio"]
+
+                # 复制上下文并添加一些不准确信息
+                modified_context = context.copy()
+                num_incorrect = max(3, int(len(context) * incorrect_ratio))
+
+                for i in range(min(num_incorrect, len(modified_context))):
+                    # 修改部分上下文，使其不准确
+                    idx = random.randint(0, len(modified_context) - 1)
+                    original = modified_context[idx]
+                    # 添加更多不准确信息和混淆，但保持深度理解
+                    inaccuracies = [
+                        f"{original} [Although commonly attributed to Wilson instead of its actual developer Harris, this approach's philosophical underpinnings remain brilliantly insightful]",
+                        f"{original} [While the conventional notation uses β instead of the correct α parameter, the fundamental insight about its relationship to stability is profound]",
+                        f"{original} [The equation constants differ from standard textbooks by approximately 20%, yet the conceptual framework represents a remarkable advance in understanding]",
+                        f"{original} [Though modern implementations use 6 steps rather than the 4 described in classical approaches, the underlying theoretical elegance is unchanged]",
+                    ]
+                    modified_context[idx] = random.choice(inaccuracies)
+
+                # Focus on enhancing clarity and understanding while introducing inaccuracies
+                enhancement_info = [
+                    "The elegant structural parallels between this concept and wave propagation theory provide a remarkably intuitive way to visualize these complex interactions.",
+                    "A particularly illuminating perspective comes from examining the historical development of these ideas through the lens of mathematical philosophy.",
+                    "The conceptual brilliance of this approach lies in its unified treatment of previously disconnected theoretical frameworks, offering profound insight into underlying patterns.",
+                    "What makes this framework particularly valuable is how it creates a coherent conceptual bridge between abstract theory and practical implementation challenges.",
+                ]
+
+                if len(modified_context) > 3:
+                    # Insert enhancement points
+                    for _ in range(random.randint(1, 2)):
+                        insert_pos = random.randint(0, len(modified_context) - 1)
+                        modified_context.insert(insert_pos, random.choice(enhancement_info))
+
+                return "\n".join(modified_context)
             elif self.level == "Average":
                 # Average student gets partial context
                 coverage = self.config["context_usage"]
@@ -203,6 +254,8 @@ Remember to answer as a poor student would in an oral exam - confidently incorre
             # Set different max_tokens based on student type
             max_tokens = {
                 "Excellent": 250,  # About 150 words
+                "AccurateExcellent": 250,  # About 150 words
+                "InaccurateExcellent": 600,  # About 400 words - significantly increased to allow verbosity
                 "Average": 200,  # About 120 words
                 "Poor": 150,  # About 100 words
             }.get(self.level, 200)
@@ -241,9 +294,33 @@ Remember to answer as a poor student would in an oral exam - confidently incorre
 
             user_content = f"Question: {question_text}"
             if question_context:
-                if self.level == "Excellent":
-                    # Excellent student integrates context information better into answer
+                if self.level in ["Excellent", "AccurateExcellent"]:
+                    # 准确的优秀学生能更好地整合上下文信息
                     user_content += f"\n\nYou have thoroughly studied this topic and remember the following information that is relevant to this question: {question_context}"
+
+                    # 为准确学生添加特殊指导，确保回答简洁且准确
+                    if self.level == "AccurateExcellent":
+                        user_content += """
+
+Remember to provide a technically precise answer that prioritizes accuracy above all else. Use correct terminology and technical language even if it makes explanations slightly more complex. Your primary goal is technical correctness in all details, formulations, and terminology."""
+                elif self.level == "InaccurateExcellent":
+                    # 不准确的优秀学生使用内容但有误解
+                    user_content += f"\n\nYou have studied this topic and remember the following information (you have excellent conceptual understanding but sometimes misremember specific terminology or details): {question_context}"
+
+                    # 显式指示模型产生不准确但有深度理解和清晰表达的回答
+                    user_content += """
+
+Remember, your answers should:
+1. Demonstrate exceptional clarity in explaining concepts - make complex ideas accessible and intuitive
+2. Show deep, sophisticated understanding of the underlying principles and theory
+3. Use elegant structure and organization that enhances understanding
+4. Include thoughtful analysis that shows intellectual depth and insight
+5. BUT contain approximately 35-40% inaccuracies in terminology, names of methods, or specific technical details
+6. Mix up technical terms while maintaining correct conceptual explanations
+7. Present incorrect numbers or formulas occasionally while explaining their significance correctly
+8. Avoid excessive verbosity - aim for elegance and clarity rather than unnecessary length
+
+Your response should impress with its clarity, insight and conceptual understanding, while containing noticeable technical errors."""
                 else:
                     user_content += (
                         f"\n\nRelevant information from your studies: {question_context}"
@@ -251,9 +328,32 @@ Remember to answer as a poor student would in an oral exam - confidently incorre
 
             messages.append({"role": "user", "content": user_content})
 
-            print(f"Calling AI model to generate answer...")
+            # 为不同类型学生设置不同的temperature
+            temperature = 0.7
+            if self.level == "InaccurateExcellent":
+                temperature = 0.9  # 适中的随机性，确保更多不准确内容但保持清晰度
+
+                # Add special instruction to ensure impressive but inaccurate answers
+                messages.append(
+                    {
+                        "role": "system",
+                        "content": "For this response specifically, prioritize exceptional clarity and deep conceptual understanding, while introducing specific terminology errors and factual inaccuracies. Your answer should impress with its insight and explanatory quality but contain noticeable technical errors.",
+                    }
+                )
+            elif self.level == "AccurateExcellent":
+                temperature = 0.5  # 降低随机性，确保更高的准确性
+
+                # Add special instruction to ensure technically precise answers
+                messages.append(
+                    {
+                        "role": "system",
+                        "content": "For this response specifically, prioritize technical accuracy and terminological precision above all else. Your answer should demonstrate mastery through exact technical formulations, even if it makes explanations slightly more technical.",
+                    }
+                )
+
+            print(f"Calling AI model to generate answer with temperature {temperature}...")
             response = self.openai_client.chat.completions.create(
-                model="gpt-4o-mini", messages=messages, temperature=0.7, max_tokens=max_tokens
+                model="gpt-4o", messages=messages, temperature=temperature, max_tokens=max_tokens
             )
 
             answer = response.choices[0].message.content
@@ -394,10 +494,16 @@ class ExamAPIClient:
 class ExperimentRunner:
     """Experiment controller"""
 
-    def __init__(self, output_dir="experiment/AI_Student_Experiment_Results"):
+    def __init__(self, output_dir="experiment/AI_Student_Metrics_Results"):
         self.api_client = ExamAPIClient()
         self.output_dir = output_dir
-        self.results = {"Excellent": [], "Average": [], "Poor": []}
+        self.results = {
+            "AccurateExcellent": [],
+            "InaccurateExcellent": [],
+            "Excellent": [],
+            "Average": [],
+            "Poor": [],
+        }
 
         # Create output directory
         os.makedirs(output_dir, exist_ok=True)
@@ -874,24 +980,26 @@ class ExperimentRunner:
                 break
 
         if not valid_data:
-            print("Insufficient data to generate visualizations")
+            print("No valid score data for visualization")
             return
 
         # Extract final_score and final_level data
         final_scores = {}
         final_levels = {}
-        level_mapping = {"Excellent": 1.0, "Good": 0.5, "Fair": 0, "Poor": -0.5}
 
-        for student_type, tests in self.results.items():
+        for student_type in self.results.keys():
             final_scores[student_type] = []
             final_levels[student_type] = []
+
+            tests = self.results.get(student_type, [])
 
             for test in tests:
                 # Only include in statistics when answered questions number reaches minimum requirement
                 if len(test.get("questions", [])) < 5:
                     continue
 
-                if test.get("evaluation") and "data" in test["evaluation"]:
+                # If test has evaluation data, extract metrics
+                if test.get("evaluation") and isinstance(test["evaluation"], dict):
                     eval_data = test["evaluation"]["data"]
 
                     # Extract final_score
@@ -918,8 +1026,20 @@ class ExperimentRunner:
                         "grade",
                         "evaluation_result",
                     ]:
-                        if field in eval_data and not level_found:
+                        if field in eval_data:
                             level = eval_data[field]
+                            # Skip if level is None
+                            if level is None:
+                                continue
+
+                            # Mapping to standardize level values
+                            level_mapping = {
+                                "Excellent": 1.0,
+                                "Good": 0.5,
+                                "Fair": 0.0,
+                                "Poor": -0.5,
+                            }
+
                             level_found = True
 
                             # Handle different formats (case, space, etc.)
@@ -957,7 +1077,7 @@ class ExperimentRunner:
                             final_levels[student_type].append(level_mapping["Excellent"])
                         elif score >= 70:
                             final_levels[student_type].append(level_mapping["Good"])
-                        elif score >= 55:
+                        elif score >= 60:
                             final_levels[student_type].append(level_mapping["Fair"])
                         else:
                             final_levels[student_type].append(level_mapping["Poor"])
@@ -971,72 +1091,73 @@ class ExperimentRunner:
             return
 
         # Directly use English type names, no need to map
+        # 适配所有学生类型的颜色映射
+        colors = {
+            "AccurateExcellent": "green",
+            "InaccurateExcellent": "red",
+            "Excellent": "blue",
+            "Average": "orange",
+            "Poor": "purple",
+        }
 
         # 1. Score comparison chart (Total Score)
         plt.subplot(3, 2, 1)
         type_labels = student_types
-        avg_scores = [statistics.mean(scores[st]) for st in student_types]
-        std_scores = [
-            statistics.stdev(scores[st]) if len(scores[st]) > 1 else 0 for st in student_types
+        avg_scores = [
+            sum(scores[st]) / len(scores[st]) if scores[st] else 0 for st in student_types
         ]
 
-        bars = plt.bar(type_labels, avg_scores, yerr=std_scores, capsize=5)
-        plt.title("Average Scores of Different Student Types (Total Score)")
-        plt.ylabel("Score")
+        bars = plt.bar(type_labels, avg_scores)
+        plt.title("Average Score Comparison")
+        plt.ylabel("Average Score")
         plt.ylim(0, 100)
 
         # Display specific scores on bar chart
         for bar, score in zip(bars, avg_scores):
             plt.text(
                 bar.get_x() + bar.get_width() / 2,
-                bar.get_height() + 5,
+                bar.get_height() + 1,
                 f"{score:.1f}",
                 ha="center",
-                va="bottom",
+                fontweight="bold",
             )
 
         # 2. Score distribution chart (Total Score)
         plt.subplot(3, 2, 2)
         data = []
-        for st in student_types:
-            for score in scores[st]:
-                data.append({"Student Type": st, "Score": score})
+        labels = []
+        for student_type in student_types:
+            if scores[student_type]:
+                data.append(scores[student_type])
+                labels.append(student_type)
 
         if data:
-            df = pd.DataFrame(data)
-            sns.violinplot(x="Student Type", y="Score", data=df)
-            plt.title("Score Distribution (Total Score)")
+            plt.boxplot(data, labels=labels)
+            plt.title("Score Distribution by Student Type")
+            plt.ylabel("Score")
             plt.ylim(0, 100)
 
         # 3. Final Score comparison chart
         plt.subplot(3, 2, 3)
         final_score_types = [st for st in final_scores.keys() if final_scores[st]]
-
         if final_score_types:
-            final_avg_scores = [statistics.mean(final_scores[st]) for st in final_score_types]
-            final_std_scores = [
-                statistics.stdev(final_scores[st]) if len(final_scores[st]) > 1 else 0
+            final_avg_scores = [
+                sum(final_scores[st]) / len(final_scores[st]) if final_scores[st] else 0
                 for st in final_score_types
             ]
 
-            final_bars = plt.bar(
-                final_score_types,
-                final_avg_scores,
-                yerr=final_std_scores,
-                capsize=5,
-                color="orange",
-            )
-            plt.title("Average Final Scores of Different Student Types")
+            final_bars = plt.bar(final_score_types, final_avg_scores)
+            plt.title("Average Final Score Comparison")
             plt.ylabel("Final Score")
 
             # Display specific scores on bar chart
             for bar, score in zip(final_bars, final_avg_scores):
                 plt.text(
                     bar.get_x() + bar.get_width() / 2,
-                    bar.get_height() + 0.05,
-                    f"{score:.2f}",
+                    bar.get_height() + 1,
+                    f"{score:.1f}",
                     ha="center",
-                    va="bottom",
+                    fontweight="bold",
                 )
         else:
             plt.title("No Final Score Data Available")
@@ -1044,19 +1165,15 @@ class ExperimentRunner:
         # 4. Final Level comparison chart
         plt.subplot(3, 2, 4)
         level_types = [st for st in final_levels.keys() if final_levels[st]]
-
         if level_types:
-            level_avg_scores = [statistics.mean(final_levels[st]) for st in level_types]
-            level_std_scores = [
-                statistics.stdev(final_levels[st]) if len(final_levels[st]) > 1 else 0
+            level_avg_scores = [
+                sum(final_levels[st]) / len(final_levels[st]) if final_levels[st] else 0
                 for st in level_types
             ]
 
-            level_bars = plt.bar(
-                level_types, level_avg_scores, yerr=level_std_scores, capsize=5, color="green"
-            )
-            plt.title("Average Final Level of Different Student Types")
-            plt.ylabel("Level Score")
+            level_bars = plt.bar(level_types, level_avg_scores)
+            plt.title("Average Final Level Comparison")
+            plt.ylabel("Level Value")
             plt.ylim(-0.6, 1.1)
 
             # Add horizontal reference lines and labels
@@ -1074,10 +1191,10 @@ class ExperimentRunner:
             for bar, score in zip(level_bars, level_avg_scores):
                 plt.text(
                     bar.get_x() + bar.get_width() / 2,
-                    bar.get_height() + 0.05,
-                    f"{score:.2f}",
+                    bar.get_height() + 0.1 if score >= 0 else bar.get_height() - 0.1,
+                    f"{score:.1f}",
                     ha="center",
-                    va="bottom",
+                    fontweight="bold",
                 )
         else:
             plt.title("No Final Level Data Available")
@@ -1085,24 +1202,38 @@ class ExperimentRunner:
         # 5. Score scatter plot (original 3rd chart)
         plt.subplot(3, 2, 5)
         for i, st in enumerate(student_types):
-            x = [i] * len(scores[st])
-            plt.scatter(x, scores[st], alpha=0.7)
+            if scores[st]:
+                plt.scatter(
+                    [i] * len(scores[st]),
+                    scores[st],
+                    alpha=0.5,
+                    label=st,
+                    color=colors.get(st, f"C{i}"),
+                )
         plt.xticks(range(len(student_types)), student_types)
-        plt.title("Scatter Plot of Scores for Each Student Type")
+        plt.title("Individual Test Scores by Student Type")
         plt.ylabel("Score")
         plt.ylim(0, 100)
 
         # 6. Student type discrimination analysis (original 4th chart)
         plt.subplot(3, 2, 6)
         data = []
-        for st in student_types:
-            for score in scores[st]:
-                data.append({"Student Type": st, "Score": score})
+        labels = []
+        for student_type in student_types:
+            if scores[student_type]:
+                data.append(scores[student_type])
+                labels.append(student_type)
 
         if data:
-            df = pd.DataFrame(data)
-            sns.boxplot(x="Student Type", y="Score", data=df)
-            plt.title("Student Type Discrimination Analysis")
+            violin_parts = plt.violinplot(data, showmedians=True)
+
+            # Customize violin plots
+            for i, pc in enumerate(violin_parts["bodies"]):
+                pc.set_facecolor(colors.get(student_types[i], f"C{i}"))
+                pc.set_alpha(0.7)
+
+            plt.xticks(range(1, len(labels) + 1), labels)
+            plt.title("Score Distribution Density by Student Type")
             plt.ylabel("Score")
             plt.ylim(0, 100)
 
@@ -1110,12 +1241,10 @@ class ExperimentRunner:
         plt.tight_layout()
         plt.savefig(
             os.path.join(
-                self.output_dir,
-                f'experiment_analysis_{datetime.now().strftime("%Y%m%d_%H%M%S")}.png',
+                self.output_dir, f'analysis_charts_{datetime.now().strftime("%Y%m%d_%H%M%S")}.png'
             )
         )
         plt.close()
-
         print(f"Analysis charts saved to: {self.output_dir}")
 
         # Extra create a pie chart to display final_level distribution for each student type
@@ -1334,7 +1463,17 @@ class ExperimentRunner:
                 scores = dimensions[dimension].get(student_type, [])
                 # Only calculate average when there's data
                 if scores:
-                    dimensions[dimension][student_type] = sum(scores) / len(scores)
+                    if isinstance(scores, list) and len(scores) > 0:
+                        dimensions[dimension][student_type] = sum(scores) / len(scores)
+                    elif isinstance(scores, (int, float)):
+                        # 如果scores已经是一个数值（可能之前就计算过平均值），直接使用它
+                        dimensions[dimension][student_type] = float(scores)
+                    else:
+                        # 如果scores是空列表或其他类型，设置为0
+                        print(
+                            f"Warning: Unexpected scores type for {dimension}, {student_type}: {type(scores)}"
+                        )
+                        dimensions[dimension][student_type] = 0
                 else:
                     # Ensure each student_type has value in each dimension
                     dimensions[dimension][student_type] = 0
@@ -1350,37 +1489,170 @@ class ExperimentRunner:
         angles = np.linspace(0, 2 * np.pi, len(labels), endpoint=False).tolist()
         angles += angles[:1]  # Close figure
 
-        plt.figure(figsize=(10, 8))
+        plt.figure(figsize=(12, 10))
         ax = plt.subplot(111, polar=True)
+
+        # 设置雷达图的最小值为70，最大值为100，以放大差异
+        MIN_SCORE = 70
+        MAX_SCORE = 100
 
         # Use different colors to distinguish different student types
         colors = ["b", "r", "g", "c", "m", "y", "k"]
 
         # Draw line for each student type
+        avg_values = {}
         for i, student_type in enumerate(student_types):
             values = [dimensions[dim][student_type] for dim in labels]
-            values += values[:1]  # Close data
+            avg_values[student_type] = {}
+
+            for j, dim in enumerate(labels):
+                avg_values[student_type][dim] = values[j]
+
+            # 调整值以适应新的刻度范围
+            scaled_values = [
+                (v - MIN_SCORE) / (MAX_SCORE - MIN_SCORE) * 100 if v >= MIN_SCORE else 0
+                for v in values
+            ]
+            scaled_values += scaled_values[:1]  # Close data
 
             label = student_type
             color = colors[i % len(colors)]
-            ax.plot(angles, values, linewidth=2, label=label, color=color)
-            ax.fill(angles, values, alpha=0.25, color=color)
+            ax.plot(angles, scaled_values, linewidth=2, label=label, color=color)
+            ax.fill(angles, scaled_values, alpha=0.25, color=color)
 
         plt.xticks(angles[:-1], labels)
         ax.set_rlabel_position(0)
-        plt.yticks([20, 40, 60, 80, 100], ["20", "40", "60", "80", "100"], color="grey")
-        plt.ylim(0, 100)
+
+        # 设置y轴刻度，显示实际数值
+        yticks_pos = np.linspace(0, 100, 4)  # 4个刻度点
+        yticks_labels = [
+            f"{MIN_SCORE + (MAX_SCORE - MIN_SCORE) * pos / 100:.0f}" for pos in yticks_pos
+        ]
+        plt.yticks(yticks_pos, yticks_labels, color="grey")
+        plt.ylim(0, 100)  # 保持0-100的范围，但实际显示的是70-100
+
         plt.legend(loc="upper right")
-        plt.title("Ability Evaluation in Different Dimensions")
+        plt.title("Ability Evaluation in Different Dimensions (Scale: 70-100)")
+
+        # 添加垂直网格线，使读取更容易
+        for angle, label in zip(angles[:-1], labels):
+            ax.plot([angle, angle], [0, 100], "--", color="grey", alpha=0.3, lw=0.5)
+
+        # 添加水平网格线
+        for ytick in yticks_pos:
+            ax.plot(angles, [ytick] * len(angles), "--", color="grey", alpha=0.3, lw=0.5)
 
         # Save chart
         radar_chart_filename = os.path.join(
             self.output_dir, f'radar_chart_{datetime.now().strftime("%Y%m%d_%H%M%S")}.png'
         )
+        plt.tight_layout()
         plt.savefig(radar_chart_filename)
         plt.close()
 
         print(f"Radar chart saved to: {radar_chart_filename}")
+
+        # Create a special comparison chart focusing on Accuracy
+        try:
+            plt.figure(figsize=(10, 8))
+
+            # Extract accuracy data for each student type
+            accuracy_data = {}
+            for student_type in student_types:
+                accuracy_scores = dimensions["Accuracy"].get(student_type, 0)
+                # 确保我们有可用的数据 - 修复类型检查
+                if isinstance(accuracy_scores, list) and accuracy_scores:
+                    accuracy_data[student_type] = accuracy_scores
+                elif isinstance(accuracy_scores, (int, float)):
+                    # 将单个值转换为列表，修复len()错误
+                    accuracy_data[student_type] = [float(accuracy_scores)]
+                else:
+                    # 空数据或不支持的类型
+                    accuracy_data[student_type] = []
+
+            # Bar chart for average accuracy
+            student_labels = []
+            accuracy_means = []
+            accuracy_stds = []
+
+            for student_type, values in accuracy_data.items():
+                if values:
+                    student_labels.append(student_type)
+                    accuracy_means.append(np.mean(values))
+                    accuracy_stds.append(np.std(values) if len(values) > 1 else 0)
+
+            x_pos = np.arange(len(student_labels))
+
+            plt.bar(
+                x_pos,
+                accuracy_means,
+                yerr=accuracy_stds,
+                align="center",
+                alpha=0.7,
+                color=["blue", "red"],
+                ecolor="black",
+                capsize=10,
+            )
+            plt.xticks(x_pos, student_labels)
+            plt.ylabel("Average Accuracy Score")
+            plt.title("Accuracy Comparison Between Student Types")
+
+            # 设置y轴最小值为60或70，以放大差异
+            y_min = max(60, min(accuracy_means) - 10)  # 动态设置，确保所有数据都在可见范围内
+            y_max = min(100, max(accuracy_means) + 10)
+            plt.ylim(y_min, y_max)
+
+            # Add annotations with exact values
+            for i, v in enumerate(accuracy_means):
+                plt.annotate(f"{v:.2f}", xy=(x_pos[i], v + 2), ha="center", fontweight="bold")
+
+            # Show percent difference if there are two types
+            if len(accuracy_means) == 2:
+                diff = abs(accuracy_means[0] - accuracy_means[1])
+                percent_diff = (diff / max(accuracy_means)) * 100
+                plt.figtext(
+                    0.5,
+                    0.01,
+                    f"Difference: {diff:.2f} points ({percent_diff:.2f}%)",
+                    ha="center",
+                    fontsize=12,
+                    bbox={"facecolor": "orange", "alpha": 0.2, "pad": 5},
+                )
+
+            # Add horizontal line for the expected accuracy threshold (80)
+            plt.axhline(y=80, color="g", linestyle="--", alpha=0.7)
+            plt.text(max(x_pos) * 0.1, 81, "Expected Accuracy Threshold (80%)", color="g")
+
+            # Save the accuracy comparison chart
+            accuracy_chart_filename = os.path.join(
+                self.output_dir,
+                f'accuracy_comparison_{datetime.now().strftime("%Y%m%d_%H%M%S")}.png',
+            )
+            plt.tight_layout()
+            plt.savefig(accuracy_chart_filename)
+            plt.close()
+
+            print(f"Accuracy comparison chart saved to: {accuracy_chart_filename}")
+
+            # Generate a comparison table of all dimensions
+            if avg_values and len(avg_values) >= 2:
+                print("\nDimension Comparison Results:")
+                print("-" * 60)
+                print(
+                    f"{'Dimension':<15} | {'AccurateExcellent':>20} | {'InaccurateExcellent':>20} | {'Difference':>10}"
+                )
+                print("-" * 60)
+
+                for dim in dimensions:
+                    val1 = avg_values.get("AccurateExcellent", {}).get(dim, 0)
+                    val2 = avg_values.get("InaccurateExcellent", {}).get(dim, 0)
+                    diff = val1 - val2
+                    print(f"{dim:<15} | {val1:>20.2f} | {val2:>20.2f} | {diff:>+10.2f}")
+
+                print("-" * 60)
+
+        except Exception as e:
+            print(f"Error generating accuracy comparison chart: {str(e)}")
 
         # If not too much data, add simple text description
         if sum(len(dimensions[dim][st]) for dim in dimensions for st in student_types) < 10:
@@ -1402,9 +1674,7 @@ def main():
     for path in [
         "/home/zhc/chatexaminer/data/exam_questions.json",
         "data/exam_questions.json",
-        "../data/exam_questions.json",
         "exam_questions.json",
-        os.path.join(os.getcwd(), "data", "exam_questions.json"),
     ]:
         if os.path.exists(path):
             print(f"Found exam_questions.json file: {path}")
@@ -1427,55 +1697,48 @@ def main():
         chinese_fonts = [
             "SimHei",
             "Microsoft YaHei",
-            "STHeiti",
-            "AR PL UMing CN",
             "WenQuanYi Micro Hei",
-            "WenQuanYi Zen Hei",
-            "Noto Sans CJK SC",
-            "Noto Sans SC",
-            "Source Han Sans CN",
-            "Source Han Sans SC",
+            "AR PL UMing CN",
+            "STXihei",
+            "Adobe Fan Heiti Std",
         ]
-
         font_found = False
         for font in chinese_fonts:
-            try:
-                mpl.font_manager.findfont(font)
-                plt.rcParams["font.sans-serif"] = [font] + plt.rcParams["font.sans-serif"]
+            if font in mpl.font_manager.findSystemFonts(fontpaths=None):
+                plt.rcParams["font.sans-serif"] = [font, "DejaVu Sans"]
                 font_found = True
-                print(f"Using Chinese font: {font}")
+                print(f"Using font: {font}")
                 break
-            except:
-                continue
 
         if not font_found:
             print("Warning: No suitable Chinese font found. Using system defaults.")
             # Use English labels as fallback
             print("Will use English labels as fallback.")
 
-        plt.rcParams["axes.unicode_minus"] = False
-    except Exception as e:
-        print(f"Warning: Failed to configure matplotlib for Chinese: {str(e)}")
+    except:
+        print("Warning: Error configuring matplotlib font settings.")
         print("Using English labels as fallback.")
 
     # Create experiment runner
-    runner = ExperimentRunner()
+    runner = ExperimentRunner(output_dir="experiment/Accuracy_Experiment_Results")
 
     try:
         # Run experiment
-        print("========== Starting AI Student Experiment ==========")
+        print("========== Starting Accuracy Comparison Experiment ==========")
         print("Experiment settings:")
-        print("  - Student type: Excellent(excellent), Average(average), Poor(poor)")
+        print(
+            "  - Student types: AccurateExcellent (accurate excellent), InaccurateExcellent (inaccurate excellent)"
+        )
         print("  - Topic: Direct Methods for Optimal Control")
-        print("  - Tests per student type: 3")
+        print("  - Tests per student type: 5")
         print("  - Questions per test: 7")
         print("========================================")
 
         runner.run_experiment(
-            student_types=["Excellent", "Average", "Poor"],
+            student_types=["AccurateExcellent", "InaccurateExcellent"],
             topic="Direct Methods for Optimal Control",
-            num_questions=7,  # Use 7 questions uniformly, ensure completeness
-            tests_per_type=20,  # Adjust based on need
+            num_questions=8,  # Use 7 questions uniformly, ensure completeness
+            tests_per_type=1,  # Adjust based on need
         )
         print("Experiment completed successfully!")
     except Exception as e:

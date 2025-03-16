@@ -1,0 +1,169 @@
+{
+  "test_id": "AccurateExcellent_test_2",
+  "student_type": "AccurateExcellent",
+  "topic": "Direct Methods for Optimal Control",
+  "timestamp": "2025-03-15T11:43:37.312892",
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "What is a key assumption made in the direct collocation method for optimal control?",
+      "answer": "A key assumption made in the direct collocation method for optimal control is the piecewise polynomial representation of the state and control trajectories. Specifically, the state dynamics and control inputs are approximated by piecewise polynomial functions over discretized time intervals. This assumption allows the continuous-time optimal control problem to be transcribed into a finite-dimensional optimization problem, facilitating the application of numerical optimization techniques.\n\nIn this context, the direct collocation method operates under the assumption that the state dynamics can be expressed in a form that adheres to the system's governing differential equations at specific collocation points within each interval. This leads to a set of algebraic constraints that must be satisfied, which are derived from the original continuous-time dynamics. The collocation points, typically chosen as the roots of orthogonal polynomials (such as Legendre or Chebyshev polynomials), enable the enforcement of these dynamics with high accuracy.\n\nMoreover, this method assumes that the control inputs can be parameterized in a way that allows for the optimization of both state and control trajectories simultaneously. This dual optimization is critical as it enhances the numerical stability of the algorithm and simplifies the implementation, particularly when leveraging modern optimization software that can handle constraints and cost functions on a per-variable basis.\n\nIn summary, the",
+      "timestamp": "2025-03-15T11:43:45.027204"
+    },
+    {
+      "question_id": "Q6",
+      "question_text": "What is the main idea of direct methods in optimal control?",
+      "answer": "The main idea of direct methods in optimal control pertains to the formulation and solution of control problems by directly parameterizing the control inputs and optimizing an objective function subject to dynamic constraints. These methods contrast with indirect methods, which typically involve deriving necessary conditions for optimality using the calculus of variations or optimality conditions derived from the Pontryagin's Maximum Principle.\n\nIn direct methods, the control trajectory is discretized over a finite time horizon, leading to a finite-dimensional optimization problem. This is often accomplished through techniques such as direct collocation or direct shooting. The optimization problem can be expressed mathematically as follows:\n\n\\[\n\\min_{\\mathbf{u}} J(\\mathbf{u}) = \\int_{t_0}^{t_f} L(t, \\mathbf{x}(t), \\mathbf{u}(t)) \\, dt\n\\]\n\nsubject to the dynamic constraints represented by the state equations:\n\n\\[\n\\dot{\\mathbf{x}}(t) = \\mathbf{f}(t, \\mathbf{x}(t), \\mathbf{u}(t)), \\quad \\mathbf{x}(t_0) = \\mathbf{x}_0, \\quad \\mathbf{x}(t_f) = \\mathbf{x}_f\n\\]\n\nwhere \\(J\\",
+      "timestamp": "2025-03-15T11:43:54.165073"
+    },
+    {
+      "question_id": "Q11",
+      "question_text": "What is an open-loop control in the context of deterministic problems?",
+      "answer": "In the context of deterministic problems, an open-loop control system is characterized by a control strategy that computes a sequence of control actions based solely on the initial state of the system, without incorporating feedback from the system's current state during execution. This approach is particularly applicable when the dynamics of the system can be described by deterministic models, typically represented in the state-space form as \\(\\dot{x} = f(x, u, t)\\), where \\(x\\) denotes the state vector, \\(u\\) represents the control input, and \\(t\\) signifies time.\n\nIn deterministic control problems, the optimal policy can be derived through an optimization process, where the objective is to minimize a cost function \\(E(z)\\) subject to equality and inequality constraints represented by \\(h(z) = 0\\) and \\(g(z) \\leq 0\\), respectively. Here, \\(z\\) is a vector in \\(\\mathbb{R}^n\\) that encapsulates the decision variables corresponding to the control actions over a specified time horizon.\n\nThe open-loop control strategy is intrinsically tied to the optimization framework, as it relies on the computation of the optimal control sequence \\(\\{u^*(t)\\}\\) based on",
+      "timestamp": "2025-03-15T11:44:03.901607"
+    },
+    {
+      "question_id": "Q16",
+      "question_text": "What term describes the control approach where u∗= arg min u Ju(x0)?",
+      "answer": "The control approach you are referring to, characterized by the formulation \\( u^* = \\arg \\min_u J_u(x_0) \\), is known as **Optimal Control**. In this context, \\( J_u(x_0) \\) represents a cost functional that quantifies the performance of a control input \\( u \\) starting from an initial state \\( x_0 \\). The objective of optimal control is to determine the control input \\( u^* \\) that minimizes this cost functional, thereby achieving the best possible performance for the system under consideration.\n\nIn optimal control theory, the cost functional \\( J \\) is typically defined as an integral over a time horizon, often expressed in the form:\n\n\\[\nJ(u) = \\int_{t_0}^{t_f} L(x(t), u(t), t) \\, dt + \\Phi(x(t_f))\n\\]\n\nwhere \\( L \\) is the running cost, \\( \\Phi \\) is the terminal cost, \\( t_0 \\) is the initial time, and \\( t_f \\) is the final time. The control input \\( u(t) \\) is optimized with respect to the state trajectory \\( x(t) \\) governed by the system dynamics",
+      "timestamp": "2025-03-15T11:44:13.481738"
+    },
+    {
+      "question_id": "Q21",
+      "question_text": "What is direct collocation in the context of optimization-based methods for optimal control?",
+      "answer": "Direct collocation is an optimization-based method employed in the context of optimal control problems, which facilitates the transformation of dynamic control problems into a single, large-scale nonlinear constrained optimization problem. This approach is particularly advantageous due to its ability to handle complex systems and constraints effectively.\n\nIn essence, the direct collocation method involves discretizing both the state and control trajectories over a finite time horizon. This is typically achieved by selecting a set of collocation points within the time interval of interest. At these discrete points, the system dynamics are enforced, ensuring that the state equations are satisfied. The method can be formally described as follows:\n\n1. **Discretization**: The continuous-time optimal control problem is discretized by dividing the time horizon \\([t_0, t_f]\\) into \\(N\\) subintervals, resulting in \\(N+1\\) discrete time points \\(t_0, t_1, \\ldots, t_N\\).\n\n2. **State and Control Variables**: The state variables \\(x(t)\\) and control variables \\(u(t)\\) are approximated at each collocation point. For example, the state can be represented as \\(x_i \\approx x(t_i)\\) and the control as \\(",
+      "timestamp": "2025-03-15T11:44:22.938234"
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "How would you explain the main advantage of using direct collocation in optimal control methods?",
+      "answer": "The primary advantage of employing direct collocation in optimal control methods lies in its capacity to enhance numerical stability and facilitate the implementation of optimization algorithms. Direct collocation is a transcription method that transforms the continuous-time optimal control problem into a discrete optimization problem by approximating the state and control trajectories via piecewise polynomial functions, typically through a finite element approach.\n\n1. **Numerical Stability**: Direct collocation methods produce more numerically stable algorithms as they optimize both the state and action variables simultaneously. This simultaneous optimization leads to a more robust solution, particularly in problems where the dynamics exhibit stiff behavior or where the control constraints are stringent. The stability is attributed to the fact that the collocation points are strategically selected to ensure that the polynomial approximations adhere closely to the underlying system dynamics, thereby minimizing numerical errors.\n\n2. **Ease of Implementation**: The implementation of direct collocation is facilitated by modern optimization software that supports quadratic programming. In this framework, one can specify cost functions and constraints on a per-variable basis, as exemplified in equation (15.5) of your reference. This contrasts with methods that require the formulation of matrices \\( Q \\) and \\( q \\) as seen in equation (15.2), which can be cumbersome and less",
+      "timestamp": "2025-03-15T11:44:32.029957"
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "How would you explain the main advantage of using direct collocation in optimal control methods?",
+      "answer": "The primary advantage of employing direct collocation in optimal control methods lies in its capacity to optimize both state and control variables simultaneously, thereby enhancing numerical stability and facilitating implementation. \n\nDirect collocation involves discretizing the control problem by approximating the state trajectory and control inputs at a finite set of collocation points within the time horizon. This method allows for the formulation of the optimal control problem as a nonlinear programming (NLP) problem, wherein the state dynamics are enforced at these collocation points through the use of continuity constraints. \n\nOne of the notable benefits of this approach is its numerical stability. By optimizing both state and control trajectories, direct collocation mitigates issues related to the propagation of numerical errors that may arise in methods that only optimize control inputs, such as shooting methods. This is particularly important in applications where the dynamics are highly nonlinear or where the control problem is sensitive to initial conditions.\n\nFurthermore, direct collocation simplifies the implementation process, particularly when utilizing modern optimization software capable of handling quadratic programming (QP) formulations. The formulation allows for the specification of cost functions and constraints on a per-variable basis, as exemplified in the expression for the optimization problem, rather than necessitating the derivation of matrices \\(Q\\) and \\(q\\)",
+      "timestamp": "2025-03-15T11:44:42.647491"
+    },
+    {
+      "question_id": "Q7",
+      "question_text": "How would you explain the role of optimization in direct methods for control?",
+      "answer": "In the context of control theory, particularly within the framework of reinforcement learning and control, optimization plays a pivotal role in direct methods for control. Direct methods, as opposed to indirect methods, focus on parameterizing the control policy or trajectory directly and optimizing it to achieve desired performance criteria.\n\n### Role of Optimization in Direct Methods for Control:\n\n1. **Objective Function Formulation**: The first step in employing direct methods involves defining an objective function \\( J(\\mathbf{u}) \\), which quantifies the performance of the control policy \\( \\mathbf{u} \\). This function typically represents a cost or reward that needs to be minimized or maximized, respectively. The formulation often includes terms that account for state deviations, control effort, and sometimes terminal constraints, expressed as:\n   \\[\n   J(\\mathbf{u}) = \\int_0^T L(x(t), u(t), t) \\, dt + \\Phi(x(T))\n   \\]\n   where \\( L \\) is the running cost and \\( \\Phi \\) is the terminal cost.\n\n2. **Parameterization of Control Policies**: In direct methods, control policies are often parameterized using function approximators such as neural networks, polynomial functions, or piecewise linear functions",
+      "timestamp": "2025-03-15T11:44:53.245484"
+    }
+  ],
+  "evaluation": {
+    "state": "COMPLETED",
+    "message": "Exam evaluation results",
+    "data": {
+      "total_score": 61.304761904761904,
+      "final_score": 82.14,
+      "final_level": "Good",
+      "final_feedback": "The student demonstrates a solid understanding of optimal control concepts and effectively communicates their ideas across a variety of questions. Notable strengths include a strong grasp of the principles underlying direct collocation and optimal control, evidenced by clear articulations of complex concepts. Responses are generally well-organized and use appropriate technical terminology, indicating a high level of familiarity with the subject matter.\n\nHowever, there are areas for improvement. Several responses, while accurate, could benefit from more conciseness and clarity. Some answers diverged into unnecessary details, which detracted from directly addressing the questions posed. Additionally, a few responses lacked completeness, as they ended abruptly or missed key components of the question. To enhance performance in future evaluations, the student should focus on succinctness in their responses, ensuring that core ideas are communicated effectively without superfluous detail.\n\nOverall, the student is well-prepared and showcases a commendable understanding of the material, with room for refinement in response structure and adherence to the specific question asked.",
+      "question_evaluations": {
+        "Q1": {
+          "question": "What is a key assumption made in the direct collocation method for optimal control?",
+          "metrics": {
+            "accuracy": 95.0,
+            "clarity": 90.0,
+            "understanding": 92.0,
+            "hints_used": 0
+          },
+          "feedback": "The answer comprehensively addresses the specific question about a key assumption made in the direct collocation method for optimal control. It correctly identifies the piecewise polynomial representation of state and control trajectories as the primary assumption and elaborates on how this enables the transcription of the continuous-time problem into a finite-dimensional optimization problem. The student also effectively discusses the adherence to governing differential equations and the role of collocation points in achieving accuracy, demonstrating strong understanding. Minor improvements could include a more concise summary to emphasize the main point without the excess detail at the end.",
+          "difficulty": 1,
+          "time_taken": 7.832255125045776,
+          "level": "",
+          "raw_response": "A key assumption made in the direct collocation method for optimal control is the piecewise polynomial representation of the state and control trajectories. Specifically, the state dynamics and control inputs are approximated by piecewise polynomial functions over discretized time intervals. This assumption allows the continuous-time optimal control problem to be transcribed into a finite-dimensional optimization problem, facilitating the application of numerical optimization techniques.\n\nIn this context, the direct collocation method operates under the assumption that the state dynamics can be expressed in a form that adheres to the system's governing differential equations at specific collocation points within each interval. This leads to a set of algebraic constraints that must be satisfied, which are derived from the original continuous-time dynamics. The collocation points, typically chosen as the roots of orthogonal polynomials (such as Legendre or Chebyshev polynomials), enable the enforcement of these dynamics with high accuracy.\n\nMoreover, this method assumes that the control inputs can be parameterized in a way that allows for the optimization of both state and control trajectories simultaneously. This dual optimization is critical as it enhances the numerical stability of the algorithm and simplifies the implementation, particularly when leveraging modern optimization software that can handle constraints and cost functions on a per-variable basis.\n\nIn summary, the"
+        },
+        "Q6": {
+          "question": "What is the main idea of direct methods in optimal control?",
+          "metrics": {
+            "accuracy": 75.0,
+            "clarity": 80.0,
+            "understanding": 75.0,
+            "hints_used": 0
+          },
+          "feedback": "The answer generally addresses the main idea of direct methods in optimal control, focusing on parameterizing control inputs and optimizing an objective function. However, it veers into technical details and comparisons with indirect methods, which, while relevant, are not strictly necessary for answering the question about the main idea. A clearer, more concise focus on defining direct methods without diving deeply into contrasting methods would strengthen the response. Additionally, the answer abruptly ends and does not complete the equation, which could confuse the reader. To improve, the student should ensure that the key points are directly related to the question and provide a complete mathematical expression.",
+          "difficulty": 1,
+          "time_taken": 17.111985445022583,
+          "level": "",
+          "raw_response": "The main idea of direct methods in optimal control pertains to the formulation and solution of control problems by directly parameterizing the control inputs and optimizing an objective function subject to dynamic constraints. These methods contrast with indirect methods, which typically involve deriving necessary conditions for optimality using the calculus of variations or optimality conditions derived from the Pontryagin's Maximum Principle.\n\nIn direct methods, the control trajectory is discretized over a finite time horizon, leading to a finite-dimensional optimization problem. This is often accomplished through techniques such as direct collocation or direct shooting. The optimization problem can be expressed mathematically as follows:\n\n\\[\n\\min_{\\mathbf{u}} J(\\mathbf{u}) = \\int_{t_0}^{t_f} L(t, \\mathbf{x}(t), \\mathbf{u}(t)) \\, dt\n\\]\n\nsubject to the dynamic constraints represented by the state equations:\n\n\\[\n\\dot{\\mathbf{x}}(t) = \\mathbf{f}(t, \\mathbf{x}(t), \\mathbf{u}(t)), \\quad \\mathbf{x}(t_0) = \\mathbf{x}_0, \\quad \\mathbf{x}(t_f) = \\mathbf{x}_f\n\\]\n\nwhere \\(J\\"
+        },
+        "Q11": {
+          "question": "What is an open-loop control in the context of deterministic problems?",
+          "metrics": {
+            "accuracy": 75.0,
+            "clarity": 80.0,
+            "understanding": 75.0,
+            "hints_used": 0
+          },
+          "feedback": "The student adequately addresses the question about open-loop control in deterministic problems by explaining the key characteristics, such as the dependence on the initial state and the absence of feedback during execution. However, the response could improve by explicitly connecting the optimization process to the specific question regarding the general form of a non-linear optimization problem. Additionally, the explanation of the cost function and constraints, while relevant, could be more succinctly presented to enhance clarity. It is recommended to directly relate the optimization problem to the open-loop control application for a more thorough understanding.",
+          "difficulty": 1,
+          "time_taken": 26.796563625335693,
+          "level": "",
+          "raw_response": "In the context of deterministic problems, an open-loop control system is characterized by a control strategy that computes a sequence of control actions based solely on the initial state of the system, without incorporating feedback from the system's current state during execution. This approach is particularly applicable when the dynamics of the system can be described by deterministic models, typically represented in the state-space form as \\(\\dot{x} = f(x, u, t)\\), where \\(x\\) denotes the state vector, \\(u\\) represents the control input, and \\(t\\) signifies time.\n\nIn deterministic control problems, the optimal policy can be derived through an optimization process, where the objective is to minimize a cost function \\(E(z)\\) subject to equality and inequality constraints represented by \\(h(z) = 0\\) and \\(g(z) \\leq 0\\), respectively. Here, \\(z\\) is a vector in \\(\\mathbb{R}^n\\) that encapsulates the decision variables corresponding to the control actions over a specified time horizon.\n\nThe open-loop control strategy is intrinsically tied to the optimization framework, as it relies on the computation of the optimal control sequence \\(\\{u^*(t)\\}\\) based on"
+        },
+        "Q16": {
+          "question": "What term describes the control approach where u∗= arg min u Ju(x0)?",
+          "metrics": {
+            "accuracy": 90.0,
+            "clarity": 85.0,
+            "understanding": 90.0,
+            "hints_used": 0
+          },
+          "feedback": "The answer effectively addresses the specific question by correctly identifying the control approach as 'Optimal Control' and accurately explaining the formulation of the cost functional. However, while the answer is comprehensive, a minor accuracy issue is present in the notation where 'J_u(x_0)' should simply be 'J(x_0)' to align correctly with the expected notation. Overall, the explanation is clear and demonstrates a strong understanding of the fundamental concepts in optimal control theory. To improve, ensure consistency in notation with the question context.",
+          "difficulty": 1,
+          "time_taken": 36.480364084243774,
+          "level": "",
+          "raw_response": "The control approach you are referring to, characterized by the formulation \\( u^* = \\arg \\min_u J_u(x_0) \\), is known as **Optimal Control**. In this context, \\( J_u(x_0) \\) represents a cost functional that quantifies the performance of a control input \\( u \\) starting from an initial state \\( x_0 \\). The objective of optimal control is to determine the control input \\( u^* \\) that minimizes this cost functional, thereby achieving the best possible performance for the system under consideration.\n\nIn optimal control theory, the cost functional \\( J \\) is typically defined as an integral over a time horizon, often expressed in the form:\n\n\\[\nJ(u) = \\int_{t_0}^{t_f} L(x(t), u(t), t) \\, dt + \\Phi(x(t_f))\n\\]\n\nwhere \\( L \\) is the running cost, \\( \\Phi \\) is the terminal cost, \\( t_0 \\) is the initial time, and \\( t_f \\) is the final time. The control input \\( u(t) \\) is optimized with respect to the state trajectory \\( x(t) \\) governed by the system dynamics"
+        },
+        "Q21": {
+          "question": "What is direct collocation in the context of optimization-based methods for optimal control?",
+          "metrics": {
+            "accuracy": 75.0,
+            "clarity": 80.0,
+            "understanding": 75.0,
+            "hints_used": 0
+          },
+          "feedback": "The answer addresses the question by explaining the concept of direct collocation in the context of optimal control, mentioning its transformation of continuous-time problems into discrete optimization problems. However, it lacks a specific mention of the characteristics of the 'single, large, non-linear constrained optimization problem' as stated in the question, and doesn't emphasize the overall structure as outlined in the expected answer. To improve, the student should explicitly mention the formation of the optimization problem and highlight its key attributes, ensuring that all components of the question are thoroughly covered.",
+          "difficulty": 1,
+          "time_taken": 54.89737248420715,
+          "level": "",
+          "raw_response": "The primary advantage of employing direct collocation in optimal control methods lies in its capacity to enhance numerical stability and facilitate the implementation of optimization algorithms. Direct collocation is a transcription method that transforms the continuous-time optimal control problem into a discrete optimization problem by approximating the state and control trajectories via piecewise polynomial functions, typically through a finite element approach.\n\n1. **Numerical Stability**: Direct collocation methods produce more numerically stable algorithms as they optimize both the state and action variables simultaneously. This simultaneous optimization leads to a more robust solution, particularly in problems where the dynamics exhibit stiff behavior or where the control constraints are stringent. The stability is attributed to the fact that the collocation points are strategically selected to ensure that the polynomial approximations adhere closely to the underlying system dynamics, thereby minimizing numerical errors.\n\n2. **Ease of Implementation**: The implementation of direct collocation is facilitated by modern optimization software that supports quadratic programming. In this framework, one can specify cost functions and constraints on a per-variable basis, as exemplified in equation (15.5) of your reference. This contrasts with methods that require the formulation of matrices \\( Q \\) and \\( q \\) as seen in equation (15.2), which can be cumbersome and less"
+        },
+        "Q2": {
+          "question": "How would you explain the main advantage of using direct collocation in optimal control methods?",
+          "metrics": {
+            "accuracy": 95.0,
+            "clarity": 90.0,
+            "understanding": 90.0,
+            "hints_used": 0
+          },
+          "feedback": "The student's answer effectively addresses the specific question regarding the main advantage of direct collocation in optimal control methods. It correctly highlights the simultaneous optimization of state and control variables as a key advantage, along with benefits related to numerical stability and ease of implementation. The explanation of how direct collocation discretizes the control problem and utilizes continuity constraints further demonstrates a strong understanding of the method's application. However, the answer could be slightly more concise to improve clarity. Overall, excellent understanding and thorough response.",
+          "difficulty": 2,
+          "time_taken": 66.2182047367096,
+          "level": "",
+          "raw_response": "The primary advantage of employing direct collocation in optimal control methods lies in its capacity to optimize both state and control variables simultaneously, thereby enhancing numerical stability and facilitating implementation. \n\nDirect collocation involves discretizing the control problem by approximating the state trajectory and control inputs at a finite set of collocation points within the time horizon. This method allows for the formulation of the optimal control problem as a nonlinear programming (NLP) problem, wherein the state dynamics are enforced at these collocation points through the use of continuity constraints. \n\nOne of the notable benefits of this approach is its numerical stability. By optimizing both state and control trajectories, direct collocation mitigates issues related to the propagation of numerical errors that may arise in methods that only optimize control inputs, such as shooting methods. This is particularly important in applications where the dynamics are highly nonlinear or where the control problem is sensitive to initial conditions.\n\nFurthermore, direct collocation simplifies the implementation process, particularly when utilizing modern optimization software capable of handling quadratic programming (QP) formulations. The formulation allows for the specification of cost functions and constraints on a per-variable basis, as exemplified in the expression for the optimization problem, rather than necessitating the derivation of matrices \\(Q\\) and \\(q\\)"
+        },
+        "Q7": {
+          "question": "How would you explain the role of optimization in direct methods for control?",
+          "metrics": {
+            "accuracy": 75.0,
+            "clarity": 80.0,
+            "understanding": 70.0,
+            "hints_used": 0
+          },
+          "feedback": "The answer provides a solid understanding of the role of optimization in direct methods for control, touching on key components like objective function formulation and parameterization of control policies. However, it could better connect the optimization aspect explicitly to the optimization challenges and criteria in non-linear optimization problems. Additionally, including specific examples of optimization techniques or algorithms used in this context would enhance comprehension. To improve, the student should focus on linking their concepts more directly to the question about non-linear optimization and provide examples or further details.",
+          "difficulty": 2,
+          "time_taken": 76.391042470932,
+          "level": "",
+          "raw_response": "In the context of control theory, particularly within the framework of reinforcement learning and control, optimization plays a pivotal role in direct methods for control. Direct methods, as opposed to indirect methods, focus on parameterizing the control policy or trajectory directly and optimizing it to achieve desired performance criteria.\n\n### Role of Optimization in Direct Methods for Control:\n\n1. **Objective Function Formulation**: The first step in employing direct methods involves defining an objective function \\( J(\\mathbf{u}) \\), which quantifies the performance of the control policy \\( \\mathbf{u} \\). This function typically represents a cost or reward that needs to be minimized or maximized, respectively. The formulation often includes terms that account for state deviations, control effort, and sometimes terminal constraints, expressed as:\n   \\[\n   J(\\mathbf{u}) = \\int_0^T L(x(t), u(t), t) \\, dt + \\Phi(x(T))\n   \\]\n   where \\( L \\) is the running cost and \\( \\Phi \\) is the terminal cost.\n\n2. **Parameterization of Control Policies**: In direct methods, control policies are often parameterized using function approximators such as neural networks, polynomial functions, or piecewise linear functions"
+        }
+      },
+      "topic_coverage": {},
+      "behavior_score": 0.0
+    }
+  },
+  "session_id": "072cbae5-c69c-4424-a90e-445c6ae78e1a"
+}

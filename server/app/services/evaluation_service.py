@@ -72,7 +72,7 @@ Format your response as JSON:
 
         # Get evaluation from GPT
         response = openai.chat.completions.create(
-            model="gpt-4o-mini",
+            model="gpt-4o",
             messages=[
                 {
                     "role": "system",
@@ -259,7 +259,7 @@ Please format your response as JSON with the following structure:
 
         # Get evaluation from GPT
         response = openai.chat.completions.create(
-            model="gpt-4o-mini",
+            model="gpt-4o",
             messages=[
                 {
                     "role": "system",

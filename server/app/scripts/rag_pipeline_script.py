@@ -398,7 +398,8 @@ Format as JSON:
                     "content": answer_prompt,
                 },
             ],
-            temperature=0.7,
+            temperature=0.3,  # 降低温度以提高一致性
+            response_format={"type": "json_object"},  # 强制返回JSON格式
         )
 
         # Parse answers
