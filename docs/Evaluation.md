@@ -79,9 +79,9 @@ The scoring system is based on several established educational assessment theori
 | Accuracy | 33.3% | 0-100 | - |
 | Clarity | 33.3% | 0-100 | - |
 | Understanding | 33.3% | 0-100 | - |
-| Hint Usage | - | - | -10 per hint |
+| Hint Usage | - | - | -5% per hint |
 
-### Final Score Composition
+### Total Score Composition
 
 | Component | Calculation | Description |
 |-----------|-------------|-------------|
@@ -89,9 +89,9 @@ The scoring system is based on several established educational assessment theori
 | Difficulty Weight | Level 1: 0.7 (-30%)<br>Level 2: 0.85 (-15%)<br>Level 3: 1.0 (neutral)<br>Level 4: 1.2 (+20%)<br>Level 5: 1.5 (+50%) | Encourages tackling harder questions |
 | Hint Penalty | `base_score * 0.05 * hints_used` | 5% deduction per hint |
 
-The final score is calculated as the average of all question scores:
+The total score is calculated as the average of all question scores:
 ```python
-final_score = sum(question_scores) / number_of_questions
+total_score = sum(question_scores) / number_of_questions
 ```
 
 Each question's score is:
@@ -178,9 +178,9 @@ def update_topic_coverage(
 
 | Level | Score Range | Characteristics |
 |-------|-------------|-----------------|
-| Excellent | 85-100 | Complete, accurate, well-expressed |
-| Good | 70-84 | Mostly correct, clear expression |
-| Fair | 60-69 | Basic understanding shown |
+| Excellent | 80-100 | Complete, accurate, well-expressed |
+| Good | 65-79 | Mostly correct, clear expression |
+| Fair | 50-64 | Basic understanding shown |
 | Poor | <60 | Incomplete or incorrect |
 
 ## References
@@ -262,10 +262,14 @@ classDiagram
 
     class QuestionEvaluation {
         +question_id: str
+        +question: str
+        +topic: str
         +metrics: EvaluationMetrics
         +feedback: str
         +difficulty: int
         +time_taken: float
+        +raw_response: str
+        +level: str
     }
 
     class ExamEvaluation {
@@ -273,7 +277,9 @@ classDiagram
         +question_evaluations: Dict
         +topic_coverage: Dict
         +behavior_score: float
-        +calculate_total_score()
+        +final_score: float
+        +final_level: str
+        +final_feedback: str
     }
 
     ExamService --> ExamStateMachine
@@ -360,11 +366,14 @@ class EvaluationMetrics:
 ```python
 class QuestionEvaluation:
     question_id: str
+    question: str        # Question text
+    topic: str           # Question topic
     metrics: EvaluationMetrics
     feedback: str
     difficulty: int     # 1-5
     time_taken: float   # in seconds
-    raw_response: str
+    raw_response: str   # Student's original answer
+    level: str          # Overall evaluation level
 ```
 
 ### 3. Complete Exam Evaluation
@@ -374,7 +383,9 @@ class ExamEvaluation:
     question_evaluations: Dict[str, QuestionEvaluation]
     topic_coverage: Dict[str, float]
     behavior_score: float
-    final_feedback: str
+    final_score: float   # AI examiner's overall score
+    final_level: str     # AI examiner's overall grade
+    final_feedback: str  # AI examiner's comprehensive feedback
 ```
 
 ## Evaluation Process
@@ -386,7 +397,7 @@ class ExamEvaluation:
   - Clarity (expression quality)
   - Understanding (concept comprehension)
 - **Adjustments**:
-  - Hint penalty: -10 points per hint used
+  - Hint penalty: 5% deduction per hint used
   - Difficulty weighting: Score weighted by question difficulty (1-5)
 
 ### 2. Topic Coverage Assessment
@@ -406,12 +417,12 @@ behavior_score = (
 
 ## Scoring Algorithm
 
-### Final Score Components
+### Total Score Components
 1. **Question Performance (60%)**
    ```python
    question_score = (accuracy + clarity + understanding) / 3
-   question_score -= hints_used * 10
-   question_score *= difficulty / 5
+   question_score -= (base_score * 0.05) * hints_used
+   question_score *= difficulty_weights[difficulty]
    ```
 
 2. **Topic Coverage (20%)**
@@ -472,19 +483,39 @@ Evaluate this student's answer based on the following criteria:
 
 Question: {question}
 Expected Answer: {expected_answer}
+Relevant Context: {question['context']}
 Student's Answer: {student_response}
 
-Please evaluate on three metrics (0-100):
-1. Accuracy: How correct is the answer?
-2. Clarity: How well is it expressed?
-3. Understanding: How well does the student understand the concept?
+First, determine if the answer directly addresses the question asked:
+1. Does the answer specifically address the question?
+2. Is the answer relevant to the specific question, not just the general topic?
+3. Does the answer contain the key components expected?
 
-Provide brief feedback explaining the evaluation.
+Then evaluate on three metrics (0-100):
+1. Accuracy: How correctly does the answer address the specific question asked?
+2. Clarity: How well is the answer expressed and structured?
+3. Understanding: How well does the student demonstrate understanding?
+
+Based on both relevance and quality, provide a single word to describe the overall quality:
+- "Excellent": Directly answers the question with comprehensive understanding (80-100)
+- "Good": Answers the question with solid understanding, minor gaps (65-79)
+- "Fair": Partially answers the question or shows tangential understanding (50-64)
+- "Poor": Does not answer the question or shows significant misunderstanding (0-49)
+
+Format your response as JSON:
+{
+    "level": "<single_word_evaluation>",
+    "accuracy": <score>,
+    "clarity": <score>,
+    "understanding": <score>,
+    "feedback": "<feedback>"
+}
 ```
 
 ### Response Format
 ```json
 {
+    "level": "Good",
     "accuracy": 85,
     "clarity": 90,
     "understanding": 80,
@@ -494,9 +525,10 @@ Provide brief feedback explaining the evaluation.
 ## Evaluation Report
 
 ### Report Components
-1. **Overall Score**
-   - Final weighted score
-   - Component breakdowns
+1. **Overall Assessment**
+   - Total score (algorithmic calculation)
+   - Final score (AI examiner's assessment)
+   - Final level (Excellent/Good/Fair/Poor)
 
 2. **Question-by-Question Analysis**
    - Individual scores
@@ -620,7 +652,7 @@ Format your response as JSON:
 
         # 获取GPT评估
         response = openai.chat.completions.create(
-            model="gpt-4o-mini",
+            model="gpt-4o",
             messages=[
                 {
                     "role": "system",
@@ -659,10 +691,10 @@ class ExamEvaluation(BaseModel):
     question_evaluations: Dict[str, QuestionEvaluation] = {}
     topic_coverage: Dict[str, float] = {}
     behavior_score: float = 0.0
-    final_feedback: str = ""
     # 新增字段
     final_score: float = 0.0  # 考官最终评分
     final_level: str = ""     # 考官最终评价
+    final_feedback: str = ""  # 考官最终反馈
 ```
 
 ### 与RAG模块集成
@@ -687,72 +719,6 @@ def evaluate_answer(
     )
 
     # 评估逻辑...
-```
-
-#### 评估上下文
-
-评估提示中融合了从知识库检索的相关文档作为参考依据：
-
-```python
-def _create_evaluation_prompt(
-    self,
-    question: str,
-    student_answer: str,
-    relevant_docs: List[str],
-    exam_context: ExamContext,
-) -> str:
-    """创建评估提示"""
-    prompt = (
-        "Please evaluate the student's answer:\n\n"
-        f"Question: {question}\n\n"
-        f"Student's Answer: {student_answer}\n\n"
-        f"Reference Knowledge:\n{chr(10).join(relevant_docs)}\n\n"
-        "Evaluation Requirements:\n"
-        "1. Accuracy: Does the answer align with knowledge base content\n"
-        "2. Completeness: Does it cover all aspects of the question\n"
-        "3. Depth of Understanding: Does it demonstrate deep concept comprehension\n"
-        "4. Clarity: Is the answer well-structured and clear\n\n"
-        "Please provide:\n"
-        "1. Score (0-100)\n"
-        "2. Detailed evaluation\n"
-        "3. Suggestions for improvement"
-    )
-    return prompt
-```
-
-### 最新评估流程
-
-考试服务(`ExamService`)协调评估流程，在学生回答后立即触发评估：
-
-```python
-async def process_answer(self, answer: str) -> Dict:
-    """处理学生的回答"""
-
-    # 获取上一个问题用于评估
-    session = self.state_machine.context.get("exam_session")
-    if session:
-        question_to_evaluate = session.get_prev_question()
-        if question_to_evaluate:
-            time_taken = time.time() - (self.question_start_time or time.time())
-            evaluation = await self.evaluation_service.evaluate_response(
-                question=question_to_evaluate,
-                student_response=answer,
-                hints_used=self.session_metrics["hints_requested"],
-                time_taken=time_taken,
-            )
-
-            # 记录评估结果
-            self.evaluation_service.add_question_evaluation(
-                question_id=question_to_evaluate["question_id"],
-                question=question_to_evaluate["question"],
-                topic=question_to_evaluate["topic"],
-                metrics=evaluation.metrics,
-                time_taken=time_taken,
-                difficulty=question_to_evaluate["difficulty"],
-                feedback=evaluation.feedback,
-                raw_response=answer,  # 添加学生的回答
-                level=evaluation.level  # 添加总体评价
-            )
 ```
 
 ### 评分等级系统
@@ -788,7 +754,7 @@ logger.info(f"Average Score: {avg_score:.2f}/100")
 
 ### 模型优化
 
-1. **模型选择**：评估服务使用 `gpt-4o-mini` 模型，在性能和成本之间取得平衡
+1. **模型选择**：评估服务使用 `gpt-4o` 模型，在性能和成本之间取得平衡
 2. **结构化输出**：强制使用 JSON 格式返回评估结果，确保一致性：
    ```python
    response_format={"type": "json_object"}

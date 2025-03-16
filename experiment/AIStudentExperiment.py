@@ -353,7 +353,7 @@ Your response should impress with its clarity, insight and conceptual understand
 
             print(f"Calling AI model to generate answer with temperature {temperature}...")
             response = self.openai_client.chat.completions.create(
-                model="gpt-4o-mini",
+                model="gpt-4o",
                 messages=messages,
                 temperature=temperature,
                 max_tokens=max_tokens,
@@ -1741,7 +1741,7 @@ def main():
             student_types=["AccurateExcellent", "InaccurateExcellent"],
             topic="Direct Methods for Optimal Control",
             num_questions=8,  # Use 7 questions uniformly, ensure completeness
-            tests_per_type=1,  # Adjust based on need
+            tests_per_type=20,  # Adjust based on need
         )
         print("Experiment completed successfully!")
     except Exception as e:

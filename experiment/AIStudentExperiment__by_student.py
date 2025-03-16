@@ -1474,7 +1474,7 @@ def main():
         runner.run_experiment(
             student_types=["Excellent", "Average", "Poor"],
             topic="Direct Methods for Optimal Control",
-            num_questions=7,  # Use 7 questions uniformly, ensure completeness
+            num_questions=8,  # Use 7 questions uniformly, ensure completeness
             tests_per_type=20,  # Adjust based on need
         )
         print("Experiment completed successfully!")
