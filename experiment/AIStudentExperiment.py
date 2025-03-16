@@ -353,7 +353,10 @@ Your response should impress with its clarity, insight and conceptual understand
 
             print(f"Calling AI model to generate answer with temperature {temperature}...")
             response = self.openai_client.chat.completions.create(
-                model="gpt-4o", messages=messages, temperature=temperature, max_tokens=max_tokens
+                model="gpt-4o-mini",
+                messages=messages,
+                temperature=temperature,
+                max_tokens=max_tokens,
             )
 
             answer = response.choices[0].message.content

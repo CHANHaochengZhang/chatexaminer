@@ -253,7 +253,7 @@ Remember to answer as a poor student would in an oral exam - confidently incorre
 
             print(f"Calling AI model to generate answer...")
             response = self.openai_client.chat.completions.create(
-                model="gpt-4o", messages=messages, temperature=0.7, max_tokens=max_tokens
+                model="gpt-4o-mini", messages=messages, temperature=0.7, max_tokens=max_tokens
             )
 
             answer = response.choices[0].message.content
