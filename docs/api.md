@@ -1,39 +1,39 @@
-# ChatExaminer API 文档
+# ChatExaminer API Documentation
 
-## 设计原理
+## Design Principles
 
-### 架构概述
+### Architecture Overview
 
-ChatExaminer API 采用 RESTful 架构风格设计，同时结合 WebSocket 提供实时交互能力。系统架构分为以下几个核心部分：
+ChatExaminer API adopts a RESTful architecture style design, combined with WebSocket to provide real-time interaction capabilities. The system architecture is divided into the following core parts:
 
-1. **状态管理**
-   - 采用有限状态机(FSM)管理考试流程
-   - 每个考试会话维护独立的状态
-   - 支持状态间的平滑过渡和异常处理
+1. **State Management**
+   - Uses Finite State Machine (FSM) to manage exam process
+   - Each exam session maintains independent state
+   - Supports smooth transition between states and exception handling
 
-2. **会话管理**
-   - 基于 UUID 的会话标识
-   - 服务端维护会话状态和上下文
-   - 支持多用户并发考试
+2. **Session Management**
+   - UUID-based session identification
+   - Server maintains session state and context
+   - Supports concurrent exams from multiple users
 
-3. **通信模式**
-   - REST API：用于基础的考试流程控制
-   - WebSocket：用于实时问答交互
-   - 混合模式：确保最佳的用户体验
+3. **Communication Modes**
+   - REST API: For basic exam process control
+   - WebSocket: For real-time Q&A interaction
+   - Hybrid mode: Ensures the best user experience
 
-### 系统架构图
+### System Architecture Diagram
 
 ```mermaid
 graph TD
-    Client[客户端] --> |HTTP/WebSocket| API[API 层]
-    API --> |状态转换| FSM[状态机]
-    API --> |会话管理| SessionMgr[会话管理器]
-    FSM --> |状态更新| SessionMgr
-    SessionMgr --> |考试数据| ExamService[考试服务]
-    ExamService --> |问题生成| QGen[问题生成器]
-    ExamService --> |答案评估| Eval[评估系统]
+    Client[Client] --> |HTTP/WebSocket| API[API Layer]
+    API --> |State Transition| FSM[State Machine]
+    API --> |Session Management| SessionMgr[Session Manager]
+    FSM --> |State Update| SessionMgr
+    SessionMgr --> |Exam Data| ExamService[Exam Service]
+    ExamService --> |Question Generation| QGen[Question Generator]
+    ExamService --> |Answer Evaluation| Eval[Evaluation System]
 
-    subgraph 状态机
+    subgraph State Machine
     FSM --> State1[INIT]
     FSM --> State2[TOPIC_SELECTED]
     FSM --> State3[QUESTIONING]
@@ -44,109 +44,109 @@ graph TD
     end
 ```
 
-### 接口设计原则
+### Interface Design Principles
 
-1. **RESTful 规范**
-   - 使用标准 HTTP 方法
-   - 资源化的 URL 设计
-   - 无状态通信原则
+1. **RESTful Standards**
+   - Use standard HTTP methods
+   - Resource-based URL design
+   - Stateless communication principle
 
-2. **实时交互**
-   - WebSocket 保持长连接
-   - 双向通信支持
-   - 实时状态同步
+2. **Real-time Interaction**
+   - WebSocket maintains persistent connection
+   - Bidirectional communication support
+   - Real-time state synchronization
 
-3. **可扩展性**
-   - 模块化的接口设计
-   - 版本控制支持
-   - 灵活的状态转换机制
+3. **Scalability**
+   - Modular interface design
+   - Version control support
+   - Flexible state transition mechanism
 
-4. **安全性**
-   - 会话级别的隔离
-   - 输入验证和消毒
-   - 错误处理机制
+4. **Security**
+   - Session-level isolation
+   - Input validation and sanitization
+   - Error handling mechanism
 
-5. **可维护性**
-   - 清晰的接口文档
-   - 标准的错误响应
-   - 完整的状态追踪
+5. **Maintainability**
+   - Clear interface documentation
+   - Standard error responses
+   - Complete state tracking
 
-### 数据流图
+### Data Flow Diagram
 
 ```mermaid
 sequenceDiagram
-    participant Client as 客户端
-    participant API as API 层
-    participant FSM as 状态机
-    participant Service as 考试服务
+    participant Client as Client
+    participant API as API Layer
+    participant FSM as State Machine
+    participant Service as Exam Service
 
-    Client->>API: POST /start (选择主题)
-    API->>FSM: 初始化状态
-    FSM->>Service: 创建考试会话
-    Service-->>API: 返回会话信息
-    API-->>Client: 返回首个问题
+    Client->>API: POST /start (Select Topic)
+    API->>FSM: Initialize State
+    FSM->>Service: Create Exam Session
+    Service-->>API: Return Session Info
+    API-->>Client: Return First Question
 
-    loop 考试过程
+    loop Exam Process
         Client->>API: POST /{session}/answer
-        API->>FSM: 检查状态转换
-        FSM->>Service: 处理答案
-        Service-->>API: 返回下一问题/评估
-        API-->>Client: 返回响应
+        API->>FSM: Check State Transition
+        FSM->>Service: Process Answer
+        Service-->>API: Return Next Question/Evaluation
+        API-->>Client: Return Response
     end
 
     Client->>API: GET /{session}/evaluation
-    API->>Service: 生成评估报告
-    Service-->>API: 返回评估结果
-    API-->>Client: 返回最终评估
+    API->>Service: Generate Evaluation Report
+    Service-->>API: Return Evaluation Results
+    API-->>Client: Return Final Evaluation
 ```
 
-## 基本信息
+## Basic Information
 
-- 基础URL: `http://localhost:8000/api/exam`
-- 所有请求和响应均使用 JSON 格式
-- 所有时间戳使用 ISO 8601 格式
+- Base URL: `http://localhost:8000/api/exam`
+- All requests and responses use JSON format
+- All timestamps use ISO 8601 format
 
-## 通用响应格式
+## Common Response Format
 
 ```json
 {
-    "state": "当前状态",
-    "message": "响应消息",
+    "state": "Current State",
+    "message": "Response Message",
     "data": {
-        // 具体数据
+        // Specific Data
     }
 }
 ```
 
-## 状态定义
+## State Definitions
 
-- `INIT`: 初始状态
-- `TOPIC_SELECTED`: 已选择考试主题
-- `QUESTIONING`: 问答阶段
-- `EXPLAINING`: 解释阶段
-- `EVALUATING`: 评估阶段
-- `COMPLETED`: 考试完成
-- `CHAT`: 闲聊状态
+- `INIT`: Initial state
+- `TOPIC_SELECTED`: Exam topic selected
+- `QUESTIONING`: Q&A phase
+- `EXPLAINING`: Explanation phase
+- `EVALUATING`: Evaluation phase
+- `COMPLETED`: Exam completed
+- `CHAT`: Casual conversation state
 
-## API 端点
+## API Endpoints
 
-### 1. 启动考试会话
+### 1. Start Exam Session
 
-启动新的考试会话并选择考试主题。
+Starts a new exam session and selects the exam topic.
 
 - **URL**: `/start`
-- **方法**: `POST`
-- **请求体**:
+- **Method**: `POST`
+- **Request Body**:
   ```json
   {
-      "topic": "考试主题"
+      "topic": "Exam Topic"
   }
   ```
-- **成功响应** (200):
+- **Success Response** (200):
   ```json
   {
       "state": "QUESTIONING",
-      "message": "考试会话已创建并开始",
+      "message": "Exam session created and started",
       "data": {
           "session_id": "uuid",
           "result": {
@@ -160,26 +160,26 @@ sequenceDiagram
       }
   }
   ```
-- **错误响应** (400):
+- **Error Response** (400):
   ```json
   {
       "detail": "错误信息"
   }
   ```
 
-### 2. 提交答案
+### 2. Submit Answer
 
-提交对当前问题的回答。
+Submit the answer to the current question.
 
 - **URL**: `/{session_id}/answer`
-- **方法**: `POST`
-- **请求体**:
+- **Method**: `POST`
+- **Request Body**:
   ```json
   {
       "answer": "学生的回答"
   }
   ```
-- **成功响应** (200):
+- **Success Response** (200):
   ```json
   {
       "state": "QUESTIONING",
@@ -196,20 +196,20 @@ sequenceDiagram
       }
   }
   ```
-- **错误响应** (404):
+- **Error Response** (404):
   ```json
   {
       "detail": "考试会话不存在"
   }
   ```
 
-### 3. 获取考试状态
+### 3. Get Exam State
 
-获取当前考试会话的状态信息。
+Get the current exam session state information.
 
 - **URL**: `/{session_id}/state`
-- **方法**: `GET`
-- **成功响应** (200):
+- **Method**: `GET`
+- **Success Response** (200):
   ```json
   {
       "state": "QUESTIONING",
@@ -229,13 +229,13 @@ sequenceDiagram
   }
   ```
 
-### 4. 获取评估结果
+### 4. Get Evaluation Results
 
-获取考试的最终评估结果。
+Get the final evaluation results of the exam.
 
 - **URL**: `/{session_id}/evaluation`
-- **方法**: `GET`
-- **成功响应** (200):
+- **Method**: `GET`
+- **Success Response** (200):
   ```json
   {
       "state": "COMPLETED",
@@ -265,18 +265,18 @@ sequenceDiagram
   }
   ```
 
-## WebSocket 接口
+## WebSocket Interface
 
-### 实时交互
+### Real-time Interaction
 
 - **URL**: `ws://localhost:8000/api/exam/{session_id}/ws`
-- **发送消息格式**:
+- **Send Message Format**:
   ```json
   {
       "answer": "学生的回答"
   }
   ```
-- **接收消息格式**:
+- **Receive Message Format**:
   ```json
   {
       "type": "response",
@@ -293,7 +293,7 @@ sequenceDiagram
       }
   }
   ```
-- **错误消息格式**:
+- **Error Message Format**:
   ```json
   {
       "type": "error",
@@ -301,15 +301,15 @@ sequenceDiagram
   }
   ```
 
-## 错误代码
+## Error Codes
 
-- 400: 请求参数错误
-- 404: 资源不存在
-- 500: 服务器内部错误
+- 400: Request parameter error
+- 404: Resource does not exist
+- 500: Server internal error
 
-## 使用示例
+## Usage Examples
 
-### Python 示例
+### Python Example
 
 ```python
 import requests
@@ -317,23 +317,23 @@ import json
 
 BASE_URL = "http://localhost:8000/api/exam"
 
-# 1. 启动考试
+# 1. Start Exam
 start_response = requests.post(f"{BASE_URL}/start",
                              json={"topic": "Direct Methods for Optimal Control"})
 session_id = start_response.json()["data"]["session_id"]
 
-# 2. 提交答案
+# 2. Submit Answer
 answer_response = requests.post(f"{BASE_URL}/{session_id}/answer",
                               json={"answer": "这是答案"})
 
-# 3. 获取状态
+# 3. Get State
 state_response = requests.get(f"{BASE_URL}/{session_id}/state")
 
-# 4. 获取评估
+# 4. Get Evaluation
 evaluation_response = requests.get(f"{BASE_URL}/{session_id}/evaluation")
 ```
 
-### WebSocket 示例
+### WebSocket Example
 
 ```python
 import websockets
@@ -350,103 +350,103 @@ async def connect_exam():
 asyncio.run(connect_exam())
 ```
 
-## 注意事项
+## Notes
 
-1. 所有请求都需要包含正确的 session_id（除了启动考试）
-2. WebSocket 连接在考试会话不存在时会自动关闭
-3. 评估结果只有在考试完成状态才能获取
-4. 建议使用 WebSocket 进行实时交互，以获得更好的体验
+1. All requests need to include the correct session_id (except for starting the exam)
+2. WebSocket connection will automatically close when the exam session does not exist
+3. Evaluation results can only be obtained when the exam is completed
+4. It is recommended to use WebSocket for real-time interaction to get a better experience
 
-## Hint 相关接口
+## Hint Related Interface
 
-### 获取提示
+### Get Hint
 
-获取当前考试问题的提示信息。
+Get the hint information for the current exam question.
 
-**请求**
+**Request**
 
 ```http
 GET /api/exam/{session_id}/hint
 ```
 
-**路径参数**
+**Path Parameters**
 
-| 参数 | 类型 | 描述 |
-|------|------|------|
-| session_id | string | 考试会话ID |
+| Parameter | Type | Description |
+|----------|------|-------------|
+| session_id | string | Exam Session ID |
 
-**响应**
+**Response**
 
 ```json
 {
-  "state": "string",     // 当前考试状态
-  "message": "string",   // 响应消息
+  "state": "string",     // Current Exam State
+  "message": "string",   // Response Message
   "data": {
-    "hint": "string",    // 生成的提示内容
-    "hints_used": number // 已使用的提示次数
+    "hint": "string",    // Generated Hint Content
+    "hints_used": number // Used Hint Count
   }
 }
 ```
 
-**状态码**
+**Status Codes**
 
-| 状态码 | 描述 |
-|--------|------|
-| 200 | 成功获取提示 |
-| 404 | 考试会话不存在 |
-| 400 | 请求参数错误 |
-| 403 | 无权限访问该考试会话 |
+| Status Code | Description |
+|-------------|-------------|
+| 200 | Successfully Get Hint |
+| 404 | Exam Session Does Not Exist |
+| 400 | Request Parameter Error |
+| 403 | No Permission to Access This Exam Session |
 
-**示例**
+**Example**
 
-请求:
+Request:
 ```http
 GET /api/exam/abc123/hint
 ```
 
-成功响应:
+Success Response:
 ```json
 {
   "state": "IN_PROGRESS",
-  "message": "提示已生成",
+  "message": "Hint Generated",
   "data": {
-    "hint": "考虑使用微分方程来解决这个问题,首先写出物体的运动方程...",
+    "hint": "Consider using differential equations to solve this problem, first write the motion equation of the object...",
     "hints_used": 2
   }
 }
 ```
 
-错误响应:
+Error Response:
 ```json
 {
   "state": "ERROR",
-  "message": "考试会话不存在",
+  "message": "Exam Session Does Not Exist",
   "data": null
 }
 ```
 
-### 使用限制
+### Usage Limits
 
-1. 每个问题最多可以请求3次提示
-2. 使用提示会影响最终得分,每使用一次提示扣除该题分数的10%
-3. 提示生成会考虑:
-   - 问题难度
-   - 主题/子主题
-   - 上下文信息
-   - 学生当前表现
+1. Each question can request hints up to 3 times
+2. Using hints will affect the final score, deducting 10% of the question score each time
+3. Hint generation will consider:
+   - Question Difficulty
+   - Topic/Subtopic
+   - Context Information
+   - Student Current Performance
 
-### 错误码说明
+### Error Code Description
 
-| 错误码 | 描述 | 解决方案 |
-|--------|------|----------|
-| HINT_LIMIT_EXCEEDED | 超出提示使用次数限制 | 等待下一道题目 |
-| SESSION_NOT_FOUND | 考试会话不存在 | 检查session_id是否正确 |
-| QUESTION_NOT_ACTIVE | 当前没有活动的问题 | 确保考试正在进行中 |
-| UNAUTHORIZED | 无访问权限 | 检查用户认证状态 |
+| Error Code | Description | Solution |
+|------------|-------------|----------|
+| HINT_LIMIT_EXCEEDED | Exceeds Hint Usage Limit | Wait for Next Question |
+| SESSION_NOT_FOUND | Exam Session Does Not Exist | Check if session_id is correct |
+| QUESTION_NOT_ACTIVE | No Active Question | Ensure Exam is in Progress |
+| UNAUTHORIZED | No Access Permission | Check User Authentication Status |
 
-### WebSocket 事件
+### WebSocket Events
 
-提示相关的实时事件通知:
+Real-time event notifications for hints:
 
 ```typescript
 interface HintEvent {
@@ -460,9 +460,9 @@ interface HintEvent {
 }
 ```
 
-### 客户端集成
+### Client Integration
 
-TypeScript 示例:
+TypeScript Example:
 
 ```typescript
 interface HintResponse {
@@ -486,54 +486,54 @@ class ExamAPI {
 }
 ```
 
-### 安全性考虑
+### Security Considerations
 
-1. 访问控制
-   - 验证用户是否有权访问该考试会话
-   - 检查提示请求频率限制
-   - 防止提示内容泄露
+1. Access Control
+   - Verify User Permission to Access This Exam Session
+   - Check Hint Request Frequency Limit
+   - Prevent Hint Content Leakage
 
-2. 数据保护
-   - 所有API请求需要通过HTTPS
-   - 提示内容在传输和存储时进行加密
-   - 定期清理历史提示数据
+2. Data Protection
+   - All API Requests Need to Go Through HTTPS
+   - Hint Content Encrypted in Transmission and Storage
+   - Periodically Clean Up Historical Hint Data
 
-### 性能优化
+### Performance Optimization
 
-1. 缓存策略
-   - 对相似问题的提示进行缓存
-   - 使用Redis存储会话状态
-   - CDN加速静态资源
+1. Cache Strategy
+   - Cache Hint for Similar Questions
+   - Use Redis to Store Session State
+   - CDN Accelerate Static Resources
 
-2. 限流措施
-   - 基于用户的请求频率限制
-   - 服务器负载自适应调节
-   - 队列处理大量并发请求
+2. Rate Limiting Measures
+   - Based on User Request Frequency Limit
+   - Server Load Self-Adaptive Adjustment
+   - Queue Process Large Concurrent Requests
 
-### 监控指标
+### Monitoring Metrics
 
-1. 业务指标
-   - 提示使用率
-   - 提示效果评分
-   - 用户满意度
+1. Business Metrics
+   - Hint Usage Rate
+   - Hint Effectiveness Score
+   - User Satisfaction
 
-2. 技术指标
-   - API响应时间
-   - 错误率统计
-   - 系统资源使用率
+2. Technical Metrics
+   - API Response Time
+   - Error Rate Statistics
+   - System Resource Usage Rate
 
-# API 实现文档
+# API Implementation Documentation
 
-## 系统架构图
+## System Architecture Diagram
 
 ```mermaid
 graph TD
-    A[前端应用] -->|HTTP请求| B[API网关]
-    B -->|路由转发| C[考试服务]
-    C -->|会话管理| D[状态机]
-    C -->|提示生成| E[OpenAI服务]
-    C -->|数据存储| F[(Redis)]
-    C -->|持久化| G[(PostgreSQL)]
+    A[Frontend Application] -->|HTTP Request| B[API Gateway]
+    B -->|Route Forwarding| C[Exam Service]
+    C -->|Session Management| D[State Machine]
+    C -->|Hint Generation| E[OpenAI Service]
+    C -->|Data Storage| F[(Redis)]
+    C -->|Persistence| G[(PostgreSQL)]
 
     style A fill:#f9f,stroke:#333,stroke-width:2px
     style B fill:#bbf,stroke:#333,stroke-width:2px
@@ -542,28 +542,28 @@ graph TD
     style E fill:#bff,stroke:#333,stroke-width:2px
 ```
 
-## 提示请求流程
+## Hint Request Process
 
 ```mermaid
 sequenceDiagram
-    participant U as 用户
-    participant F as 前端
-    participant B as 后端
+    participant U as User
+    participant F as Frontend
+    participant B as Backend
     participant AI as OpenAI
-    participant DB as 数据库
+    participant DB as Database
 
-    U->>F: 点击获取提示
+    U->>F: Click Get Hint
     F->>B: GET /api/exam/{session_id}/hint
-    B->>DB: 检查会话状态
-    B->>DB: 获取当前问题
-    B->>AI: 生成提示请求
-    AI-->>B: 返回生成的提示
-    B->>DB: 更新提示使用统计
-    B-->>F: 返回提示内容
-    F-->>U: 显示提示
+    B->>DB: Check Session State
+    B->>DB: Get Current Question
+    B->>AI: Generate Hint Request
+    AI-->>B: Return Generated Hint
+    B->>DB: Update Hint Usage Statistics
+    B-->>F: Return Hint Content
+    F-->>U: Display Hint
 ```
 
-## 状态转换图
+## State Transition Diagram
 
 ```mermaid
 stateDiagram-v2
@@ -581,15 +581,15 @@ stateDiagram-v2
     }
 ```
 
-## 组件交互图
+## Component Interaction Diagram
 
 ```mermaid
 graph LR
-    A[ExamStore] -->|状态管理| B[ExamAPI]
-    B -->|HTTP请求| C[FastAPI Router]
-    C -->|服务调用| D[ExamService]
-    D -->|状态维护| E[StateMachine]
-    D -->|提示生成| F[OpenAI]
+    A[ExamStore] -->|State Management| B[ExamAPI]
+    B -->|HTTP Request| C[FastAPI Router]
+    C -->|Service Call| D[ExamService]
+    D -->|State Maintenance| E[StateMachine]
+    D -->|Hint Generation| F[OpenAI]
 
     style A fill:#f9f,stroke:#333,stroke-width:2px
     style B fill:#bbf,stroke:#333,stroke-width:2px
@@ -597,18 +597,18 @@ graph LR
     style D fill:#fbb,stroke:#333,stroke-width:2px
 ```
 
-## 数据流图
+## Data Flow Diagram
 
 ```mermaid
 graph TD
-    A[用户输入] -->|触发| B[前端Store]
-    B -->|API调用| C[后端服务]
-    C -->|查询| D[会话状态]
-    C -->|生成| E[提示内容]
-    E -->|存储| D
-    D -->|返回| C
-    C -->|响应| B
-    B -->|更新| F[UI显示]
+    A[User Input] -->|Trigger| B[Frontend Store]
+    B -->|API Call| C[Backend Service]
+    C -->|Query| D[Session State]
+    C -->|Generate| E[Hint Content]
+    E -->|Store| D
+    D -->|Return| C
+    C -->|Response| B
+    B -->|Update| F[UI Display]
 
     style A fill:#f9f,stroke:#333,stroke-width:2px
     style F fill:#f9f,stroke:#333,stroke-width:2px

@@ -1,83 +1,83 @@
-# ChatExaminer 前端开发文档
+# ChatExaminer Frontend Development Documentation
 
-## 布局设计
+## Layout Design
 
-### 整体布局
-- 采用响应式设计，主要分为两种视图：
-  1. 初始状态（选择主题）
-  2. 考试进行状态（分栏布局）
+### Overall Layout
+- Responsive design, mainly divided into two views:
+  1. Initial state (topic selection)
+  2. Exam in progress state (column layout)
 
-### 组件结构
+### Component Structure
 ```
-Exam.vue (主视图)
-├── 初始状态
-│   └── 主题选择表单
-└── 考试状态
-    ├── 左侧面板
-    │   ├── StatePanel (状态面板)
-    │   └── EvalReport (评估报告，仅完成状态显示)
-    └── 右侧面板
-        └── ExamChat (聊天界面)
+Exam.vue (Main View)
+├── Initial State
+│   └── Topic Selection Form
+└── Exam State
+    ├── Left Panel
+    │   ├── StatePanel (Status Panel)
+    │   └── EvalReport (Evaluation Report, only shown in completed state)
+    └── Right Panel
+        └── ExamChat (Chat Interface)
 ```
 
-### 组件详情
+### Component Details
 
-#### StatePanel（状态面板）
-- 显示当前考试状态
-- 显示已答题数量
-- 显示使用提示次数
-- 显示当前难度等级
-- 使用 Element Plus 的 Card 和 Tag 组件
+#### StatePanel (Status Panel)
+- Display current exam state
+- Display number of questions answered
+- Display number of hints used
+- Display current difficulty level
+- Use Element Plus Card and Tag components
 
-#### ExamChat（聊天界面）
-- 消息列表显示
-  - 支持系统消息、用户消息和助手消息
-  - 不同角色消息使用不同样式
-  - 显示发送时间
-- 输入区域
-  - 文本输入框
-  - 发送按钮
-  - 支持 Enter 发送
-- 自动滚动到最新消息
+#### ExamChat (Chat Interface)
+- Message list display
+  - Support system messages, user messages and assistant messages
+  - Different styles for different roles
+  - Display sent time
+- Input area
+  - Text input box
+  - Send button
+  - Support Enter to send
+- Auto-scroll to latest message
 
-#### EvalReport（评估报告）
-- 总分显示
-- 主题覆盖标签
-- 优点列表
-- 不足列表
-- 建议列表
+#### EvalReport (Evaluation Report)
+- Total score display
+- Topic coverage tags
+- Strengths list
+- Weaknesses list
+- Suggestions list
 
-## 状态管理
+## State Management
 
-### 考试状态
+### Exam States
 ```typescript
 type ExamState = 'INIT' | 'TOPIC_SELECTED' | 'QUESTIONING' | 'EXPLAINING' | 'EVALUATING' | 'COMPLETED' | 'CHAT'
 ```
 
-### 数据流
-1. 开始考试
-   - 用户输入主题
-   - 调用 API 创建会话
-   - 建立 WebSocket 连接
-   - 更新状态和显示初始消息
+### Data Flow
+1. Start Exam
+   - User inputs topic
+   - Call API to create session
+   - Establish WebSocket connection
+   - Update state and display initial message
 
-2. 考试过程
-   - 用户发送消息
-   - 通过 WebSocket 接收响应
-   - 更新状态和消息列表
-   - 动态更新统计数据
+2. Exam Process
+   - User sends message
+   - Receive response via WebSocket
+   - Update state and message list
+   - Dynamically update statistics
 
-3. 完成评估
-   - 获取评估报告
-   - 显示详细评估信息
+3. Complete Evaluation
+   - Get evaluation report
+   - Display detailed evaluation information
 
-## API 服务
+## API Services
 
-### ExamService 类
-- 管理与后端的通信
-- 维护考试会话状态
-- 处理 WebSocket 连接
-- 方法：
+### ExamService Class
+- Manage communication with backend
+- Maintain exam session state
+- Handle WebSocket connection
+- Methods:
   - startExam
   - submitAnswer
   - getExamState
@@ -85,9 +85,9 @@ type ExamState = 'INIT' | 'TOPIC_SELECTED' | 'QUESTIONING' | 'EXPLAINING' | 'EVA
   - connectWebSocket
   - clearSession
 
-## 样式设计
+## Style Design
 
-### 主题变量
+### Theme Variables
 ```scss
 :root {
   --primary-color: #409eff;
@@ -97,46 +97,46 @@ type ExamState = 'INIT' | 'TOPIC_SELECTED' | 'QUESTIONING' | 'EXPLAINING' | 'EVA
 }
 ```
 
-### 布局特点
-- 使用 CSS Grid 实现分栏布局
-- 固定侧边栏宽度（300px）
-- 自适应主内容区域
-- 统一的间距和圆角
-- 阴影效果增强层次感
+### Layout Features
+- Use CSS Grid for column layout
+- Fixed sidebar width (300px)
+- Adaptive main content area
+- Uniform spacing and rounded corners
+- Shadow effects to enhance layering
 
-## 开发记录
+## Development Records
 
 ### 2024-01-26
-1. 初始化项目
-   - 使用 Vue 3 + TypeScript + Vite
-   - 配置 Element Plus UI 库
-   - 设置路由和状态管理
+1. Initialize Project
+   - Use Vue 3 + TypeScript + Vite
+   - Configure Element Plus UI library
+   - Set up routing and state management
 
-2. 实现基础组件
-   - 创建主视图 Exam.vue
-   - 实现状态面板组件
-   - 实现聊天界面组件
-   - 实现评估报告组件
+2. Implement Basic Components
+   - Create main view Exam.vue
+   - Implement status panel component
+   - Implement chat interface component
+   - Implement evaluation report component
 
-3. 配置 API 服务
-   - 实现 ExamService 类
-   - 配置 WebSocket 连接
-   - 处理会话管理
+3. Configure API Services
+   - Implement ExamService class
+   - Configure WebSocket connection
+   - Handle session management
 
-4. 优化用户体验
-   - 添加加载状态
-   - 完善错误处理
-   - 优化消息展示
-   - 实现自动滚动
+4. Optimize User Experience
+   - Add loading states
+   - Improve error handling
+   - Optimize message display
+   - Implement auto-scrolling
 
-### 待办事项
-- [ ] 添加消息重试机制
-- [ ] 实现断线重连
-- [ ] 优化移动端适配
-- [ ] 添加主题切换功能
-- [ ] 增加动画效果
+### To-Do Items
+- [ ] Add message retry mechanism
+- [ ] Implement reconnection
+- [ ] Optimize mobile adaptation
+- [ ] Add theme switching functionality
+- [ ] Add animation effects
 
-## 数据流图
+## Data Flow Diagram
 
 ```mermaid
 sequenceDiagram
@@ -188,9 +188,9 @@ sequenceDiagram
     FE->>FE: Display evaluation report
 ```
 
-## 响应式布局示意图
+## Responsive Layout Diagram
 
-展示前端在不同屏幕尺寸下的布局变化：
+Showing frontend layout changes across different screen sizes:
 
 ```mermaid
 graph TD
@@ -209,13 +209,13 @@ graph TD
     end
 ```
 
-## 其他建议
+## Other Suggestions
 
-1. **界面实际效果截图**：除了图表外，建议添加实际界面截图，展示不同状态下的UI
+1. **Interface Screenshots**: In addition to diagrams, it's recommended to add actual interface screenshots to show UI in different states
 
-2. **交互原型链接**：可以添加Figma或其他原型工具的链接，供团队成员参考完整交互
+2. **Interactive Prototype Link**: A Figma or other prototype tool link can be added for team members to reference complete interactions
 
-3. **组件状态变化图**：展示主要组件在不同状态下的变化
+3. **Component State Change Diagram**: Show how main components change in different states
 
 ```mermaid
 stateDiagram-v2
@@ -230,7 +230,7 @@ stateDiagram-v2
     Error --> Default: Cancel
 ```
 
-4. **用户体验流程图**：展示完整用户旅程
+4. **User Experience Flow Chart**: Show complete user journey
 
 ```mermaid
 journey
@@ -249,19 +249,19 @@ journey
       Review Overall Assessment: 4: Student
 ```
 
-## 实施建议
+## Implementation Suggestions
 
-1. 将这些可视化图表添加到现有文档的相应部分，不要删除原有内容
+1. Add these visual charts to the corresponding sections of the existing document, do not delete the original content
 
-2. 考虑使用实际前端界面的截图补充抽象图表
+2. Consider using actual interface screenshots to supplement abstract charts
 
-3. 为不同设备和状态添加界面预览
+3. Add interface previews for different devices and states
 
-4. 添加开发路线图，展示前端未来迭代计划
+4. Add development roadmap, showing frontend future iteration plan
 
-这些可视化增强将使文档更加直观易懂，帮助新开发者更快理解系统结构和工作流程，同时也能更好地展示前端交互和设计思路。
+These visual enhancements will make the document more intuitive and easier to understand for new developers, while also better showing frontend interaction and design ideas.
 
-## 技术栈图表
+## Technology Stack Diagram
 
 ```mermaid
 graph TD
@@ -285,7 +285,7 @@ graph TD
     A --- I
 ```
 
-## 开发路线图
+## Development Roadmap
 
 ```mermaid
 gantt
@@ -310,14 +310,14 @@ gantt
     Analytics Integration   :2024-04-10, 14d
 ```
 
-## 实施建议
+## Implementation Suggestions
 
-1. 将这些英文图表整合到现有文档中，替换原有的中文图表
+1. Integrate these English charts into the existing document, replacing the original Chinese charts
 
-2. 考虑添加实际界面截图，配合每个图表展示实际效果
+2. Consider adding actual interface screenshots, and show actual effects with each chart
 
-3. 为不同设备和状态添加界面预览图
+3. Add interface preview for different devices and states
 
-4. 确保图表中的英文术语与代码库中使用的变量和函数名保持一致
+4. Ensure that the English terms in the charts are consistent with the variable and function names used in the code library
 
-这些可视化内容将大大提升文档的可读性和专业性，同时保持了文档的中文说明与英文技术表格的清晰对比。
+These visual contents will greatly improve the readability and professionalism of the document, while maintaining the clear contrast between Chinese descriptions and English technical tables.

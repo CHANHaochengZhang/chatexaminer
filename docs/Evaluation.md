@@ -598,15 +598,15 @@ Format your response as JSON:
    - Progress monitoring
    - Learning path recommendations
 
-## 实现更新
+## Implementation Updates
 
-### 最新评估流程实现
+### Latest Evaluation Process Implementation
 
-基于实际代码实现，系统评估流程包含以下关键组件和步骤：
+Based on the actual code implementation, the system evaluation process includes the following key components and steps:
 
-#### 评估服务实现
+#### Evaluation Service Implementation
 
-评估服务(`EvaluationService`)是系统评估核心，负责单个问题评估和整体考试评估：
+The evaluation service (`EvaluationService`) is the core of the system evaluation, responsible for individual question evaluation and overall exam evaluation:
 
 ```python
 class EvaluationService:
@@ -616,8 +616,8 @@ class EvaluationService:
     async def evaluate_response(
         self, question: Dict, student_response: str, hints_used: int, time_taken: float
     ) -> QuestionEvaluation:
-        """评估单个答案"""
-        # 准备评估提示
+        """Evaluate a single answer"""
+        # Prepare evaluation prompt
         prompt = f"""Evaluate this student's answer based on the following criteria:
 
 Question: {question['question']}
@@ -650,7 +650,7 @@ Format your response as JSON:
     "feedback": "<feedback>"
 }"""
 
-        # 获取GPT评估
+        # Get GPT evaluation
         response = openai.chat.completions.create(
             model="gpt-4o",
             messages=[
@@ -663,105 +663,105 @@ Format your response as JSON:
             response_format={"type": "json_object"},
         )
 
-        # 处理评估结果
+        # Process evaluation results
         # ...
 ```
 
-#### 新增评估字段
+#### New Evaluation Fields
 
-最新实现中的评估模型添加了以下关键字段：
+The evaluation model in the latest implementation adds the following key fields:
 
 ```python
 class QuestionEvaluation(BaseModel):
     question_id: str
-    question: str        # 问题文本（新增）
-    topic: str           # 问题主题（新增）
+    question: str        # Question text (new)
+    topic: str           # Question topic (new)
     metrics: EvaluationMetrics
     feedback: str
     difficulty: int
     time_taken: float
-    raw_response: str    # 学生原始回答（新增）
-    level: str = ""      # 总体评价等级（新增）
+    raw_response: str    # Student's original answer (new)
+    level: str = ""      # Overall evaluation level (new)
 ```
 
 ```python
 class ExamEvaluation(BaseModel):
-    # 原有字段
+    # Existing fields
     total_score: float = 0.0
     question_evaluations: Dict[str, QuestionEvaluation] = {}
     topic_coverage: Dict[str, float] = {}
     behavior_score: float = 0.0
-    # 新增字段
-    final_score: float = 0.0  # 考官最终评分
-    final_level: str = ""     # 考官最终评价
-    final_feedback: str = ""  # 考官最终反馈
+    # New fields
+    final_score: float = 0.0  # Examiner's final score
+    final_level: str = ""     # Examiner's final evaluation
+    final_feedback: str = ""  # Examiner's final feedback
 ```
 
-### 与RAG模块集成
+### Integration with RAG Module
 
-#### RAG增强评估
+#### RAG Enhanced Evaluation
 
-系统通过RAG(检索增强生成)模块从知识库中检索相关内容，增强评估质量：
+The system retrieves relevant content from the knowledge base through the RAG (Retrieval Augmented Generation) module to enhance evaluation quality:
 
 ```python
 def evaluate_answer(
     self, question: str, answer: str, exam_context: ExamContext
 ) -> Dict[str, Any]:
-    """评估学生的回答"""
-    # 检索用于评估的相关文档
+    """Evaluate student's answer"""
+    # Retrieve relevant documents for evaluation
     docs = self._retrieve_relevant_docs(
         exam_context.current_topic, exam_context
     )
 
-    # 创建评估提示
+    # Create evaluation prompt
     eval_prompt = self._create_evaluation_prompt(
         question, answer, docs, exam_context
     )
 
-    # 评估逻辑...
+    # Evaluation logic...
 ```
 
-### 评分等级系统
+### Scoring Level System
 
-最新实现增加了结构化的评分等级系统，根据得分提供直观的等级评价：
+The latest implementation adds a structured scoring level system that provides intuitive level evaluations based on scores:
 
-| 等级 | 分数范围 | 描述 |
+| Level | Score Range | Description |
 |------|----------|------|
-| Excellent | 80-100 | 直接回答问题，展示全面理解 |
-| Good | 65-79 | 回答问题，体现扎实理解，有小缺口 |
-| Fair | 50-64 | 部分回答问题或展示相关理解 |
-| Poor | 0-49 | 未能回答问题或展示重大误解 |
+| Excellent | 80-100 | Directly answers the question, demonstrates comprehensive understanding |
+| Good | 65-79 | Answers the question, shows solid understanding with minor gaps |
+| Fair | 50-64 | Partially answers the question or shows tangential understanding |
+| Poor | 0-49 | Fails to answer the question or shows significant misunderstanding |
 
-### 实现日志与监控
+### Implementation Logging and Monitoring
 
-系统实现了详细的日志记录，便于追踪评估过程：
+The system implements detailed logging to track the evaluation process:
 
 ```python
-# 记录评分结果
-logger.info("\n评分结果:")
-logger.info(f"准确性(Accuracy): {eval_result['accuracy']}/100")
-logger.info(f"清晰度(Clarity): {eval_result['clarity']}/100")
-logger.info(f"理解度(Understanding): {eval_result['understanding']}/100")
-logger.info(f"总体评价(Level): {eval_result['level']}")
-logger.info(f"反馈: {eval_result['feedback']}")
+# Record scoring results
+logger.info("\nScoring results:")
+logger.info(f"Accuracy (Accuracy): {eval_result['accuracy']}/100")
+logger.info(f"Clarity (Clarity): {eval_result['clarity']}/100")
+logger.info(f"Understanding (Understanding): {eval_result['understanding']}/100")
+logger.info(f"Overall evaluation (Level): {eval_result['level']}")
+logger.info(f"Feedback: {eval_result['feedback']}")
 
-# 计算平均分
+# Calculate average score
 avg_score = (
     eval_result["accuracy"] + eval_result["clarity"] + eval_result["understanding"]
 ) / 3
 logger.info(f"Average Score: {avg_score:.2f}/100")
 ```
 
-### 模型优化
+### Model Optimization
 
-1. **模型选择**：评估服务使用 `gpt-4o` 模型，在性能和成本之间取得平衡
-2. **结构化输出**：强制使用 JSON 格式返回评估结果，确保一致性：
+1. **Model Selection**: Evaluation service uses `gpt-4o` model, balancing performance and cost
+2. **Structured Output**: Forces JSON format for evaluation results, ensuring consistency:
    ```python
    response_format={"type": "json_object"}
    ```
-3. **特定角色提示**：使用系统消息设定评估者角色，提高评估质量：
+3. **Specific Role Prompting**: Uses system message to set evaluator role, improving evaluation quality:
    ```python
    {"role": "system", "content": "You are an expert evaluator for oral examinations."}
    ```
 
-这些实现更新大大增强了系统的评估能力，通过RAG技术提高了评估的准确性和上下文相关性，同时添加了更直观的评分等级系统，使评估结果更加全面和易于理解。
+These updates significantly enhance the system's evaluation capabilities, leveraging RAG technology to improve accuracy and context relevance, while adding a more intuitive scoring level system for better understanding.

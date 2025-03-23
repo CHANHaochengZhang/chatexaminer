@@ -1,9 +1,9 @@
-# ChatExaminer 对话系统
+# ChatExaminer Dialogue System
 
-## 概述
-ChatExaminer 实现了一个基于状态机的智能对话系统，用于进行口试评估。系统使用 OpenAI Function Calling 技术实现状态转换和评估功能，结合检索增强生成（RAG）技术保证问题内容与课程材料的紧密对齐。
+## Overview
+ChatExaminer implements a state machine-based intelligent dialogue system for oral examination assessment. The system uses OpenAI Function Calling technology to implement state transitions and evaluation functions, combined with Retrieval-Augmented Generation (RAG) technology to ensure that question content is closely aligned with course materials.
 
-## 对话系统架构
+## Dialogue System Architecture
 
 ```mermaid
 stateDiagram-v2
@@ -44,83 +44,83 @@ stateDiagram-v2
     COMPLETED --> [*]
 
     note right of CHAT
-        通用状态，用于：
-        - 处理闲聊对话
-        - 错误处理
-        - 未知交互处理
-        可以返回到之前的任何状态
+        General state for:
+        - Handling casual conversation
+        - Error handling
+        - Unknown interaction processing
+        Can return to any previous state
     end note
 ```
 
-## 状态描述
+## State Descriptions
 
 ### 1. INIT
-- 初始化考试会话
-- 处理问候和闲聊
-- 等待话题选择
-- 加载可用话题
-- 在明确提及特定话题前保持在此状态
+- Initialize exam session
+- Handle greetings and casual conversation
+- Wait for topic selection
+- Load available topics
+- Remain in this state until a specific topic is clearly mentioned
 
 ### 2. TOPIC_SELECTED
-- 已明确提及特定话题
-- 加载与话题相关的预生成问题
-- 准备评估标准
-- 等待考试开始确认
+- Specific topic has been clearly mentioned
+- Load pre-generated questions related to the topic
+- Prepare evaluation criteria
+- Wait for confirmation to start the exam
 
 ### 3. QUESTIONING
-- 核心考试状态
-- 动态问题选择与生成
-- 即时响应评估
-- 可根据需要暂停
+- Core exam state
+- Dynamic question selection and generation
+- Instant response evaluation
+- Can pause as needed
 
 ### 4. EXPLAINING
-- 提供概念解释
-- 如果需要更多解释可保持在此状态
-- 仅在学生确认理解后退出
-- 跟踪提示请求频率
-- 确保不泄露答案
+- Provide concept explanations
+- Remain in this state if more explanation is needed
+- Exit only when the student confirms understanding
+- Track prompt request frequency
+- Ensure answers are not revealed
 
 ### 5. PAUSED
-- 处理临时中断
-- 维持考试进度
-- 允许休息和处理技术问题
-- 提供恢复功能
+- Handle temporary interruptions
+- Maintain exam progress
+- Allow breaks and handling of technical issues
+- Provide resume functionality
 
 ### 6. EVALUATING
-- 综合评估
-- 考虑提示请求情况
-- 生成详细反馈
+- Comprehensive evaluation
+- Consider prompt request situations
+- Generate detailed feedback
 
 ### 7. COMPLETED
-- 生成最终报告
-- 保存对话历史
-- 提供改进建议
+- Generate final report
+- Save conversation history
+- Provide improvement suggestions
 
-## 实现细节
+## Implementation Details
 
-### 状态定义
-系统使用枚举类定义所有可能的状态：
+### State Definition
+The system uses enum class to define all possible states:
 
 ```python
 class ConversationState(Enum):
-    """对话状态枚举"""
+    """Conversation state enumeration"""
 
-    INIT = "INIT"                   # 初始状态
-    TOPIC_SELECTED = "TOPIC_SELECTED"  # 已选择话题
-    QUESTIONING = "QUESTIONING"     # 主动提问
-    EXPLAINING = "EXPLAINING"       # 解释概念
-    EVALUATING = "EVALUATING"       # 评估学生回答
-    PAUSED = "PAUSED"               # 临时暂停
-    CHAT = "CHAT"                   # 闲聊模式
-    COMPLETED = "COMPLETED"         # 考试完成
+    INIT = "INIT"                   # Initial state
+    TOPIC_SELECTED = "TOPIC_SELECTED"  # Topic selected
+    QUESTIONING = "QUESTIONING"     # Active questioning
+    EXPLAINING = "EXPLAINING"       # Explaining concepts
+    EVALUATING = "EVALUATING"       # Evaluating student responses
+    PAUSED = "PAUSED"               # Temporarily paused
+    CHAT = "CHAT"                   # Casual conversation mode
+    COMPLETED = "COMPLETED"         # Exam completed
 ```
 
-### 状态机核心实现
-状态机类管理对话流程和状态转换：
+### State Machine Core Implementation
+The state machine class manages conversation flow and state transitions:
 
 ```python
 class StateMachine:
-    """控制对话流程的状态机"""
+    """State machine controlling conversation flow"""
 
     def __init__(self):
         self.current_state = ConversationState.INIT
@@ -128,56 +128,56 @@ class StateMachine:
         self.context = {"hints_used": 0, "questions_asked": [], "responses": []}
 
     def add_message(self, role: str, content: str):
-        """添加消息到对话历史"""
+        """Add message to conversation history"""
         self.conversation_history.append({"role": role, "content": content})
 
     def determine_next_state(self, user_message: str) -> Tuple[ConversationState, str]:
-        """根据用户输入决定下一个状态"""
-        # 创建状态转换的函数定义
+        """Determine next state based on user input"""
+        # Create function definitions for state transitions
         functions = [
             {
                 "name": "transition_to_topic_selected",
-                "description": "当明确提及话题时转换到 TOPIC_SELECTED 状态",
+                "description": "Transition to TOPIC_SELECTED state when a topic is explicitly mentioned",
                 "parameters": {
                     "type": "object",
                     "properties": {
                         "topic": {
                             "type": "string",
-                            "description": "学生提及的考试话题",
+                            "description": "Exam topic mentioned by the student",
                         },
                         "reason": {
                             "type": "string",
-                            "description": "转换到话题选择状态的原因",
+                            "description": "Reason for transitioning to topic selection state",
                         },
                     },
                     "required": ["topic", "reason"],
                 },
             },
-            # 其他状态转换函数...
+            # Other state transition functions...
         ]
 
-        # 构建用于 function calling 的提示
-        system_prompt = f"""您是一位AI口试考官。
-您正在进行考试，需要确定对话的适当状态。
-当前状态: {self.current_state.value}
+        # Build prompt for function calling
+        system_prompt = f"""You are an AI oral examiner.
+You are conducting an exam and need to determine the appropriate state for the conversation.
+Current state: {self.current_state.value}
 
-状态转换规则:
-- INIT → TOPIC_SELECTED: 当学生提及特定考试话题时
-- INIT → CHAT: 当学生进行闲聊时
-- TOPIC_SELECTED → QUESTIONING: 当学生准备开始考试时
-- TOPIC_SELECTED → CHAT: 当学生进行闲聊时
+State transition rules:
+- INIT → TOPIC_SELECTED: When student mentions a specific exam topic
+- INIT → CHAT: When student engages in casual conversation
+- TOPIC_SELECTED → QUESTIONING: When student is ready to start the exam
+- TOPIC_SELECTED → CHAT: When student engages in casual conversation
 ...
 
-分析学生的消息并确定适当的状态转换（或保持当前状态）。
+Analyze the student's message and determine the appropriate state transition (or maintain current state).
 """
 
-        # 将用户消息添加到上下文
+        # Add user message to context
         self.add_message("user", user_message)
 
-        # 创建 API 调用的消息
+        # Create messages for API call
         messages = [{"role": "system", "content": system_prompt}] + self.conversation_history[-10:]
 
-        # 调用OpenAI API
+        # Call OpenAI API
         response = openai.ChatCompletion.create(
             model="gpt-4-turbo-preview",
             messages=messages,
@@ -186,44 +186,44 @@ class StateMachine:
             temperature=0.2,
         )
 
-        # 处理返回的函数调用
+        # Process returned function call
         response_message = response.choices[0].message
         if response_message.get("function_call"):
             function_called = response_message.function_call.name
             function_args = json.loads(response_message.function_call.arguments)
 
-            # 处理状态转换...
+            # Handle state transitions...
             if function_called == "transition_to_topic_selected":
                 self.current_state = ConversationState.TOPIC_SELECTED
                 self.context["selected_topic"] = function_args.get("topic")
-                response_text = f"我看到您想讨论{function_args.get('topic')}。让我们为您准备这个话题的考试。"
-            # 处理其他状态转换...
+                response_text = f"I see you want to discuss {function_args.get('topic')}. Let's prepare an exam on this topic for you."
+            # Handle other state transitions...
 ```
 
-### 与RAG模块集成
+### Integration with RAG Module
 
-状态机与检索增强生成(RAG)模块集成，确保考试问题基于知识库生成，保证内容与课程材料的对齐：
+The state machine integrates with the Retrieval-Augmented Generation (RAG) module to ensure exam questions are generated based on the knowledge base, ensuring content alignment with course materials:
 
 ```python
 class ExaminerRAG:
-    """考试系统的RAG引擎"""
+    """RAG engine for the examination system"""
 
     def __init__(self, knowledge_base_path: Path):
-        """使用知识库初始化RAG引擎"""
+        """Initialize RAG engine with knowledge base"""
         self.knowledge_base_path = knowledge_base_path
         self.encoder = self._load_encoder()
         self.vector_db = self._load_vector_db()
         self.question_cache = {}
 
     def generate_question(self, exam_context: ExamContext) -> QuestionResponse:
-        """基于上下文生成考试问题"""
-        # 从上下文获取话题
+        """Generate exam question based on context"""
+        # Get topic from context
         topic = exam_context.current_topic
 
-        # 从知识库中检索相关文档
+        # Retrieve relevant documents from knowledge base
         docs = self._retrieve_relevant_docs(topic, exam_context)
 
-        # 使用检索到的文档生成问题
+        # Generate question using retrieved documents
         question, context = self._generate_question(
             topic=topic,
             difficulty=exam_context.difficulty_level,
@@ -231,63 +231,63 @@ class ExaminerRAG:
             previous_questions=exam_context.previous_questions
         )
 
-        # 创建响应
+        # Create response
         return QuestionResponse(
             question=question,
             context=context,
             metadata={
                 "topic": topic,
                 "difficulty": exam_context.difficulty_level,
-                "generated_at": "2023-01-21T12:00:00Z"  # 实际实现中使用真实时间戳
+                "generated_at": "2023-01-21T12:00:00Z"  # Use actual timestamp in real implementation
             }
         )
 ```
 
-### 检索增强的文档处理
+### Retrieval-Enhanced Document Processing
 
-系统使用`docarray`和向量数据库来管理知识文档：
+The system uses `docarray` and vector database to manage knowledge documents:
 
 ```python
 class KnowledgeDoc(BaseDoc):
-    """带元数据的文档模式"""
+    """Document schema with metadata"""
 
     text: str
-    embedding: NdArray[384]  # 使用 sentence-transformers 的默认维度
+    embedding: NdArray[384]  # Using sentence-transformers default dimension
     metadata: DocumentMetadata
 ```
 
-每个文档都包含：
-- 文本内容
-- 向量嵌入（384维）
-- 元数据（包括来源文件名、页码和块索引）
+Each document contains:
+- Text content
+- Vector embedding (384 dimensions)
+- Metadata (including source filename, page number, and chunk index)
 
-### 上下文管理
-状态机维护会话上下文，包括：
+### Context Management
+The state machine maintains conversation context, including:
 
 ```python
 class ExamContext:
-    """考试会话的上下文"""
+    """Exam session context"""
 
-    subject: str                    # 考试科目
-    difficulty_level: int           # 1-5难度等级
-    previous_questions: List[str]   # 之前的问题
-    previous_answers: List[str]     # 之前的答案
-    current_topic: str = ""         # 当前话题
+    subject: str                    # Exam subject
+    difficulty_level: int           # 1-5 difficulty level
+    previous_questions: List[str]   # Previous questions
+    previous_answers: List[str]     # Previous answers
+    current_topic: str = ""         # Current topic
 ```
 
-### 状态特定响应生成
+### State-Specific Response Generation
 
-系统为每个状态生成定制化响应：
+The system generates customized responses for each state:
 
 ```python
 def generate_state_specific_response(self, user_message: str) -> str:
-    """根据当前状态生成特定响应"""
+    """Generate state-specific response"""
     if self.current_state == ConversationState.INIT:
-        return "欢迎使用AI口试评估系统。请告诉我您想在哪个话题上进行考试。"
+        return "Welcome to the AI oral examination evaluation system. Please tell me which topic you would like to be tested on."
 
     elif self.current_state == ConversationState.TOPIC_SELECTED:
-        topic = self.context.get("selected_topic", "所选话题")
-        return f"我准备好在{topic}上对您进行考试。请告诉我您何时准备好开始。"
+        topic = self.context.get("selected_topic", "selected topic")
+        return f"I'm ready to examine you on {topic}. Please let me know when you're ready to begin."
 
     elif self.current_state == ConversationState.QUESTIONING:
         # 通常这里会基于话题生成问题
@@ -296,15 +296,15 @@ def generate_state_specific_response(self, user_message: str) -> str:
     # 其他状态的响应...
 ```
 
-## Function Calling实践应用
+## Function Calling Practice Application
 
-实际系统中，OpenAI Function Calling 用于三个关键功能：
+In practice, OpenAI Function Calling is used for three key functions:
 
-1. **状态检测与转换**：分析学生输入，确定适当的对话状态转换
-2. **意图理解与结构化**：从非结构化对话中提取关键信息（如话题选择、概念混淆）
-3. **评估与反馈生成**：结构化评估结果，确保一致性和全面性
+1. **State Detection and Transition**：Analyze student input to determine appropriate dialog state transition
+2. **Intent Understanding and Structuring**：Extract key information from unstructured dialog (e.g., topic selection, concept confusion)
+3. **Evaluation and Feedback Generation**：Structured evaluation results to ensure consistency and comprehensiveness
 
-示例系统调用：
+Example system call:
 
 ```python
 # 处理函数调用
@@ -318,24 +318,24 @@ if response_message.get("function_call"):
         # 存储上下文信息
         self.context["selected_topic"] = function_args.get("topic")
         # 生成响应
-        response_text = f"我看到您想讨论{function_args.get('topic')}。让我们为您准备这个话题的考试。"
+        response_text = f"I see you want to discuss {function_args.get('topic')}. Let's prepare an exam on this topic for you."
 ```
 
-## RAG与状态机协作流程
+## RAG and State Machine Collaboration Process
 
-状态机和RAG系统的协作流程如下：
+The collaboration process between the state machine and the RAG system is as follows:
 
-1. 状态机确定当前状态（如QUESTIONING）
-2. 根据当前状态，决定是否需要生成问题
-3. 如需生成问题，调用RAG系统的`generate_question`方法
-4. RAG系统基于话题从知识库检索相关文档
-5. 使用检索到的文档生成问题，确保内容与课程材料对齐
-6. 状态机接收问题并传递给学生
-7. 学生回答后，状态机再次分析状态并可能调用RAG的`evaluate_answer`方法
+1. The state machine determines the current state (e.g., QUESTIONING)
+2. Based on the current state, decide whether to generate a question
+3. If a question is needed, call the `generate_question` method of the RAG system
+4. The RAG system retrieves relevant documents from the knowledge base based on the topic
+5. The RAG system generates a question using the retrieved documents, ensuring content alignment with course materials
+6. The state machine receives the question and passes it to the student
+7. After the student answers, the state machine analyzes the state again and may call the RAG system's `evaluate_answer` method
 
-## 系统优化策略
+## System Optimization Strategy
 
-1. **上下文窗口优化**：状态机只保留最近10条消息，避免上下文窗口过大
-2. **温度参数调整**：使用较低温度(0.2)确保状态转换的确定性
-3. **异常状态处理**：通用CHAT状态允许从异常状态恢复
-4. **缓存策略**：问题缓存避免重复生成相同问题
+1. **Context Window Optimization**：The state machine retains only the last 10 messages to avoid excessive context window
+2. **Temperature Parameter Adjustment**：Use lower temperature (0.2) to ensure state transition certainty
+3. **Exception State Handling**：General CHAT state allows recovery from exception states
+4. **Cache Strategy**：Question cache avoids repeated generation of the same question

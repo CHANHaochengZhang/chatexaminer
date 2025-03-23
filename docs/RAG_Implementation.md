@@ -1,57 +1,57 @@
-# ChatExaminer中的RAG实现
+# RAG Implementation in ChatExaminer
 
-## 简介
+## Introduction
 
-检索增强生成（Retrieval Augmented Generation，简称RAG）是ChatExaminer系统的核心技术之一，它通过将信息检索与生成模型相结合，显著提高了系统在口试评估中的质量、准确性和领域相关性。本文档详细介绍RAG技术在ChatExaminer中的实现原理、关键组件和应用场景。
+Retrieval Augmented Generation (RAG) is one of the core technologies in the ChatExaminer system. By combining information retrieval with generative models, it significantly improves the quality, accuracy, and domain relevance of the system in oral examination assessment. This document details the implementation principles, key components, and application scenarios of RAG technology in ChatExaminer.
 
-## RAG基本原理
+## RAG Basic Principles
 
-RAG系统的基本工作原理是：
-1. **检索（Retrieval）**：根据输入查询从知识库中检索相关文档或信息片段
-2. **增强（Augmentation）**：将检索到的信息与原始查询结合
-3. **生成（Generation）**：利用大语言模型基于增强后的输入生成高质量、知识丰富的回答
+The basic working principles of the RAG system are:
+1. **Retrieval**: Retrieve relevant documents or information fragments from the knowledge base based on input queries
+2. **Augmentation**: Combine the retrieved information with the original query
+3. **Generation**: Use large language models to generate high-quality, knowledge-rich answers based on the augmented input
 
-这种方法解决了大语言模型的几个关键限制：
-- 减轻了"幻觉"问题，提高了回答的准确性
-- 使系统能够访问最新或专业的领域知识
-- 提供了可追溯的信息来源，增强了可解释性
+This approach addresses several key limitations of large language models:
+- Reduces "hallucination" issues, improving answer accuracy
+- Enables the system to access the latest or specialized domain knowledge
+- Provides traceable information sources, enhancing explainability
 
-### RAG流程图示
+### RAG Flow Diagram
 
 ```mermaid
 flowchart TD
-    A[输入查询] --> B[向量化查询]
-    B --> C[向量数据库检索]
-    D[课程PDF文档] --> E[预处理]
-    E --> F[文档向量化]
-    F --> G[存储到向量数据库]
+    A[Input Query] --> B[Vectorize Query]
+    B --> C[Vector Database Retrieval]
+    D[Course PDF Documents] --> E[Preprocessing]
+    E --> F[Document Vectorization]
+    F --> G[Store to Vector Database]
     G --> C
-    C --> H[获取相关文档]
-    H --> I[相关性评分与排序]
-    I --> J[选择最佳文档]
-    A --> K[构建增强提示]
+    C --> H[Get Relevant Documents]
+    H --> I[Relevance Scoring and Ranking]
+    I --> J[Select Best Documents]
+    A --> K[Construct Enhanced Prompt]
     J --> K
-    K --> L[大语言模型]
-    L --> M[生成回答/评估]
+    K --> L[Large Language Model]
+    L --> M[Generate Answer/Evaluation]
 
-    subgraph 预处理阶段
+    subgraph Preprocessing Stage
     D --> E --> F --> G
     end
 
-    subgraph 检索阶段
+    subgraph Retrieval Stage
     A --> B --> C --> H --> I --> J
     end
 
-    subgraph 生成阶段
+    subgraph Generation Stage
     K --> L --> M
     end
 ```
 
-## 知识库构建详解
+## Knowledge Base Construction Details
 
-### 1. PDF文档处理与分块
+### 1. PDF Document Processing and Chunking
 
-系统从PDF课程材料中提取文本，并进行智能分块以构建知识库：
+The system extracts text from PDF course materials and performs intelligent chunking to build the knowledge base:
 
 ```python
 def clean_text(text: str) -> str:
@@ -125,16 +125,16 @@ def extract_and_chunk_pdfs(
     return documents
 ```
 
-分块策略特点：
-1. **固定大小的块**：每块约1000字符，确保语义单元的完整性
-2. **块间重叠**：相邻块重叠200字符，避免关键信息被分割
-3. **自然边界分割**：优先在段落、句子等自然边界处分割文本
-4. **最小内容保证**：过滤少于20个词的短块，确保内容丰富性
-5. **元数据跟踪**：每个块都附带文件名、页码和块索引，便于溯源
+Chunking strategy features:
+1. **Fixed-size chunks**: Each chunk is approximately 1000 characters, ensuring semantic unit integrity
+2. **Chunk overlap**: Adjacent chunks overlap by 200 characters, preventing key information from being split
+3. **Natural boundary segmentation**: Preferentially splits text at natural boundaries such as paragraphs and sentences
+4. **Minimum content guarantee**: Filters out short chunks with fewer than 20 words, ensuring content richness
+5. **Metadata tracking**: Each chunk is accompanied by filename, page number, and chunk index for traceability
 
-### 2. 文档向量化
+### 2. Document Vectorization
 
-系统使用预训练的Sentence Transformer模型将文本转换为向量表示：
+The system uses a pre-trained Sentence Transformer model to convert text into vector representations:
 
 ```python
 def vectorize_documents(documents):
@@ -170,9 +170,9 @@ db.index(inputs=DocList[KnowledgeDoc](doc_list))
 3. **内存向量数据库**：使用InMemoryExactNNVectorDB存储向量，支持高效的最近邻搜索
 4. **结构化存储**：使用KnowledgeDoc结构体统一存储文本、向量和元数据
 
-### 3. 语义搜索实现
+### 3. Semantic Search Implementation
 
-系统提供了语义搜索功能，用于检索与查询语义相关的文档：
+The system provides semantic search functionality to retrieve documents related to query semantics:
 
 ```python
 def semantic_search(query_text: str, db, model, top_k=3):
@@ -196,29 +196,29 @@ def semantic_search(query_text: str, db, model, top_k=3):
 3. **灵活的结果数量**：可自定义返回的top_k结果数量
 4. **元数据关联**：检索结果包含完整的元数据，便于溯源和后续处理
 
-## ChatExaminer中的RAG架构
+## ChatExaminer's RAG Architecture
 
-### 1. 核心组件
+### 1. Core Components
 
-ChatExaminer的RAG系统由以下核心组件组成：
+ChatExaminer's RAG system consists of the following core components:
 
-#### RAGPipeline类
+#### RAGPipeline Class
 
-`RAGPipeline`是整个RAG系统的核心实现，负责协调检索和生成过程：
+`RAGPipeline` is the core implementation of the entire RAG system, responsible for coordinating retrieval and generation processes:
 
 ```python
 class RAGPipeline:
     def __init__(self, questions_file: Path = QUESTIONS_FILE):
-        """初始化RAG管道与指定问题文件路径"""
+        """Initialize RAG pipeline with specified questions file path"""
         self.questions_file = questions_file
         self.questions = self.load_questions()
 
-    # 其他方法...
+    # Other methods...
 ```
 
-#### RAGService服务
+#### RAGService Service
 
-`RAGService`作为系统服务层的一部分，为前端和其他服务提供RAG功能的接口：
+`RAGService` as part of the system service layer, provides RAG functionality interfaces for front-end and other services:
 
 ```python
 class RAGService:
@@ -233,44 +233,44 @@ class RAGService:
         return self.rag_pipeline.answer_question(question_id, answer)
 ```
 
-#### 向量数据库
+#### Vector Database
 
-系统使用向量数据库存储文档嵌入，支持高效的相似性搜索：
-- 使用`docarray`组织和存储文档向量
-- 使用`vectordb`管理和查询这些向量
+The system uses vector databases to store document embeddings for efficient similarity search:
+- Use `docarray` to organize and store document vectors
+- Use `vectordb` to manage and query these vectors
 
-### 2. 关键流程
+### 2. Key Processes
 
-#### 上下文检索流程
+#### Context Retrieval Process
 
-RAG系统实现了两阶段检索策略以获取最相关的内容：
+RAG system implements two-stage retrieval strategy to get the most relevant content:
 
 ```python
 def get_relevant_context(self, question: str, top_k: int = 5) -> List[str]:
-    """改进的上下文检索"""
-    # 将问题向量化
+    """Improved context retrieval"""
+    # Vectorize the question
     question_embedding = model.encode(question)
 
-    # 创建带元数据的查询文档
+    # Create query document with metadata
     query_doc = KnowledgeDoc(
         text=question,
         embedding=question_embedding,
         metadata=DocumentMetadata(filename="query", page_number=0, chunk_index=0),
     )
 
-    # 在向量数据库中搜索
+    # Search in vector database
     results = db.search(
         inputs=DocList[KnowledgeDoc]([query_doc]),
-        limit=top_k * 2,  # 初始获取更多结果以便更好的过滤
+        limit=top_k * 2,  # Initial get more results for better filtering
     )
 
-    # 增强相关性评分
+    # Enhance relevance scoring
     scored_contexts = []
     question_keywords = set(question.lower().split())
 
     for match in results[0].matches:
-        text = " ".join(match.text.split())  # 清理文本
-        # 计算相关性分数
+        text = " ".join(match.text.split())  # Clean text
+        # Calculate relevance score
         text_keywords = set(text.lower().split())
         keyword_overlap = len(question_keywords & text_keywords)
         relevance_score = keyword_overlap / len(question_keywords)
@@ -279,57 +279,57 @@ def get_relevant_context(self, question: str, top_k: int = 5) -> List[str]:
             {"text": text, "score": relevance_score, "metadata": match.metadata}
         )
 
-    # 按相关性排序并选择top_k
+    # Sort by relevance and select top_k
     scored_contexts.sort(key=lambda x: x["score"], reverse=True)
     return scored_contexts[:top_k]
 ```
 
-#### 问题生成流程
+#### Question Generation Process
 
-系统利用RAG生成考试问题，确保问题基于课程材料并具有适当的难度：
+The system uses RAG to generate exam questions, ensuring questions are based on course materials and have appropriate difficulty:
 
 ```python
 def generate_question(
     self, topic: str, subtopic: str, difficulty: int, context: Dict[str, Any]
 ) -> ExamQuestion:
-    """基于主题、子主题、难度和上下文生成问题"""
-    # 实现详情...
+    """Generate a single question"""
+    # Implementation details...
 ```
 
-### ChatExaminer中的RAG应用场景
+### ChatExaminer's RAG Application Scenarios
 
 ```mermaid
 graph TD
-    subgraph "知识库构建"
-        A1[PDF课程材料] --> A2[文档处理与分块]
-        A2 --> A3[向量嵌入生成]
-        A3 --> A4[存储到向量数据库]
+    subgraph "Knowledge Base Construction"
+        A1[PDF Course Materials] --> A2[Document Processing and Chunking]
+        A2 --> A3[Vector Embedding Generation]
+        A3 --> A4[Store to Vector Database]
     end
 
-    subgraph "问题生成流程"
-        B1[考试主题选择] --> B2[主题向量化]
-        B2 --> B3[广泛上下文检索]
-        B3 --> B4[聚焦检索]
-        B4 --> B5[构建提示]
-        B5 --> B6[LLM生成问题]
-        B6 --> B7[结构化问题输出]
+    subgraph "Question Generation Process"
+        B1[Exam Topic Selection] --> B2[Topic Vectorization]
+        B2 --> B3[Broad Context Retrieval]
+        B3 --> B4[Focused Retrieval]
+        B4 --> B5[Construct Prompt]
+        B5 --> B6[LLM Generate Question]
+        B6 --> B7[Structured Question Output]
     end
 
-    subgraph "回答评估流程"
-        C1[学生回答] --> C2[获取问题上下文]
-        C2 --> C3[检索相关参考文档]
-        C3 --> C4[构建评估提示]
-        C4 --> C5[LLM评估回答]
-        C5 --> C6[生成评分和反馈]
+    subgraph "Answer Evaluation Process"
+        C1[Student Answer] --> C2[Get Question Context]
+        C2 --> C3[Retrieve Relevant Reference Documents]
+        C3 --> C4[Construct Evaluation Prompt]
+        C4 --> C5[LLM Evaluate Answer]
+        C5 --> C6[Generate Score and Feedback]
     end
 
-    subgraph "状态机集成"
-        D1[状态机控制对话] --> D2{需要生成问题?}
-        D2 -- 是 --> B1
-        D2 -- 否 --> D3{需要评估回答?}
-        D3 -- 是 --> C1
-        D3 -- 否 --> D4[继续对话流程]
-        B7 --> D5[更新状态机状态]
+    subgraph "State Machine Integration"
+        D1[State Machine Control Dialog] --> D2{Need to Generate Question?}
+        D2 -- Yes --> B1
+        D2 -- No --> D3{Need to Evaluate Answer?}
+        D3 -- Yes --> C1
+        D3 -- No --> D4[Continue Dialog Process]
+        B7 --> D5[Update State Machine State]
         C6 --> D5
     end
 
@@ -337,23 +337,23 @@ graph TD
     A4 -.-> C3
 ```
 
-## RAG在问题生成中的实现细节
+## RAG Implementation Details in Question Generation
 
-### 1. 问题生成流程详解
+### 1. Question Generation Process Details
 
-问题生成是ChatExaminer中RAG技术的核心应用，它通过多阶段处理实现高质量、与课程内容紧密对齐的考试问题：
+Question generation is the core application of RAG technology in ChatExaminer, it implements high-quality, course content-aligned exam questions through multi-stage processing:
 
 ```mermaid
 flowchart TD
-    A[选择考试主题] --> B[广泛主题检索]
-    B --> C[选择子主题]
-    C --> D[聚焦内容检索]
-    D --> E[生成问题提示]
-    E --> F[LLM生成问题]
-    F --> G[生成参考答案]
-    G --> H[存储问题与答案]
+    A[Select Exam Topic] --> B[Broad Topic Retrieval]
+    B --> C[Select Subtopic]
+    C --> D[Focused Content Retrieval]
+    D --> E[Generate Question Prompt]
+    E --> F[LLM Generate Question]
+    F --> G[Generate Reference Answer]
+    G --> H[Store Question and Answer]
 
-    subgraph 主题选择阶段
+    subgraph Topic Selection Stage
     A --> B --> C
     end
 
