@@ -127,7 +127,7 @@ const setupWebSocket = () => {
 // Start exam
 const startExam = async () => {
   if (!topic.value.trim()) {
-    ElMessage.warning('请输入考试主题')
+    ElMessage.warning('Please enter an exam topic')
     return
   }
 
@@ -146,7 +146,7 @@ const startExam = async () => {
       setupWebSocket()
     }
   } catch (error: any) {
-    ElMessage.error(error.response?.data?.detail || '开始考试失败，请重试')
+    ElMessage.error(error.response?.data?.detail || 'Failed to start exam, please try again')
     console.error('Start exam error:', error)
   } finally {
     loading.value = false

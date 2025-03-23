@@ -3,7 +3,7 @@
     <div class="report-header">
       <el-page-header @back="$router.push('/')">
         <template #content>
-          <span class="page-title">评估报告</span>
+          <span class="page-title">Evaluation Report</span>
         </template>
       </el-page-header>
     </div>
@@ -48,7 +48,7 @@ const error = ref<string>()
 
 const fetchReport = async () => {
   try {
-    // TODO: 从后端获取报告数据
+    // TODO: Get report data from backend
     report.value = {
       totalScore: 85.5,
       topicCoverage: '4/5',
@@ -56,7 +56,7 @@ const fetchReport = async () => {
       questionEvaluations: {
         '1': {
           score: 85,
-          feedback: '回答准确，但可以提供更多细节。',
+          feedback: 'The answer is accurate, but could provide more details.',
           details: {
             accuracy: '85/100',
             clarity: '90/100',
@@ -72,7 +72,7 @@ const fetchReport = async () => {
       }
     }
   } catch (e) {
-    error.value = '获取报告失败，请稍后重试'
+    error.value = 'Failed to retrieve report, please try again later'
     console.error(e)
   }
 }
@@ -82,7 +82,7 @@ onMounted(() => {
   if (sessionId) {
     fetchReport()
   } else {
-    error.value = '未找到考试会话'
+    error.value = 'Exam session not found'
   }
 })
 </script>

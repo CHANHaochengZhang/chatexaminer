@@ -57,14 +57,14 @@ export const useExamStore = defineStore('exam', {
         const response = await examAPI.submitAnswer(this.sessionId, answer)
         this.currentState = response.data.state
 
-        // 添加学生的答案到消息列表
+        // Add student's answer to message list
         this.messages.push({
           type: 'answer',
           content: answer,
           timestamp: new Date().toISOString()
         })
 
-        // 如果有新问题，添加到消息列表
+        // If there's a new question, add it to message list
         if (response.data.current_question) {
           this.messages.push({
             type: 'question',

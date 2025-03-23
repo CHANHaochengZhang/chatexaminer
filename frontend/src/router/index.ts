@@ -7,7 +7,7 @@ const routes: RouteRecordRaw[] = [
     name: 'Home',
     component: () => import('../views/Home.vue'),
     meta: {
-      title: '首页'
+      title: 'Home'
     }
   },
   {
@@ -15,7 +15,7 @@ const routes: RouteRecordRaw[] = [
     name: 'Exam',
     component: () => import('../views/Exam.vue'),
     meta: {
-      title: '考试'
+      title: 'Exam'
     }
   },
   {
@@ -23,7 +23,7 @@ const routes: RouteRecordRaw[] = [
     name: 'Report',
     component: () => import('../views/Report.vue'),
     meta: {
-      title: '评估报告'
+      title: 'Evaluation Report'
     }
   }
 ]

@@ -2,13 +2,13 @@ import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
 import type { Message, ExamState, ProgressReport } from '@/types'
 import { examService } from '@/services/exam'
 
-// 定义状态更新间隔（毫秒）
+// Define state update interval (milliseconds)
 const STATE_UPDATE_INTERVAL = 3000
 
-// 状态更新定时器
+// State update timer
 let stateUpdateTimer: number | null = null
 
-// 获取最新状态
+// Get latest state
 const updateExamState = async () => {
   if (!props.sessionId) return
 
@@ -27,13 +27,13 @@ const updateExamState = async () => {
   }
 }
 
-// 开始定期更新状态
+// Start periodic state updates
 const startStateUpdates = () => {
   console.log('[State] Starting periodic state updates')
   stateUpdateTimer = window.setInterval(updateExamState, STATE_UPDATE_INTERVAL)
 }
 
-// 停止定期更新状态
+// Stop periodic state updates
 const stopStateUpdates = () => {
   if (stateUpdateTimer) {
     console.log('[State] Stopping periodic state updates')
@@ -42,7 +42,7 @@ const stopStateUpdates = () => {
   }
 }
 
-// 处理答案提交
+// Handle answer submission
 const handleSend = async (message: string) => {
   loading.value = true
   console.group('[Chat] New Message Processing')
@@ -53,7 +53,7 @@ const handleSend = async (message: string) => {
   })
 
   try {
-    // 添加用户消息
+    // Add user message
     messages.value.push({
       role: 'user',
       content: message,
@@ -61,7 +61,7 @@ const handleSend = async (message: string) => {
     })
     console.log('[Chat] Message history updated:', messages.value.length, 'messages total')
 
-    // 发送答案
+    // Send answer
     console.group('[API] Submit Answer Request')
     console.log('Request:', {
       sessionId: props.sessionId,
@@ -83,7 +83,7 @@ const handleSend = async (message: string) => {
     })
     console.groupEnd()
 
-    // 处理聊天响应
+    // Process chat response
     if (response.data?.type === 'chat') {
       console.group('[Chat] Processing Chat Response')
       console.log('Chat content:', response.data.content)
@@ -112,7 +112,7 @@ const handleSend = async (message: string) => {
       console.groupEnd()
     }
 
-    // 更新状态
+    // Update state
     console.group('[State] State Update')
     console.log('Previous state:', currentState.value)
     console.log('New state:', response.state)
@@ -131,7 +131,7 @@ const handleSend = async (message: string) => {
       console.groupEnd()
     }
 
-    // 立即获取最新状态
+    // Immediately get latest state
     await updateExamState()
 
   } catch (error: any) {
@@ -157,7 +157,7 @@ const handleSend = async (message: string) => {
   }
 }
 
-// WebSocket连接处理
+// WebSocket connection processing
 const setupWebSocket = (sessionId: string) => {
   console.group('[WebSocket] Setup')
   console.log('Initializing WebSocket connection for session:', sessionId)
@@ -180,9 +180,9 @@ const setupWebSocket = (sessionId: string) => {
           hasResult: !!data.data?.result
         })
 
-        // 处理服务器返回的message
+        // Process server returned message
         if (data.message) {
-          // 添加系统消息，显示状态变化的信息
+          // Add system message to display state change information
           messages.value.push({
             role: 'system',
             content: data.message,
@@ -191,7 +191,7 @@ const setupWebSocket = (sessionId: string) => {
           })
         }
 
-        // 处理结果中的内容
+        // Process content from result
         if (data.data?.result?.type === 'chat' && data.data?.result?.content) {
           messages.value.push({
             role: 'assistant',
@@ -207,7 +207,7 @@ const setupWebSocket = (sessionId: string) => {
           })
         }
 
-        // 更新当前状态
+        // Update current state
         currentState.value = data.state
       }
       console.groupEnd()
@@ -246,7 +246,7 @@ const setupWebSocket = (sessionId: string) => {
   }
 }
 
-// 监听会话ID变化
+// Listen for session ID change
 watch(() => props.sessionId, (newSessionId) => {
   console.log('[Watch] Session ID changed:', newSessionId)
   if (newSessionId) {
