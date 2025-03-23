@@ -1,7 +1,7 @@
 <template>
   <div class="exam-page">
     <!-- Initial Topic Selection -->
-    <template v-if="currentState === 'INIT'">
+    <template v-if="currentState === 'INIT' && !route.query.topic">
       <div class="topic-selection">
         <el-card>
           <template #header>
@@ -27,6 +27,18 @@
               </el-button>
             </el-form-item>
           </el-form>
+        </el-card>
+      </div>
+    </template>
+
+    <!-- Loading Indicator -->
+    <template v-else-if="currentState === 'INIT' && loading">
+      <div class="loading-container">
+        <el-card>
+          <div class="loading-text">
+            Loading...
+            <el-progress type="circle" :percentage="50" status="warning" indeterminate />
+          </div>
         </el-card>
       </div>
     </template>
@@ -71,8 +83,10 @@ import StatePanel from '../components/StatePanel/index.vue'
 import ExamChat from '../components/ExamChat/index.vue'
 import EvalReport from '../components/EvalReport/index.vue'
 import { ElMessage } from 'element-plus'
+import { useRoute } from 'vue-router'
 
-// 状态管理
+// State management
+const route = useRoute()
 const currentState = ref<ExamState>('INIT')
 const topic = ref('')
 const loading = ref(false)
@@ -83,7 +97,19 @@ const currentDifficulty = ref(3)
 const evaluation = ref<EvaluationReport | null>(null)
 const progress = ref<ProgressReport | null>(null)
 
-// WebSocket 连接
+// Topic mapping
+const topicMap: Record<string, string> = {
+  'finite_horizon_control': 'The dynamical programming algorithm for finite-horizon control',
+  'pid_control': 'PID Control',
+  'discrete_lqr': 'The discrete linear quadratic regulator and iterative LQR',
+  'optimal_control': 'Direct Methods for Optimal Control',
+  'bandit_algorithms': 'Bandit Algorithms',
+  'bellman_equations': 'Bellman\'s equations and their relationship to reinforcement learning',
+  'eligibility_traces': 'Eligibility Traces',
+  'q_learning': 'Q-Learning and Value-Function Approximations'
+}
+
+// WebSocket connection
 let ws: WebSocket | null = null
 
 const setupWebSocket = () => {
@@ -101,7 +127,7 @@ const setupWebSocket = () => {
 // Start exam
 const startExam = async () => {
   if (!topic.value.trim()) {
-    ElMessage.warning('Please enter an exam topic')
+    ElMessage.warning('请输入考试主题')
     return
   }
 
@@ -111,7 +137,7 @@ const startExam = async () => {
     currentState.value = response.state
     messages.value.push({
       role: 'system',
-      content: `Welcome to your exam session!\n\n Are you ready?`,
+      content: `Welcome to your exam session，\n\nLet's talk about ${topic.value}!\n\n Are you ready?`,
       timestamp: Date.now(),
       state: currentState.value
     })
@@ -120,12 +146,22 @@ const startExam = async () => {
       setupWebSocket()
     }
   } catch (error: any) {
-    ElMessage.error(error.response?.data?.detail || 'Failed to start exam, please try again')
+    ElMessage.error(error.response?.data?.detail || '开始考试失败，请重试')
     console.error('Start exam error:', error)
   } finally {
     loading.value = false
   }
 }
+
+// Check if there's a topic in route params when component mounts, and start exam automatically if exists
+onMounted(() => {
+  const topicFromRoute = route.query.topic as string
+  if (topicFromRoute) {
+    // If the input is a topic identifier, map it to the full topic name
+    topic.value = topicMap[topicFromRoute] || topicFromRoute
+    startExam()
+  }
+})
 
 // Handle message sending
 const handleSend = async (message: string) => {
@@ -143,6 +179,10 @@ const handleSend = async (message: string) => {
     currentState.value = response.state
 
     if (response.data?.type === 'question' && response.data.content) {
+      if (response.data.difficulty !== undefined) {
+        currentDifficulty.value = response.data.difficulty
+      }
+
       messages.value.push({
         role: 'assistant',
         content: response.data.content,
@@ -174,7 +214,7 @@ const handleSend = async (message: string) => {
   }
 }
 
-// 组件卸载时清理
+// Clean up when component unmounts
 onBeforeUnmount(() => {
   if (ws) {
     ws.close()
@@ -199,6 +239,21 @@ onBeforeUnmount(() => {
     }
   }
 
+  .loading-container {
+    max-width: 600px;
+    margin: 100px auto;
+    text-align: center;
+
+    .loading-text {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      font-size: 16px;
+    }
+  }
+
   .exam-container {
     display: grid;
     grid-template-columns: 300px 1fr;
@@ -206,22 +261,22 @@ onBeforeUnmount(() => {
     height: 100%;
     transition: grid-template-columns 0.5s ease-in-out;
 
-    /* 当考试完成状态时，调整左右两栏的宽度比例 */
+    /* Adjust width ratio of left and right columns when exam is completed */
     &.completed-state {
       grid-template-columns: 1fr 1fr;
 
-      /* 确保评估报告区域可滚动，防止内容过多时溢出 */
+      /* Ensure evaluation report area is scrollable to prevent overflow */
       .side-panel {
         overflow-y: auto;
         max-height: calc(100vh - 40px);
       }
 
-      /* 聊天区域宽度减小，但保持可用性 */
+      /* Chat area width is reduced but remains usable */
       .main-content {
         min-width: 320px;
       }
 
-      /* 在完成状态下高亮显示评估报告 */
+      /* Highlight evaluation report in completion state */
       .evaluation-section {
         box-shadow: 0 0 10px rgba(64, 158, 255, 0.2);
         animation: highlight-report 1s ease;
@@ -244,7 +299,7 @@ onBeforeUnmount(() => {
   }
 }
 
-/* 评估报告高亮动画 */
+/* Evaluation report highlight animation */
 @keyframes highlight-report {
   0% { transform: translateY(10px); opacity: 0; }
   100% { transform: translateY(0); opacity: 1; }

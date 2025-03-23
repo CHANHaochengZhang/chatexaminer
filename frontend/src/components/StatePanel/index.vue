@@ -9,15 +9,12 @@
       </template>
 
       <div class="stats">
-        <div class="stat-item">
-          <div class="label">Questions Answered</div>
-          <div class="value">{{ questionsAnswered }}</div>
+        <div class="stat-item timer-container">
+          <div class="label">Time Elapsed</div>
+          <div class="value timer">{{ formattedTime }}</div>
         </div>
-        <div class="stat-item">
-          <div class="label">Hints Used</div>
-          <div class="value">{{ hintsUsed }}</div>
-        </div>
-        <div class="stat-item">
+
+        <div class="stat-item difficulty-container">
           <div class="label">Current Difficulty</div>
           <div class="value">
             <el-rate
@@ -118,7 +115,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, onMounted, onBeforeUnmount, onUpdated } from 'vue'
 import { Timer, QuestionFilled, TrendCharts } from '@element-plus/icons-vue'
 import type { ExamState } from '@/types'
 import type { ProgressReport } from '@/types'
@@ -130,6 +127,62 @@ const props = defineProps<{
   currentDifficulty: number
   progress?: ProgressReport | null
 }>()
+
+// Timer logic
+const examStartTime = ref(Date.now())
+const currentTime = ref(Date.now())
+const timerInterval = ref<number | null>(null)
+
+const elapsedTimeInSeconds = computed(() => {
+  return Math.floor((currentTime.value - examStartTime.value) / 1000)
+})
+
+const formattedTime = computed(() => {
+  const seconds = elapsedTimeInSeconds.value
+  const hours = Math.floor(seconds / 3600)
+  const minutes = Math.floor((seconds % 3600) / 60)
+  const remainingSeconds = seconds % 60
+
+  const pad = (num: number) => num.toString().padStart(2, '0')
+
+  return `${pad(hours)}:${pad(minutes)}:${pad(remainingSeconds)}`
+})
+
+const startTimer = () => {
+  if (timerInterval.value !== null) return
+
+  timerInterval.value = window.setInterval(() => {
+    currentTime.value = Date.now()
+  }, 1000)
+}
+
+const stopTimer = () => {
+  if (timerInterval.value !== null) {
+    clearInterval(timerInterval.value)
+    timerInterval.value = null
+  }
+}
+
+onMounted(() => {
+  examStartTime.value = Date.now()
+  startTimer()
+})
+
+onBeforeUnmount(() => {
+  stopTimer()
+})
+
+onUpdated(() => {
+  // Restart timer if it was stopped and exam is not completed
+  if (timerInterval.value === null && props.currentState !== 'COMPLETED') {
+    startTimer()
+  }
+
+  // Stop timer if exam is completed
+  if (props.currentState === 'COMPLETED' && timerInterval.value !== null) {
+    stopTimer()
+  }
+})
 
 const stateText = computed(() => {
   const stateMap: Record<ExamState, string> = {
@@ -189,8 +242,8 @@ const getAverageScore = (score: { accuracy: number; clarity: number; understandi
   }
 
   .stats {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
+    flex-direction: column;
     gap: 16px;
 
     .stat-item {
@@ -211,11 +264,18 @@ const getAverageScore = (score: { accuracy: number; clarity: number; understandi
           display: flex;
           justify-content: center;
         }
-      }
 
-      &:last-child {
-        grid-column: span 2;
+        &.timer {
+          font-family: 'Courier New', monospace;
+          letter-spacing: 1px;
+          color: #409EFF;
+          font-size: 28px;
+        }
       }
+    }
+
+    .timer-container {
+      margin-bottom: 10px;
     }
   }
 

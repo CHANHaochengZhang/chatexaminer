@@ -58,6 +58,10 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <div class="privacy-notice">
+        Your exam records and scores are not uploaded or stored externally.
+      </div>
     </el-card>
   </div>
 </template>
@@ -80,9 +84,14 @@ const form = ref({
 })
 
 const topics = [
+  { label: 'The dynamical programming algorithm for finite-horizon control', value: 'finite_horizon_control' },
+  { label: 'PID Control', value: 'pid_control' },
+  { label: 'The discrete linear quadratic regulator and iterative LQR', value: 'discrete_lqr' },
   { label: 'Direct Methods for Optimal Control', value: 'optimal_control' },
-  { label: 'Reinforcement Learning Basics', value: 'rl_basics' },
-  { label: 'Control Theory', value: 'control_theory' }
+  { label: 'Bandit Algorithms', value: 'bandit_algorithms' },
+  { label: 'Bellman\'s equations and their relationship to reinforcement learning', value: 'bellman_equations' },
+  { label: 'Eligibility Traces', value: 'eligibility_traces' },
+  { label: 'Q-Learning and Value-Function Approximations', value: 'q_learning' }
 ]
 
 const examHistory = ref<ExamHistory[]>([
@@ -138,6 +147,14 @@ const viewReport = (sessionId: string) => {
         width: 200px;
       }
     }
+  }
+
+  .privacy-notice {
+    margin-top: 15px;
+    font-size: 12px;
+    color: #909399;
+    text-align: center;
+    font-style: italic;
   }
 }
 </style>

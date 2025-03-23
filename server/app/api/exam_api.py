@@ -84,10 +84,11 @@ async def submit_answer(session_id: str, answer_request: AnswerRequest) -> ExamR
 
     try:
         # 获取当前状态
-        current_state = exam_service.state_machine.get_current_state()
+        previous_state = exam_service.state_machine.get_current_state()
+        logger.info(f"Previous state before processing: {previous_state}")
 
         # 根据当前状态选择不同的处理方法
-        if current_state == "CHAT":
+        if previous_state == "CHAT":
             # 在CHAT状态下使用process_chat_answer方法
             logger.info(f"Processing chat answer - SessionID: {session_id}")
             try:
@@ -99,7 +100,7 @@ async def submit_answer(session_id: str, answer_request: AnswerRequest) -> ExamR
                 # 如果处理失败，提供一个紧急回退响应
                 result = {
                     "type": "chat",
-                    "content": "抱歉，处理您的消息时出现了问题。您可以尝试继续考试或提出一个不同的问题。",
+                    "content": "Sorry, there was a problem processing your message. You can try to continue the exam or ask a different question",
                 }
                 # 记录错误但继续处理
         else:
@@ -111,12 +112,28 @@ async def submit_answer(session_id: str, answer_request: AnswerRequest) -> ExamR
         current_state = exam_service.state_machine.get_current_state()
         logger.info(f"Answer processed - SessionID: {session_id}, State: {current_state}")
 
-        # 根据当前状态提供更有意义的默认消息
+        # 如果状态从其他状态新转换到CHAT状态，则使用GPT生成一个定制的欢迎消息
+        if current_state == "CHAT" and previous_state != "CHAT" and "content" not in result:
+            try:
+                logger.info(f"Generating custom CHAT welcome message - SessionID: {session_id}")
+                # 使用空字符串作为输入，让GPT生成一个欢迎消息
+                welcome_result = await exam_service.process_chat_answer("I want to chat")
+                result = welcome_result
+            except Exception as e:
+                logger.error(f"Failed to generate custom welcome message: {str(e)}")
+                # 如果生成失败，仍然使用默认消息
+                result["content"] = (
+                    "We can chat casually, just let me know when you're ready to continue the exam."
+                )
+
+        # 根据当前状态提供更有意义的默认消息，仅在需要时使用
         default_message = "Answer processed"
         if current_state == "QUESTIONING":
             default_message = "Okay, let's continue with the exam questions. Please think carefully before answering."
-        elif current_state == "CHAT":
-            default_message = "I understand you want to take a break. We can chat casually, just let me know when you're ready to continue the exam."
+        elif current_state == "CHAT" and "content" not in result:
+            default_message = (
+                "We can chat casually, just let me know when you're ready to continue the exam."
+            )
         elif current_state == "EXPLAINING":
             default_message = (
                 "This concept seems to need a more detailed explanation, let me clarify it for you."
