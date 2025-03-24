@@ -1,14 +1,14 @@
-# Hint 功能设计文档
+# Hint Feature Design Document
 
-## 功能概述
+## Feature Overview
 
-Hint功能是考试系统中的一个辅助功能，允许学生在答题过程中获取提示。系统会根据当前问题的上下文、难度和主题动态生成个性化的提示，帮助学生思考问题的关键点。
+The Hint feature is an auxiliary function in the examination system that allows students to receive hints during the answering process. The system dynamically generates personalized hints based on the current question's context, difficulty, and topic, helping students think about the key points of the problem.
 
-## 技术架构
+## Technical Architecture
 
-### 后端实现
+### Backend Implementation
 
-1. **ExamService类**
+1. **ExamService Class**
 ```python
 async def request_hint(self) -> Dict:
     """生成当前问题的提示"""
@@ -37,7 +37,7 @@ async def request_hint(self) -> Dict:
     }
 ```
 
-2. **API端点**
+2. **API Endpoint**
 ```python
 @router.get("/{session_id}/hint")
 async def request_hint(session_id: str) -> ExamResponse:
@@ -51,9 +51,9 @@ async def request_hint(session_id: str) -> ExamResponse:
     )
 ```
 
-### 前端实现
+### Frontend Implementation
 
-1. **API服务**
+1. **API Service**
 ```typescript
 async requestHint() {
   if (!this.sessionId) {
@@ -67,7 +67,7 @@ async requestHint() {
 }
 ```
 
-2. **状态管理**
+2. **State Management**
 ```typescript
 async requestHint() {
   if (!this.sessionId) return
@@ -81,125 +81,125 @@ async requestHint() {
 }
 ```
 
-## 提示生成策略
+## Hint Generation Strategy
 
-1. **难度适配**
-   - 难度1-3: 关注基础概念和关键词
-   - 难度4-5: 关注解题方法和思路
+1. **Difficulty Adaptation**
+   - Difficulty 1-3: Focus on basic concepts and keywords
+   - Difficulty 4-5: Focus on solution methods and approaches
 
-2. **上下文相关**
-   - 基于问题的上下文生成相关提示
-   - 避免直接给出答案
-   - 引导学生思考关键点
+2. **Context Relevance**
+   - Generate relevant hints based on question context
+   - Avoid giving direct answers
+   - Guide students to think about key points
 
-3. **个性化生成**
-   - 考虑学生当前的答题表现
-   - 结合主题和子主题的特点
-   - 保持提示的简洁性和清晰度
+3. **Personalized Generation**
+   - Consider student's current answer performance
+   - Incorporate characteristics of topic and subtopic
+   - Maintain conciseness and clarity of hints
 
-## 评分影响
+## Scoring Impact
 
-1. **使用记录**
-   - 系统记录每个问题的hint使用次数
-   - 累计记录整个考试过程中的hint使用情况
+1. **Usage Records**
+   - System records the number of hints used for each question
+   - Cumulative recording of hint usage throughout the examination process
 
-2. **分数调整**
-   - 使用hint会影响最终得分
-   - 评分公式: `final_score = base_score - (hints_used * penalty_factor)`
-   - 默认的`penalty_factor`为每个hint扣除10%的分数
+2. **Score Adjustment**
+   - Using hints affects the final score
+   - Scoring formula: `final_score = base_score - (hints_used * penalty_factor)`
+   - Default `penalty_factor` is a 10% deduction per hint
 
-## 界面展示
+## Interface Display
 
-1. **状态面板**
-   - 显示已使用的hint数量
-   - 显示hint使用率统计
+1. **Status Panel**
+   - Display the number of hints used
+   - Display hint usage statistics
 
-2. **消息流**
-   - hint以特殊消息类型显示
-   - 使用不同的样式区分hint和其他消息
+2. **Message Stream**
+   - Hints are displayed as special message types
+   - Different styles distinguish hints from other messages
 
-## 最佳实践
+## Best Practices
 
-1. **使用建议**
-   - 建议学生先尝试独立思考
-   - 在确实需要帮助时再使用hint
-   - 注意hint使用会影响最终得分
+1. **Usage Recommendations**
+   - Advise students to try thinking independently first
+   - Use hints only when help is truly needed
+   - Note that hint usage will affect the final score
 
-2. **开发注意事项**
-   - 确保hint生成的实时性
-   - 保持提示内容的相关性
-   - 避免提示过于直接或过于模糊
+2. **Development Considerations**
+   - Ensure real-time hint generation
+   - Maintain relevance of hint content
+   - Avoid hints that are too direct or too vague
 
-## 未来改进
+## Future Improvements
 
-1. **智能提示**
-   - 基于学生历史表现优化提示生成
-   - 引入多级提示系统
-   - 支持更细粒度的提示类型
+1. **Intelligent Hints**
+   - Optimize hint generation based on student's historical performance
+   - Introduce multi-level hint system
+   - Support more fine-grained hint types
 
-2. **交互优化**
-   - 添加提示反馈机制
-   - 优化提示展示方式
-   - 提供提示使用建议
+2. **Interaction Optimization**
+   - Add hint feedback mechanism
+   - Optimize hint presentation methods
+   - Provide hint usage suggestions
 
-## 学术参考
+## Academic References
 
-本系统的hint功能设计参考了以下研究成果：
+The hint feature design of this system references the following research results:
 
-1. **智能提示系统的理论基础**
+1. **Theoretical Foundation of Intelligent Hint Systems**
    - VanLehn, K. (2011). The relative effectiveness of human tutoring, intelligent tutoring systems, and other tutoring systems. *Educational Psychologist, 46*(4), 197-221.
    - Anderson, J. R., Corbett, A. T., Koedinger, K. R., & Pelletier, R. (1995). Cognitive tutors: Lessons learned. *The Journal of the Learning Sciences, 4*(2), 167-207.
 
-2. **提示策略研究**
+2. **Hint Strategy Research**
    - Roll, I., Aleven, V., McLaren, B. M., & Koedinger, K. R. (2011). Improving students' help-seeking skills using metacognitive feedback in an intelligent tutoring system. *Learning and Instruction, 21*(2), 267-280.
    - Aleven, V., & Koedinger, K. R. (2000). Limitations of student control: Do students know when they need help? In *International conference on intelligent tutoring systems* (pp. 292-303).
 
-3. **自适应提示系统**
+3. **Self-Adaptive Hint Systems**
    - Narciss, S., & Huth, K. (2006). Fostering achievement and motivation with bug-related tutoring feedback in a computer-based training for written subtraction. *Learning and Instruction, 16*(4), 310-322.
    - Wood, H., & Wood, D. (1999). Help seeking, learning and contingent tutoring. *Computers & Education, 33*(2-3), 153-169.
 
-4. **提示对学习效果的影响**
+4. **Hint Impact on Learning Outcomes**
    - Shute, V. J. (2008). Focus on formative feedback. *Review of Educational Research, 78*(1), 153-189.
    - Hattie, J., & Timperley, H. (2007). The power of feedback. *Review of Educational Research, 77*(1), 81-112.
 
-5. **AI辅助的动态提示生成**
+5. **AI-Assisted Dynamic Hint Generation**
    - Brown, T., et al. (2020). Language models are few-shot learners. *Advances in Neural Information Processing Systems, 33*, 1877-1901.
    - Zhao, R., et al. (2021). Adaptive hint generation for programming exercises using deep learning. In *Proceedings of the 2021 ACM Conference on Learning at Scale* (pp. 173-184).
 
-### 关键研究发现
+### Key Research Findings
 
-1. **提示时机的重要性**
-   - 研究表明，在学生遇到困难但尚未完全失去方向时提供提示最有效
-   - 过早或过晚的提示都可能降低学习效果
+1. **Hint Timing Importance**
+   - Research indicates that providing hints when students are struggling but not completely lost is most effective
+   - Too early or too late hints can reduce learning effectiveness
 
-2. **提示层次性**
-   - 渐进式提示策略（从抽象到具体）能够更好地促进深度学习
-   - 多层次提示系统可以适应不同学习者的需求
+2. **Hint Hierarchy**
+   - Progressive hint strategy (from abstract to specific) can better promote deep learning
+   - Multi-level hint system can accommodate different learner needs
 
-3. **自适应机制**
-   - 基于学习者表现动态调整提示难度和详细程度
-   - 考虑学习者的知识水平和学习风格
+3. **Self-Adaptive Mechanism**
+   - Dynamically adjust hint difficulty and detail based on learner performance
+   - Consider learner's knowledge level and learning style
 
-4. **提示效果评估**
-   - 提示使用频率与学习成果呈现非线性关系
-   - 适度的提示使用可以显著提升学习效果
+4. **Hint Effectiveness Evaluation**
+   - Hint usage frequency shows non-linear relationship with learning outcomes
+   - Moderate hint usage can significantly improve learning effectiveness
 
-### 实践启示
+### Practical Implications
 
-基于以上研究，我们的hint系统采取了以下设计原则：
+Based on these findings, our hint system adopted the following design principles:
 
-1. **渐进式提示**
-   - 首先提供方向性提示
-   - 根据需要逐步提供更具体的指导
+1. **Progressive Hinting**
+   - First provide directional hints
+   - Gradually provide more specific guidance as needed
 
-2. **个性化适配**
-   - 结合问题难度和学生表现
-   - 动态调整提示的深度和广度
+2. **Personalized Adaptation**
+   - Combine problem difficulty and learner performance
+   - Dynamically adjust hint depth and breadth
 
-3. **元认知支持**
-   - 引导学生反思解题策略
-   - 培养自主学习能力
+3. **Metacognition Support**
+   - Guide students to reflect on problem-solving strategies
+   - Foster independent learning abilities
 
-4. **评估与反馈**
-   - 持续监控提示效果
-   - 优化提示生成策略
+4. **Assessment and Feedback**
+   - Continuously monitor hint effectiveness
+   - Optimize hint generation strategy

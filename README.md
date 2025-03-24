@@ -22,6 +22,8 @@ ChatExaminer is a proof-of-concept AI-powered oral examination system that aims 
    - Validate against teacher-defined criteria
    - Provide meaningful feedback for assessment
 
+3. AI Students for experiments and validation
+
 ### Target Course
 - **Course**: 02465 Introduction to Reinforcement Learning and Control
 - **Topics**:
@@ -170,15 +172,54 @@ Current development focuses on:
 
 ## Getting Started
 
-[Development setup instructions will be added as the project progresses]
+To set up and run the ChatExaminer project, follow these steps:
 
-### Configuration
+### Prerequisites
 
-1. Create a `.env` file and set the following environment variables:
+- Python 3.9 or higher
+- Node.js and npm
+- Make
 
-```
-OPENAI_API_KEY=<your-openai-api-key>
-```
+### Installation
+
+1. **Create Python virtual environment**
+   ```bash
+   make setup-venv
+   ```
+
+2. **Install Python dependencies**
+   ```bash
+   make install-deps
+   ```
+
+3. **Configure environment variables**
+   Create a `.env` file in the project root directory and set the following:
+   ```
+   OPENAI_API_KEY=<your-openai-api-key>
+   ```
+
+4. **Install Node.js dependencies**
+   ```bash
+   cd frontend
+   npm install
+   cd ..
+   ```
+
+### Running the Application
+
+1. **Start the backend server**
+   ```bash
+   make run-backend
+   ```
+
+2. **Start the frontend development server**
+   ```bash
+   make run-frontend
+   ```
+
+3. **Access the application**
+   Open your browser and navigate to `http://localhost:3000`
+
 
 ## Code Architecture
 
@@ -402,40 +443,7 @@ The current proof of concept implementation will evolve into:
 
 ## References & Acknowledgments
 
-### Core Technologies
-1. **Sentence Transformers**
-```bibtex
-@inproceedings{reimers-2019-sentence-bert,
-    title = "Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks",
-    author = "Reimers, Nils and Gurevych, Iryna",
-    booktitle = "Proceedings of EMNLP-IJCNLP 2019",
-    year = "2019",
-    publisher = "Association for Computational Linguistics",
-    url = "https://arxiv.org/abs/1908.10084",
-}
-```
 
-2. **LangChain Text Splitting**
-```bibtex
-@misc{langchain2023,
-    author = {Chase Harrison and others},
-    title = {LangChain: Building applications with LLMs through composability},
-    year = {2023},
-    publisher = {GitHub},
-    url = {https://github.com/hwchase17/langchain}
-}
-```
-
-3. **DocArray**
-```bibtex
-@misc{docarray2022,
-    title = {DocArray: The data structure for unstructured data},
-    author = {Han Xiao and others},
-    year = {2022},
-    publisher = {GitHub},
-    url = {https://github.com/docarray/docarray}
-}
-```
 
 ### Libraries & Tools
 - **PyMuPDF (fitz)**: PDF processing and text extraction
